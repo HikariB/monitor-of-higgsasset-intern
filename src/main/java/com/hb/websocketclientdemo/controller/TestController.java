@@ -25,6 +25,11 @@ public class TestController {
         return "hello,ll";
     }
 
+    @RequestMapping("/index")
+    public String index(){
+        return "index";
+    }
+
     @RequestMapping("/connect")
     @ResponseBody
     public String connect() {
