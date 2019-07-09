@@ -20,7 +20,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 
 public class JsonTest {
 
-//    private static final Logger logger = LoggerFactory.getLogger(JsonTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonTest.class);
 
     @Autowired
     private static Info info;
@@ -56,9 +56,10 @@ public class JsonTest {
         System.out.println(str3);
 
         JSONObject jsonObject = JSONObject.parseObject(str3);
+        Object object = jsonObject.get("topics");
         System.out.println(jsonObject.get("channel"));
 
-//        logger.info("test for logger");
+        logger.info("test for logger");
     }
 }
 /**

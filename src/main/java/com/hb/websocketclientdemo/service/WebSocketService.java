@@ -1,5 +1,7 @@
 package com.hb.websocketclientdemo.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hb.websocketclientdemo.model.Info;
@@ -23,6 +25,9 @@ public class WebSocketService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private OnMessageService onMessageService;
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
@@ -52,6 +57,7 @@ public class WebSocketService {
                 public void onMessage(String s) {
                     logger.info("Received:" + s);
 //                    objectMapper.
+                    onMessageService.messageDispatch(s);
                 }
 
                 @Override
@@ -62,7 +68,7 @@ public class WebSocketService {
                 @Override
                 public void onError(Exception e) {
                     e.printStackTrace();
-                    logger.info("=====Websocket Connection Failed!");
+                    logger.info("Error =====Websocket Connection Failed!");
                 }
             };
         } catch (URISyntaxException e) {
