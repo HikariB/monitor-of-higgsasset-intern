@@ -2,14 +2,25 @@ package com.hb.websocketclientdemo.model.data.dataVO;
 
 public class InstrumentData {
 
+    //instrumentInfo 初始化
+    private String instrumentId;
+    private int contractMultiplier;
+    private double preSettlementPrice;
+
+    //InitPosition 初始化
+    private int initLongPosition;
+    private int initShortPosition;
+
+    private boolean isMarketDataInitialized;
+
+    //计算得出 根据现有数据
     private double profit;
     private double currentValue;
-
-    private double currentPrice;
-
     private int netPosition;
 
-    private String instrumentId;
+
+    //更新
+    private double currentPrice;
 
     private int currentLongPosition;
 
@@ -19,7 +30,7 @@ public class InstrumentData {
 
     private double fee;
 
-    private double OrderFee;
+    private double orderFee;
 
     private int orderInsertNum;
 
@@ -28,12 +39,6 @@ public class InstrumentData {
     private int orderVolume;
     private int volume;
     private int tradeVolume;
-
-    private int contractMultiplier;
-    private int initLongPosition;
-    private int initShortPosition;
-    private double preSettlementPrice;
-    private boolean isMarketDataInitialized;
 
 
     public InstrumentData() {
@@ -45,7 +50,7 @@ public class InstrumentData {
         this.currentShortPosition = 0;
         this.positionCost = 0;
         this.fee = 0;
-        OrderFee = 0;
+        this.orderFee = 0;
         this.orderInsertNum = 0;
         this.orderCancelNum = 0;
         this.orderVolume = 0;
@@ -58,12 +63,25 @@ public class InstrumentData {
         this.isMarketDataInitialized = false;
     }
 
+    public void addOrderCancelNum(int num) {
+        orderCancelNum += num;
+    }
 
+    public void addOrderInsertNum(int num) {
+        orderInsertNum += num;
+    }
 
+    public void addOrderFee(double num) {
+        orderFee += num;
+    }
+
+    public void addOrderVolume(double num){
+        orderVolume += num;
+    }
 
 
     public double getProfit() {
-        return contractMultiplier * (currentValue - positionCost) - fee - OrderFee;
+        return contractMultiplier * (currentValue - positionCost) - fee - orderFee;
     }
 
 
@@ -125,11 +143,11 @@ public class InstrumentData {
     }
 
     public double getOrderFee() {
-        return OrderFee;
+        return orderFee;
     }
 
     public void setOrderFee(double orderFee) {
-        OrderFee = orderFee;
+        this.orderFee = orderFee;
     }
 
     public int getOrderInsertNum() {

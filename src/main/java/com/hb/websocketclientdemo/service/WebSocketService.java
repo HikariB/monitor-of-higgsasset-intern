@@ -57,8 +57,8 @@ public class WebSocketService {
                 public void onMessage(String s) {
                     logger.info("Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s);
-//                    if (!isReadable)
-//                        logger.info("Unknown Message Received");
+                    if (!isReadable)
+                        logger.info("Unknown Message Received");
 
                 }
 
