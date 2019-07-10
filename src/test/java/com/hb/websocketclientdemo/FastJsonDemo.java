@@ -24,6 +24,7 @@ public class FastJsonDemo {
         OrderRtn orderRtn = JSONObject.parseObject(str1, OrderRtn.class);
 
 
+
     }
 
 }

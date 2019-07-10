@@ -1,0 +1,160 @@
+depth_marketdata
+
+{"channel":"depth_marketdata","data":{"instrument_id":"IF1908","trading_date":"20190709","update_time":"13:35:28","update_millisec":"100","last_price":"3757.000000","adjusted_price":"3757.000000","volume":"1109","turnover":"1253183520.000000","bids":[["3756.000000","3"],["0.000000","0"],["0.000000","0"],["0.000000","0"],["0.000000","0"]],"asks":[["3760.600000","1"],["0.000000","0"],["0.000000","0"],["0.000000","0"],["0.000000","0"]]}}
+
+{
+	"channel": "depth_marketdata",
+	"data": {
+	"instrument_id": "IF1908",
+	"trading_date": "20190709",
+	"update_time": "13:35:28",
+	"update_millisec": "100",
+	"last_price": "3757.000000",
+	"adjusted_price": "3757.000000",
+	"volume": "1109",
+	"turnover": "1253183520.000000",
+	"bids": [
+		[
+			"3756.000000",
+			"3"
+		],
+		[
+			"0.000000",
+			"0"
+		],
+		[
+			"0.000000",
+			"0"
+		],
+		[
+			"0.000000",
+			"0"
+		],
+		[
+			"0.000000",
+			"0"
+		]
+			],
+		"asks": [
+		[
+			"3760.600000",
+			"1"
+		],
+		[
+			"0.000000",
+			"0"
+		],
+		[
+			"0.000000",
+			"0"
+		],
+		[
+			"0.000000",
+			"0"
+		],
+		[
+			"0.000000",
+			"0"
+		]
+			]
+	}
+}
+
+
+--------------------------
+order_rtn
+
+{"channel":"order_rtn","data":{"user_id":"83925101","instrument_id":"IF1908","order_sys_id":"      148188","order_ref":"      270353","direction":"1","offset_flag":"1","price":"3819.800000","total_volume":"1","traded_volume":"0","insert_time":"","order_status":"1"}}
+
+{
+	"channel": "order_rtn",
+	"data": {
+	"user_id": "83925101",
+	"instrument_id": "IF1908",
+	"order_sys_id": " 148188",
+	"order_ref": " 270353",
+	"direction": "1",
+	"offset_flag": "1",
+	"price": "3819.800000",
+	"total_volume": "1",
+	"traded_volume": "0",
+	"insert_time": "",
+	"order_status": "1"
+	}
+}
+------------------------------
+trade_rtn
+
+{"channel":"trade_rtn","data":{"user_id":"83925101","instrument_id":"IF1908","order_sys_id":"      148291","order_ref":"      270363","trade_id":"       30376","direction":"1","offset_flag":"1","price":"3819.800000","volume":"1","fee":"0.000000"}}
+
+
+{
+	"channel": "trade_rtn",
+	"data": {
+	"user_id": "83925101",
+	"instrument_id": "IF1908",
+	"order_sys_id": " 148291",
+	"order_ref": " 270363",
+	"trade_id": " 30376",
+	"direction": "1",
+	"offset_flag": "1",
+	"price": "3819.800000",
+	"volume": "1",
+	"fee": "0.000000"
+	}
+}
+----------------------------
+instrument_info
+
+{"channel":"instrument_info","data":{"instrument_id":"IF1908","exchange_id":"CFFEX","expire_date":"20190816","contract_multiplier":"300","price_tick":"0.200000","strike_price":"0.000000","pre_close_price":"3867.400000","pre_settlement_price":"3869.800000","upper_limit_price":"4256.600000","lower_limit_price":"3483.000000"}}
+
+{
+	"channel": "instrument_info",
+	"data": {
+	"instrument_id": "IF1908",
+	"exchange_id": "CFFEX",
+	"expire_date": "20190816",
+	"contract_multiplier": "300",
+	"price_tick": "0.200000",
+	"strike_price": "0.000000",
+	"pre_close_price": "3867.400000",
+	"pre_settlement_price": "3869.800000",
+	"upper_limit_price": "4256.600000",
+	"lower_limit_price": "3483.000000"
+	}
+}
+
+----------------------
+init_position
+
+{"channel":"init_position","data":{"user_id":"","instrument_id":"IF1908","long_pos":"2","short_pos":"2"}}
+
+{
+	"channel": "init_position",
+	"data": {
+	"user_id": "",
+	"instrument_id": "IF1908",
+	"long_pos": "2",
+	"short_pos": "2"
+	}
+}
+
+-----------
+subscribe
+
+{"channel":"subscribe", "topics":[{"account":"83925087", "instrument":"IF1904"}, {"account":"83925087", "instrument":"IF1905"}, {"account":"83925087", "instrument":"IF1906"}]}
+-----------------
+login
+
+{
+    "channel":"login", 
+    "info": {
+                "user_id":"gt_w", 
+                "password":"higgspass"
+            }
+}
+
+login_result
+{"channel":"login_result","result":"success","account":"gt_w"}
+sub_result:
+{"channel":"sub_result","result":"success","topic":{"account":"83925101", "instrument":"IF1908"}}
