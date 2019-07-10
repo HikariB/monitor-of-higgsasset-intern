@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data;
+package com.hb.websocketclientdemo.model.data.dataVO;
 
 import org.springframework.stereotype.Component;
 
@@ -21,5 +21,18 @@ public class LoginResult {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public LoginResult() {
+        this.result = " ";
+        this.account = " ";
+    }
+
+    @Override
+    public String toString() {
+        return "LoginResult{" +
+                "result='" + result + '\'' +
+                ", account='" + account + '\'' +
+                '}';
     }
 }

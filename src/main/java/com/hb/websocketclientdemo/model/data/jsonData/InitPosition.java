@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data;
+package com.hb.websocketclientdemo.model.data.jsonData;
 
 /**
  * 【初始持仓】

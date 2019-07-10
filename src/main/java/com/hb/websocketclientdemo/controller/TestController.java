@@ -2,6 +2,10 @@ package com.hb.websocketclientdemo.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hb.websocketclientdemo.model.Topic;
+import com.hb.websocketclientdemo.model.data.dataVO.LoginResult;
+import com.hb.websocketclientdemo.model.data.dataVO.MonitorData;
+import com.hb.websocketclientdemo.model.data.dataVO.SubResult;
+import com.hb.websocketclientdemo.model.data.jsonData.InstrumentInfo;
 import com.hb.websocketclientdemo.service.WebSocketService;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
@@ -19,6 +23,18 @@ public class TestController {
     @Autowired
     private WebSocketService webSocketService;
 
+    @Autowired
+    private LoginResult loginResult;
+
+    @Autowired
+    private SubResult subResult;
+
+    @Autowired
+    private InstrumentInfo instrumentInfo;
+
+    @Autowired
+    private MonitorData monitorData;
+
     @RequestMapping("/")
     @ResponseBody
     public String hello() {
@@ -26,7 +42,7 @@ public class TestController {
     }
 
     @RequestMapping("/index")
-    public String index(){
+    public String index() {
         return "index";
     }
 
@@ -85,5 +101,28 @@ public class TestController {
 
     }
 
+    @RequestMapping("/login-result")
+    @ResponseBody
+    public LoginResult getLoginResult() {
+        return loginResult;
+    }
+
+    @RequestMapping("/sub-result")
+    @ResponseBody
+    public SubResult getSubResult() {
+        return subResult;
+    }
+
+    @RequestMapping("/instrument-info")
+    @ResponseBody
+    public InstrumentInfo getInstrumentInfo() {
+        return instrumentInfo;
+    }
+
+    @RequestMapping("monitor-data")
+    @ResponseBody
+    public MonitorData getMonitorData(){
+        return monitorData;
+    }
 
 }

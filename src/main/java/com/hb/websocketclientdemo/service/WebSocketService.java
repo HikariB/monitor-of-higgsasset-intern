@@ -31,7 +31,7 @@ public class WebSocketService {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
-    private WebSocketClient wsClient=null;
+    private WebSocketClient wsClient = null;
 
     //    ws://10.12.226.66:8085/socket
 //    ws://114.55.210.206:9999/
@@ -56,8 +56,10 @@ public class WebSocketService {
                 @Override
                 public void onMessage(String s) {
                     logger.info("Received:" + s);
-//                    objectMapper.
-                    onMessageService.messageDispatch(s);
+                    boolean isReadable = onMessageService.messageDispatch(s);
+//                    if (!isReadable)
+//                        logger.info("Unknown Message Received");
+
                 }
 
                 @Override
