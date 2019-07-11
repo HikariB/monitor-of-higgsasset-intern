@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data.dataVO;
+package com.hb.websocketclientdemo.service.model;
 
 import org.springframework.stereotype.Component;
 
@@ -8,8 +8,8 @@ import java.util.Map;
 @Component
 public class MonitorData {
     //string: instrumentId
-    private Map<String,InstrumentData> instruments;
-    private Map<String,Map<Integer,OrderData>> orders;
+    private Map<String, InstrumentData> instruments;
+    private Map<String,Map<Integer, OrderData>> orders;
 
     public MonitorData(){
         instruments = new HashMap<>();

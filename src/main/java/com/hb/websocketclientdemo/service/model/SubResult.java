@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data.dataVO;
+package com.hb.websocketclientdemo.service.model;
 
 import com.hb.websocketclientdemo.model.Topic;
 import org.springframework.stereotype.Component;
@@ -34,5 +34,10 @@ public class SubResult {
                 "result='" + result + '\'' +
                 ", topics=" + topics +
                 '}';
+    }
+
+    public SubResult() {
+        this.result = "";
+        this.topics = new LinkedList<>();
     }
 }

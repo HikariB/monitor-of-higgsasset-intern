@@ -1,74 +1,51 @@
 package com.hb.websocketclientdemo.model.data.jsonData;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
-/**
- * 【报单回报】
+/**【成交回报】
  * 用户名	user_id
  * 合约名	instrument_id
  * 委托单交易所编号	order_sys_id
  * 委托单本地编号	order_ref
+ * 交易所成交编号	trade_id
  * 委托方向（0买，1卖）	direction
  * 开平仓标志（0开，1平）	offset_flag
- * 委托价格	price
- * 委托总量	total_volume
- * 已成交数量	traded_volume
- * 委托单状态	order_status
+ * 成交价	price
+ * 成交量	volume
+ * 手续费	fee
+ *
  */
-
-//@JSONField(name = "自定义")
-//    经测试，驼峰命名和下划线命名，似乎Fastjson 能够识别，所以可以不加
-// 注意Json化的时候需要getter and setter
-
-public class OrderRtn {
+public class TradeRtnDO {
     //    用户名
-
-    @JSONField(name = "user_id")
     private String userId;
 
     //    合约名
-    @JSONField(name = "instrument_id")
     private String instrumentId;
 
     //    委托单交易所编号
-    @JSONField(name = "order_sys_id")
     private String orderSysId;
 
     //    委托单本地编号
-    @JSONField(name = "order_ref")
     private String orderRef;
 
     //    交易所成交编号
     //----
-//    private String tradeId;
+    private String tradeId;
 
     //    委托方向
     //0：买 1：卖
-    @JSONField(name = "direction")
     private String direction;
 
     //    开平仓标志
     //    0：开 1：平
-
-    @JSONField(name = "offset_flag")
     private String offsetFlag;
 
     //    委托价格
-    @JSONField(name = "price")
-    private String price;
+    private double price;
 
-    //    委托总量
-    @JSONField(name = "total_volume")
-    private String totalVolume;
+    //    成交量
+    private double volume;
 
-    //    已成交数量
-    @JSONField(name = "traded_volume")
-    private String tradedVolume;
-
-    //    委托单状态
-    //0: 全部成交 1：排队中 2：已撤销 3：未知状态
-    @JSONField(name = "order_status")
-    private String orderStatus;
+    //    手续费
+    private double fee;
 
     public String getUserId() {
         return userId;
@@ -102,6 +79,14 @@ public class OrderRtn {
         this.orderRef = orderRef;
     }
 
+    public String getTradeId() {
+        return tradeId;
+    }
+
+    public void setTradeId(String tradeId) {
+        this.tradeId = tradeId;
+    }
+
     public String getDirection() {
         return direction;
     }
@@ -118,35 +103,27 @@ public class OrderRtn {
         this.offsetFlag = offsetFlag;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public String getTotalVolume() {
-        return totalVolume;
+    public double getVolume() {
+        return volume;
     }
 
-    public void setTotalVolume(String totalVolume) {
-        this.totalVolume = totalVolume;
+    public void setVolume(double volume) {
+        this.volume = volume;
     }
 
-    public String getTradedVolume() {
-        return tradedVolume;
+    public double getFee() {
+        return fee;
     }
 
-    public void setTradedVolume(String tradedVolume) {
-        this.tradedVolume = tradedVolume;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setFee(double fee) {
+        this.fee = fee;
     }
 }

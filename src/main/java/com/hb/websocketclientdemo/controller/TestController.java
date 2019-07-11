@@ -1,12 +1,12 @@
 package com.hb.websocketclientdemo.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hb.websocketclientdemo.model.Topic;
-import com.hb.websocketclientdemo.model.data.dataVO.LoginResult;
-import com.hb.websocketclientdemo.model.data.dataVO.MonitorData;
-import com.hb.websocketclientdemo.model.data.dataVO.SubResult;
-import com.hb.websocketclientdemo.model.data.jsonData.InstrumentInfo;
+import com.hb.websocketclientdemo.model.LoginInfo;
+import com.hb.websocketclientdemo.model.SubscribeInfo;
+import com.hb.websocketclientdemo.model.data.jsonData.InstrumentInfoDO;
 import com.hb.websocketclientdemo.service.WebSocketService;
+import com.hb.websocketclientdemo.service.model.LoginResult;
+import com.hb.websocketclientdemo.service.model.MonitorData;
+import com.hb.websocketclientdemo.service.model.SubResult;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,17 @@ public class TestController {
     private SubResult subResult;
 
     @Autowired
-    private InstrumentInfo instrumentInfo;
+    private InstrumentInfoDO instrumentInfo;
 
     @Autowired
     private MonitorData monitorData;
+
+    @Autowired
+    private LoginInfo loginInfo;
+
+    @Autowired
+    private SubscribeInfo subscribeInfo;
+
 
     @RequestMapping("/")
     @ResponseBody
@@ -52,14 +59,8 @@ public class TestController {
         if (webSocketService.getWsClient() == null ||
                 !webSocketService.getWsClient().getReadyState().equals(WebSocket.READYSTATE.OPEN)) {
             webSocketService.connect();
-            try {
-                webSocketService.login("gt_w", "higgspass");
-                Topic[] topics = new Topic[1];
-                topics[0] = new Topic("83925101", "IF1908");
-                webSocketService.subscribe(topics);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            webSocketService.login();
+            webSocketService.subscribe();
         } else {
             logger.info("remote server has been connected");
             return "connected";
@@ -115,14 +116,26 @@ public class TestController {
 
     @RequestMapping("/instrument-info")
     @ResponseBody
-    public InstrumentInfo getInstrumentInfo() {
+    public InstrumentInfoDO getInstrumentInfo() {
         return instrumentInfo;
     }
 
     @RequestMapping("monitor-data")
     @ResponseBody
-    public MonitorData getMonitorData(){
+    public MonitorData getMonitorData() {
         return monitorData;
+    }
+
+    @RequestMapping("/config-login-bean")
+    @ResponseBody
+    public LoginInfo getLoginInfo() {
+        return loginInfo;
+    }
+
+    @RequestMapping("/config-subscribe-bean")
+    @ResponseBody
+    public SubscribeInfo getSubscribeInfo() {
+        return subscribeInfo;
     }
 
 }

@@ -76,8 +76,7 @@ namespace HFTR.Common.Models
     {
         public Dictionary<string, InstrumentData> Instruments { get; set; } = new Dictionary<string, InstrumentData>();
         public Dictionary<string, Dictionary<int, OrderData>> Orders { get; set; } = new Dictionary<string, Dictionary<int, OrderData>>();
-
-        public double TotalFunds { get; set; } = 0;
+//        public double TotalFunds { get; set; } = 0;
 
         public double IFProfit
         {

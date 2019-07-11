@@ -1,13 +1,8 @@
 package com.hb.websocketclientdemo.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hb.websocketclientdemo.model.Info;
 import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
-import com.hb.websocketclientdemo.model.Topic;
 import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -23,8 +18,8 @@ import java.net.URISyntaxException;
 @Component
 public class WebSocketService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+//    @Autowired
+//    private ObjectMapper objectMapper;
 
     @Autowired
     private OnMessageService onMessageService;
@@ -32,6 +27,12 @@ public class WebSocketService {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
     private WebSocketClient wsClient = null;
+
+    @Autowired
+    private LoginInfo loginInfo;
+
+    @Autowired
+    private SubscribeInfo subscribeInfo;
 
     //    ws://10.12.226.66:8085/socket
 //    ws://114.55.210.206:9999/
@@ -82,18 +83,13 @@ public class WebSocketService {
         while (!wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN)) ;
     }
 
-    public void login(String userId, String password) throws JsonProcessingException {
-        Info info = new Info();
-        info.setUser_id(userId);
-        info.setPassword(password);
-        LoginInfo loginInfo = new LoginInfo("login", info);
-        wsClient.send(objectMapper.writeValueAsString(loginInfo));
+    public void login() {
+        wsClient.send(JSON.toJSONString(loginInfo));
         logger.info("=====Logining...");
     }
 
-    public void subscribe(Topic[] topics) throws JsonProcessingException {
-        SubscribeInfo subscribeInfo = new SubscribeInfo("subscribe", topics);
-        wsClient.send(objectMapper.writeValueAsString(subscribeInfo));
+    public void subscribe() {
+        wsClient.send(JSON.toJSONString(subscribeInfo));
         logger.info("=====Subscribing...");
     }
 

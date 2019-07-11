@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data.dataVO;
+package com.hb.websocketclientdemo.service.model;
 
 public class InstrumentData {
 
@@ -20,25 +20,24 @@ public class InstrumentData {
 
 
     //更新
+    //行情 更新
     private double currentPrice;
 
+    // tradeRtn
     private int currentLongPosition;
-
     private int currentShortPosition;
-
     private double positionCost;
-
     private double fee;
+    private int tradeVolume;
 
-    private double orderFee;
 
+    //orderRtn
     private int orderInsertNum;
-
     private int orderCancelNum;
-
+    private double orderFee;
     private int orderVolume;
     private int volume;
-    private int tradeVolume;
+
 
 
     public InstrumentData() {
@@ -75,8 +74,28 @@ public class InstrumentData {
         orderFee += num;
     }
 
-    public void addOrderVolume(double num){
+    public void addOrderVolume(double num) {
         orderVolume += num;
+    }
+
+    public void addFee(double num) {
+        fee += num;
+    }
+
+    public void addTradeVolume(double num) {
+        tradeVolume += num;
+    }
+
+    public void addPositionCost(double num){
+        positionCost += num;
+    }
+
+    public void addCurrentLongPosition(double num){
+        currentLongPosition += num;
+    }
+
+    public void addCurrentShortPosition(double num){
+        currentShortPosition += num;
     }
 
 
@@ -84,11 +103,9 @@ public class InstrumentData {
         return contractMultiplier * (currentValue - positionCost) - fee - orderFee;
     }
 
-
     public double getCurrentValue() {
         return currentPrice * (currentLongPosition - currentShortPosition);
     }
-
 
     public double getCurrentPrice() {
         return currentPrice;

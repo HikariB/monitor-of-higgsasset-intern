@@ -1,7 +1,5 @@
 package com.hb.websocketclientdemo.model.data.jsonData;
 
-import org.springframework.stereotype.Component;
-
 /**
  * 【初始持仓】
  * 用户名	user_id
@@ -9,8 +7,8 @@ import org.springframework.stereotype.Component;
  * 初始多头	long_pos
  * 初始空头	short_pos
  */
-@Component
-public class InitPosition {
+
+public class InitPositionDO {
     //    用户名
     private String userId;
 
@@ -18,9 +16,9 @@ public class InitPosition {
     private String instrumentId;
 
     //    初始多头
-    private String longPos;
+    private int longPos;
     //    初始空头
-    private String shortPos;
+    private int shortPos;
 
     public String getUserId() {
         return userId;
@@ -38,19 +36,19 @@ public class InitPosition {
         this.instrumentId = instrumentId;
     }
 
-    public String getLongPos() {
+    public int getLongPos() {
         return longPos;
     }
 
-    public void setLongPos(String longPos) {
+    public void setLongPos(int longPos) {
         this.longPos = longPos;
     }
 
-    public String getShortPos() {
+    public int getShortPos() {
         return shortPos;
     }
 
-    public void setShortPos(String shortPos) {
+    public void setShortPos(int shortPos) {
         this.shortPos = shortPos;
     }
 }

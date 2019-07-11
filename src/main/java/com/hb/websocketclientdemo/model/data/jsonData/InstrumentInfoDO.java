@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * 跌停价	lower_limit_price
  */
 @Component
-public class InstrumentInfo {
+public class InstrumentInfoDO {
 
     //    合约名
     private String instrumentId;
@@ -24,19 +24,19 @@ public class InstrumentInfo {
     //    到期日（期货/期权）
     private String expireDate;
     //    合约乘数
-    private String contractMultiplier;
+    private int contractMultiplier;
     //    最小变动价位
-    private String priceTick;
+    private double priceTick;
     //    执行价格
-    private String strikePrice;
+    private double strikePrice;
     //    前收盘价
-    private String preClosePrice;
+    private double preClosePrice;
     //    前结算价
-    private String preSettlementPrice;
+    private double preSettlementPrice;
     //    涨停价
-    private String upperLimitPrice;
+    private double upperLimitPrice;
     //    跌停价
-    private String lowerLimitPrice;
+    private double lowerLimitPrice;
 
     public String getInstrumentId() {
         return instrumentId;
@@ -62,59 +62,59 @@ public class InstrumentInfo {
         this.expireDate = expireDate;
     }
 
-    public String getContractMultiplier() {
+    public int getContractMultiplier() {
         return contractMultiplier;
     }
 
-    public void setContractMultiplier(String contractMultiplier) {
+    public void setContractMultiplier(int contractMultiplier) {
         this.contractMultiplier = contractMultiplier;
     }
 
-    public String getPriceTick() {
+    public double getPriceTick() {
         return priceTick;
     }
 
-    public void setPriceTick(String priceTick) {
+    public void setPriceTick(double priceTick) {
         this.priceTick = priceTick;
     }
 
-    public String getStrikePrice() {
+    public double getStrikePrice() {
         return strikePrice;
     }
 
-    public void setStrikePrice(String strikePrice) {
+    public void setStrikePrice(double strikePrice) {
         this.strikePrice = strikePrice;
     }
 
-    public String getPreClosePrice() {
+    public double getPreClosePrice() {
         return preClosePrice;
     }
 
-    public void setPreClosePrice(String preClosePrice) {
+    public void setPreClosePrice(double preClosePrice) {
         this.preClosePrice = preClosePrice;
     }
 
-    public String getPreSettlementPrice() {
+    public double getPreSettlementPrice() {
         return preSettlementPrice;
     }
 
-    public void setPreSettlementPrice(String preSettlementPrice) {
+    public void setPreSettlementPrice(double preSettlementPrice) {
         this.preSettlementPrice = preSettlementPrice;
     }
 
-    public String getUpperLimitPrice() {
+    public double getUpperLimitPrice() {
         return upperLimitPrice;
     }
 
-    public void setUpperLimitPrice(String upperLimitPrice) {
+    public void setUpperLimitPrice(double upperLimitPrice) {
         this.upperLimitPrice = upperLimitPrice;
     }
 
-    public String getLowerLimitPrice() {
+    public double getLowerLimitPrice() {
         return lowerLimitPrice;
     }
 
-    public void setLowerLimitPrice(String lowerLimitPrice) {
+    public void setLowerLimitPrice(double lowerLimitPrice) {
         this.lowerLimitPrice = lowerLimitPrice;
     }
 }

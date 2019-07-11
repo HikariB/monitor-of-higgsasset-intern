@@ -1,0 +1,4 @@
+#logging:
+#  file: D:\\JavaCode\\websocket-client-demo-git\\log\\websocket.log
+#  level:
+#    com.hb.websocketclientdemo: debug
