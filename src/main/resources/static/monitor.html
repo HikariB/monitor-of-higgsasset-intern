@@ -8,32 +8,99 @@
     <link rel="stylesheet" href="css/user_css/bootstrap.min.css">
     <link rel="stylesheet" href="css/user_css/bootstrap-table.min.css">
     <link rel="stylesheet" href="css/user_css/all.css">
+<!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
+    <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
 
+    <style>
+        .select,
+        #locale {
+            width: 100%;
+        }
+
+        .like {
+            margin-right: 10px;
+        }
+    </style>
 
 </head>
 <body>
 <br>
 
+<div class="select">
+    <select class="form-control" name="" id="locale">
+        <option value="User1" selected>83925101</option>
+        <option value="User2">To be...</option>
+        <option value="Default" selected>Select an User Account</option>
+
+    </select>
+</div>
+
+<div id="toolbar">
+    <button id="connect" class="btn btn-primary">
+        <!--        <i class="glyphicon glyphicon-remove"></i> Delete-->
+        Connect
+    </button>
+    <button id="disconnect" class="btn btn-secondary">Disconnect</button>
+    <button id="append" class="btn btn-secondary" disabled>Append 10000 Rows</button>
+    Total rows: <span id="total">12</span>
+</div>
+<!--        要实现函数：detailFormatter-->
+<!--data-content-type="application/x-www-form-urlencoded"-->
+<!--data-show-search-button="true"-->
 
 <table
+        class="table-striped"
         id="instrument-info"
         data-toggle="table"
+        data-height="1000"
+
         data-url="instruments"
+        data-method="get"
+
+
         data-search="true"
         data-pagination="false"
-        data-flat="false">
+        data-flat="false"
+
+        data-show-button-icons="true"
+
+        data-toolbar="#toolbar"
+        data-show-refresh="false"
+        data-show-toggle="false"
+        data-show-fullscreen="false"
+        data-show-columns="true"
+        data-detail-view="false"
+        data-detail-formatter="detailFormatter"
+        data-show-export="false"
+        data-click-to-select="true"
+        data-show-pagination-switch="false"
+        data-pagination="false"
+        data-silent-sort="false"
+        data-sort-name="instrumentId"
+        data-sort-order="asc"
+        data-show-footer="true"
+        data-icons-prefix="icon"
+        data-icons="icons"
+        data-auto-refresh="true"
+        data-auto-refresh-interval="1"
+>
+
 
     <thead>
+
     <tr>
-        <th data-sortable="true" data-field="instrumentId">InstrumentID</th>
-        <th data-field="currentLongPosition">CurrentLong</th>
-        <th data-field="currentShortPosition">CurrentShort</th>
-        <th data-field="orderVolume">OrderVolume</th>
-        <th data-field="tradeVolume">TradedVolume</th>
-        <th data-field="volume">MarketVolume</th>
-        <th data-field="fee">Fee</th>
-        <th data-field="orderFee">OrderFee</th>
-        <th data-field="profit">Profit</th>
+        <th data-sortable="true" data-field="instrumentId" data-footer-formatter="idFormatter" data-width="300">
+            InstrumentID
+        </th>
+        <th data-sortable="true" data-field="currentLongPosition" data-halign="center" data-align="center">CurrentLong
+        </th>
+        <th data-sortable="true" data-field="currentShortPosition">CurrentShort</th>
+        <th data-sortable="true" data-field="orderVolume">OrderVolume</th>
+        <th data-sortable="true" data-field="tradeVolume">TradedVolume</th>
+        <th data-sortable="true" data-field="volume">MarketVolume</th>
+        <th data-sortable="true" data-field="fee">Fee</th>
+        <th data-sortable="true" data-field="orderFee">OrderFee</th>
+        <th data-sortable="true" data-field="profit">Profit</th>
     </tr>
     </thead>
 
@@ -45,6 +112,34 @@
 <script src="js/user_js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/user_js/bootstrap-table.min.js"></script>
+<script src="js/user_js/bootstrap_table_auto_refresh.min.js"></script>
+
+<script>
+    function idFormatter() {
+        return 'Total'
+    }
+
+    window.icons = {
+        refresh: 'ion-md-refresh',
+        columns: 'ion-md-menu',
+        fullscreen: 'ion-md-expand',
+        autoRefresh: 'ion-md-refresh-circle'
+    }
+
+
+    $(function () {
+        $('#instrument-info').bootstrapTable()
+        var connectbtn = $('#connect');
+        var disconnectbtn = $('#disconnect');
+        connectbtn.click(function () {
+            alert("connect")
+        })
+
+        disconnectbtn.click(function () {
+            alert("disconnect")
+        });
+    })
+</script>
 </body>
 </html>
 
