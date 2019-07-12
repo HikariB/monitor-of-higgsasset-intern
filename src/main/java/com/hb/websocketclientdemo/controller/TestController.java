@@ -138,4 +138,9 @@ public class TestController {
         return subscribeInfo;
     }
 
+    @RequestMapping("/monitor")
+    public String monitor(){
+        return "monitor";
+    }
+
 }
