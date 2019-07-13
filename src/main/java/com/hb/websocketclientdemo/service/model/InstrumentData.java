@@ -39,7 +39,6 @@ public class InstrumentData {
     private int volume;
 
 
-
     public InstrumentData() {
 
         this.currentPrice = 0;
@@ -86,18 +85,17 @@ public class InstrumentData {
         tradeVolume += num;
     }
 
-    public void addPositionCost(double num){
+    public void addPositionCost(double num) {
         positionCost += num;
     }
 
-    public void addCurrentLongPosition(double num){
+    public void addCurrentLongPosition(double num) {
         currentLongPosition += num;
     }
 
-    public void addCurrentShortPosition(double num){
+    public void addCurrentShortPosition(double num) {
         currentShortPosition += num;
     }
-
 
     public double getProfit() {
         return contractMultiplier * (currentValue - positionCost) - fee - orderFee;

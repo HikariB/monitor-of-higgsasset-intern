@@ -4,12 +4,13 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Hello, Bootstrap Table!</title>
+    <title>Higgs Asset</title>
     <link rel="stylesheet" href="css/user_css/bootstrap.min.css">
     <link rel="stylesheet" href="css/user_css/bootstrap-table.min.css">
     <link rel="stylesheet" href="css/user_css/all.css">
-<!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
+    <!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
+    <link href="css/user_css/dragtable.css" rel="stylesheet">
 
     <style>
         .select,
@@ -21,125 +22,171 @@
             margin-right: 10px;
         }
     </style>
-
 </head>
 <body>
 <br>
-
-<div class="select">
-    <select class="form-control" name="" id="locale">
-        <option value="User1" selected>83925101</option>
-        <option value="User2">To be...</option>
-        <option value="Default" selected>Select an User Account</option>
-
-    </select>
+<div class="container-fluid">
+    <div class="select">
+        <select class="form-control" name="" id="account">
+            <option value="User1" selected>83925101</option>
+            <option value="User2">To be...</option>
+            <option value="Default" selected>Select an User Account</option>
+        </select>
+    </div>
 </div>
 
-<div id="toolbar">
-    <button id="connect" class="btn btn-primary">
-        <!--        <i class="glyphicon glyphicon-remove"></i> Delete-->
-        Connect
-    </button>
-    <button id="disconnect" class="btn btn-secondary">Disconnect</button>
-    <button id="append" class="btn btn-secondary" disabled>Append 10000 Rows</button>
-    Total rows: <span id="total">12</span>
+<div class="row container-fluid">
+    <div class="col-7">
+        <div id="toolbar">
+            <button id="connect" class="btn btn-secondary">
+                <!--        <i class="glyphicon glyphicon-remove"></i> Delete-->
+                Connect
+            </button>
+            <button id="disconnect" class="btn btn-secondary">Disconnect</button>
+            <button id="append" class="btn btn-secondary" disabled>Append 10000 Rows</button>
+            Total rows: <span id="total">12</span>
+        </div>
+        <!--        要实现函数：detailFormatter-->
+        <!--data-content-type="application/x-www-form-urlencoded"-->
+        <!--data-show-search-button="true"-->
+        <div>
+            <table class="table-striped"
+                   id="instrument-info"
+                   data-toggle="table"
+                   data-height="750"
+
+                   data-url="instruments"
+                   data-method="get"
+
+
+                   data-search="true"
+                   data-pagination="false"
+                   data-flat="false"
+
+                   data-show-button-icons="true"
+
+                   data-toolbar="#toolbar"
+                   data-show-columns="true"
+                   data-show-refresh="true"
+                   data-show-toggle="false"
+                   data-show-fullscreen="true"
+
+                   data-detail-view="false"
+                   data-detail-formatter="detailFormatter"
+                   data-show-export="false"
+                   data-click-to-select="true"
+                   data-show-pagination-switch="false"
+                   data-pagination="false"
+                   data-silent-sort="false"
+
+                   data-sort-name="instrumentId"
+                   data-sort-order="asc"
+
+                   data-show-footer="true"
+                   data-icons-prefix="icon"
+                   data-icons="icons"
+                   data-auto-refresh="true"
+                   data-auto-refresh-status="false"
+                   data-auto-refresh-interval="1"
+                   ata-reorderable-columns="true"
+            >
+                <thead>
+                <!--        data-width="300"-->
+                <tr>
+                    <th data-sortable="true" data-field="instrumentId" data-footer-formatter="idFormatter"
+                        data-halign="center" data-align="center" data-title-tooltip="合约信息表">
+                        合约
+                    </th>
+                    <th data-sortable="true" data-field="currentLongPosition" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="">
+                        CurrentLong
+                    </th>
+                    <th data-sortable="true" data-field="currentShortPosition" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="">
+                        CurrentShort
+                    </th>
+                    <th data-sortable="true" data-field="orderVolume" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="下单总量">
+                        OrderVolume
+                    </th>
+                    <th data-sortable="true" data-field="tradeVolume" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="交易总量">
+                        TradedVolume
+                    </th>
+                    <th data-sortable="true" data-field="volume" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="市场总量">
+                        MarketVolume
+                    </th>
+                    <th data-sortable="true" data-field="fee" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="交易费用">
+                        Fee
+                    </th>
+                    <th data-sortable="true" data-field="orderFee" data-footer-formatter="sumFormatter"
+                        data-title-tooltip="下单总量">OrderFee
+                    </th>
+                    <th data-sortable="true" data-field="profit" data-footer-formatter="sumFormatter"
+                        data-formatter="profitFormatter" data-title-tooltip="利润">
+                        Profit
+                    </th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="col-5">
+        <table class="table-striped"
+               id="ordersInfo"
+               data-toggle="table"
+               data-height="750"
+
+               data-url="orders"
+               data-method="get"
+
+               data-search="true"
+               data-pagination="true"
+               data-show-button-icons="true"
+               data-icons="icons"
+               data-toolbar="#toolbar1"
+               data-show-columns="true"
+               data-show-refresh="true"
+               data-show-fullscreen="true"
+               data-sort-name="instrumentId"
+               data-sort-order="asc"
+               data-auto-refresh="true"
+               data-auto-refresh-status="false"
+               data-auto-refresh-interval="2">
+
+            <thead>
+            <tr>
+                <th data-sortable="true" data-field="orderSysId">报单编号</th>
+                <th data-sortable="true" data-field="instrumentId">合约</th>
+                <th data-sortable="true" data-field="direction" data-title-tooltip="0：买，1：卖">买卖</th>
+                <th data-sortable="true" data-field="offsetFlag" data-title-tooltip="0：开，1：平">开平</th>
+                <th data-sortable="true" data-field="price">报单价格</th>
+                <th data-sortable="true" data-field="totalVolume">报单手数</th>
+                <th data-sortable="true" data-field="tradeVolume">已成交数</th>
+                <th data-sortable="true" data-field="insertTime">报单时间</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
 </div>
-<!--        要实现函数：detailFormatter-->
-<!--data-content-type="application/x-www-form-urlencoded"-->
-<!--data-show-search-button="true"-->
-
-<table
-        class="table-striped"
-        id="instrument-info"
-        data-toggle="table"
-        data-height="1000"
-
-        data-url="instruments"
-        data-method="get"
-
-
-        data-search="true"
-        data-pagination="false"
-        data-flat="false"
-
-        data-show-button-icons="true"
-
-        data-toolbar="#toolbar"
-        data-show-refresh="false"
-        data-show-toggle="false"
-        data-show-fullscreen="false"
-        data-show-columns="true"
-        data-detail-view="false"
-        data-detail-formatter="detailFormatter"
-        data-show-export="false"
-        data-click-to-select="true"
-        data-show-pagination-switch="false"
-        data-pagination="false"
-        data-silent-sort="false"
-        data-sort-name="instrumentId"
-        data-sort-order="asc"
-        data-show-footer="true"
-        data-icons-prefix="icon"
-        data-icons="icons"
-        data-auto-refresh="true"
-        data-auto-refresh-interval="1"
->
-
-
-    <thead>
-
-    <tr>
-        <th data-sortable="true" data-field="instrumentId" data-footer-formatter="idFormatter" data-width="300">
-            InstrumentID
-        </th>
-        <th data-sortable="true" data-field="currentLongPosition" data-halign="center" data-align="center">CurrentLong
-        </th>
-        <th data-sortable="true" data-field="currentShortPosition">CurrentShort</th>
-        <th data-sortable="true" data-field="orderVolume">OrderVolume</th>
-        <th data-sortable="true" data-field="tradeVolume">TradedVolume</th>
-        <th data-sortable="true" data-field="volume">MarketVolume</th>
-        <th data-sortable="true" data-field="fee">Fee</th>
-        <th data-sortable="true" data-field="orderFee">OrderFee</th>
-        <th data-sortable="true" data-field="profit">Profit</th>
-    </tr>
-    </thead>
-
-
-</table>
-
 
 <script src="js/user_js/jquery-3.3.1.js"></script>
 <script src="js/user_js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/user_js/bootstrap-table.min.js"></script>
 <script src="js/user_js/bootstrap_table_auto_refresh.min.js"></script>
-
-<script>
-    function idFormatter() {
-        return 'Total'
-    }
-
-    window.icons = {
-        refresh: 'ion-md-refresh',
-        columns: 'ion-md-menu',
-        fullscreen: 'ion-md-expand',
-        autoRefresh: 'ion-md-refresh-circle'
-    }
+<script src="js/user_js/jquery-ui.min.js"></script>
+<script src="js/user_js/jquery.dragtable.js"></script>
+<script src="js/user_js/bootstrap-table-reorder-columns.min.js"></script>
 
 
-    $(function () {
-        $('#instrument-info').bootstrapTable()
-        var connectbtn = $('#connect');
-        var disconnectbtn = $('#disconnect');
-        connectbtn.click(function () {
-            alert("connect")
-        })
+<script src="js/user_js/monitor.js"></script>
 
-        disconnectbtn.click(function () {
-            alert("disconnect")
-        });
-    })
-</script>
+
 </body>
 </html>
 
@@ -151,7 +198,6 @@
 <!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"-->
 <!--          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">-->
 <!--    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">-->
-
 <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"-->
 <!--        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"-->
