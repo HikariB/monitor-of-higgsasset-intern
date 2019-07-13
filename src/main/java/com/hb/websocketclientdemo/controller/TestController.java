@@ -45,7 +45,7 @@ public class TestController {
     @RequestMapping("/")
     @ResponseBody
     public String hello() {
-        return "hello,ll";
+        return "This is For Test";
     }
 
     @RequestMapping("/index")
@@ -141,6 +141,16 @@ public class TestController {
     @RequestMapping("/monitor")
     public String monitor(){
         return "monitor";
+    }
+
+    @RequestMapping("/login")
+    public String login() {
+        return "login-sign";
+    }
+
+    @RequestMapping("/login-error")
+    public String loginError() {
+        return "login-error";
     }
 
 }
