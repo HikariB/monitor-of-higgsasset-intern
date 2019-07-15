@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data.jsonData;
+package com.hb.websocketclientdemo.service;
 
 
 import com.hb.websocketclientdemo.model.Info;
@@ -15,8 +15,14 @@ public class WebSocketConfiguration {
     @Value("${login.account}")
     private String loginAccount;
 
+    @Value("${login.account2}")
+    private String loginAccount2;
+
     @Value("${subscribe.account}")
     private String subAccount;
+
+    @Value("${subscribe.account2}")
+    private String subAccount2;
 
     @Value("${login.password}")
     private String password;
@@ -54,6 +60,7 @@ public class WebSocketConfiguration {
         return new LoginInfo("login", new Info(loginAccount, password));
     }
 
+    @SuppressWarnings("all")
     @Bean(name = "SubscribeInfo")
     public SubscribeInfo getSubscribeInfo() {
         Topic[] topics = new Topic[12];
@@ -69,6 +76,30 @@ public class WebSocketConfiguration {
         topics[9] = new Topic(subAccount, instrumentID_10);
         topics[10] = new Topic(subAccount, instrumentID_11);
         topics[11] = new Topic(subAccount, instrumentID_12);
+        return new SubscribeInfo("subscribe", topics);
+    }
+
+    @Bean(name = "LoginInfoWS2")
+    public LoginInfo getLoginInfoWS2(){
+        return new LoginInfo("login", new Info(loginAccount2, password));
+    }
+
+    @SuppressWarnings("all")
+    @Bean(name = "SubscribeInfoWS2")
+    public SubscribeInfo getSubInfoWS2(){
+        Topic[] topics = new Topic[12];
+        topics[0] = new Topic(subAccount2, instrumentID_1);
+        topics[1] = new Topic(subAccount2, instrumentID_2);
+        topics[2] = new Topic(subAccount2, instrumentID_3);
+        topics[3] = new Topic(subAccount2, instrumentID_4);
+        topics[4] = new Topic(subAccount2, instrumentID_5);
+        topics[5] = new Topic(subAccount2, instrumentID_6);
+        topics[6] = new Topic(subAccount2, instrumentID_7);
+        topics[7] = new Topic(subAccount2, instrumentID_8);
+        topics[8] = new Topic(subAccount2, instrumentID_9);
+        topics[9] = new Topic(subAccount2, instrumentID_10);
+        topics[10] = new Topic(subAccount2, instrumentID_11);
+        topics[11] = new Topic(subAccount2, instrumentID_12);
         return new SubscribeInfo("subscribe", topics);
     }
 }

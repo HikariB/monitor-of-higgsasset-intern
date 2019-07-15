@@ -1,17 +1,18 @@
 package com.hb.websocketclientdemo.service.model;
 
-import org.springframework.stereotype.Component;
+import java.util.LinkedList;
+import java.util.List;
 
-@Component
+
 public class LoginResult {
     private String result;
-    private String account;
+    private List<String> account;
 
-    public String getAccount() {
+    public List<String> getAccount() {
         return account;
     }
 
-    public void setAccount(String account) {
+    public void setAccount(List<String> account) {
         this.account = account;
     }
 
@@ -25,7 +26,7 @@ public class LoginResult {
 
     public LoginResult() {
         this.result = " ";
-        this.account = " ";
+        this.account = new LinkedList<>();
     }
 
     @Override

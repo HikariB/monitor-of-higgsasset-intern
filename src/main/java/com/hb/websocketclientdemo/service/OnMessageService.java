@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -20,20 +19,10 @@ public class OnMessageService {
     private static final Logger logger = LoggerFactory.getLogger(OnMessageService.class);
 
     @Autowired
-    private LoginResult loginResult;
-
-    @Autowired
-    private SubResult subResult;
-
-    @Autowired
-    private InstrumentInfoDO instrumentInfoDO;
-
-    @Autowired
-    private MonitorData monitorData;
-
+    private MultiAccountMonitorData multiAccountData;
 
     //websocket client onMessage 方法后总转发，根据channel
-    public boolean messageDispatch(String msg) {
+    public boolean messageDispatch(String msg, String subAccount) {
         if (msg == null || msg.equals(""))
             return false;
         JSONObject msgJson = JSONObject.parseObject(msg);
@@ -47,10 +36,10 @@ public class OnMessageService {
             return subResultHandler(msgJson);
         }
         if (channel.equals("instrument_info")) {
-            return instrumentInfoHandler(msgJson);
+            return instrumentInfoHandler(msgJson, subAccount);
         }
         if (channel.equals("init_position")) {
-            return initPositionHandler(msgJson);
+            return initPositionHandler(msgJson, subAccount);
         }
         if (channel.equals("order_rtn")) {
             return orderRtnHandler(msgJson);
@@ -59,7 +48,7 @@ public class OnMessageService {
             return tradeRtnHandler(msgJson);
         }
         if (channel.equals("depth_marketdata")) {
-            return depthMarketDataHandler(msgJson);
+            return depthMarketDataHandler(msgJson, subAccount);
         }
         return false;
     }
@@ -67,8 +56,10 @@ public class OnMessageService {
     private boolean loginResultHandler(JSONObject msgJson) {
         //result 并非 Json 下面会报错
 //            JSONObject result = (JSONObject) msgJson.get("result");
+        LoginResult loginResult = multiAccountData.getLoginResult();
         loginResult.setResult((String) msgJson.get("result"));
-        loginResult.setAccount((String) msgJson.get("account"));
+        loginResult.getAccount().add((String) msgJson.get("account"));
+
         if (loginResult.getResult().equals("success")) {
             //do sth to subscribe
             return true;
@@ -78,23 +69,30 @@ public class OnMessageService {
     }
 
     private boolean subResultHandler(JSONObject msgJson) {
+        SubResult subResult = multiAccountData.getSubResult();
         subResult.setResult((String) msgJson.get("result"));
         if (subResult.getResult().equals("success")) {
             JSONObject objectTopic = (JSONObject) msgJson.get("topic");
             Topic topic = JSONObject.parseObject(objectTopic.toJSONString(), Topic.class);
-            List<Topic> topics = subResult.getTopics();
-            topics.add(topic);
-            subResult.setTopics(topics);
+
+            subResult.getTopics().add(topic);
             return true;
         }
         logger.error("subscribe Failed");
         return false;
     }
 
-    private boolean instrumentInfoHandler(JSONObject msgJson) {
+    private boolean instrumentInfoHandler(JSONObject msgJson, String subAccount) {
+        //检查是否已存在
+        if (!multiAccountData.getAccountsInfo().containsKey(subAccount)) {
+            multiAccountData.getAccountsInfo().put(subAccount, new MonitorData());
+        }
+        MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
+
         JSONObject object = (JSONObject) msgJson.get("data");
         //使用 copyProperties 进行修改，“=”赋值无效
-        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class), instrumentInfoDO);
+        InstrumentInfoDO instrumentInfoDO = JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class);
+//        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class), instrumentInfoDO);
 //        JSONObject.parseObject(object.toJSONString(), InstrumentInfo.class)
         String instrumentId = instrumentInfoDO.getInstrumentId();
         if (monitorData.getInstruments().containsKey(instrumentId)) {
@@ -112,7 +110,10 @@ public class OnMessageService {
         return true;
     }
 
-    private boolean initPositionHandler(JSONObject msgJson) {
+    private boolean initPositionHandler(JSONObject msgJson, String subAccount) {
+
+        MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
+
         JSONObject object = (JSONObject) msgJson.get("data");
         InitPositionDO initPositionDO = JSONObject.parseObject(object.toJSONString(), InitPositionDO.class);
 //        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InitPositionDO.class), initPosition);
@@ -130,6 +131,7 @@ public class OnMessageService {
         JSONObject object = (JSONObject) msgJson.get("data");
         OrderRtnDO orderDO = JSONObject.parseObject(object.toJSONString(), OrderRtnDO.class);
         // 若之前不存在 订单表 则新增
+        MonitorData monitorData = multiAccountData.getAccountsInfo().get(orderDO.getUserId());
         if (!monitorData.getOrders().containsKey(orderDO.getInstrumentId())) {
             Map<Integer, OrderData> orders = new HashMap<>();
             monitorData.getOrders().put(orderDO.getInstrumentId(), orders);
@@ -168,6 +170,7 @@ public class OnMessageService {
     private boolean tradeRtnHandler(JSONObject msgJson) {
         JSONObject object = (JSONObject) msgJson.get("data");
         TradeRtnDO tradeDO = JSONObject.parseObject(object.toJSONString(), TradeRtnDO.class);
+        MonitorData monitorData = multiAccountData.getAccountsInfo().get(tradeDO.getUserId());
         InstrumentData instrumentData = monitorData.getInstruments().get(tradeDO.getInstrumentId());
         instrumentData.addFee(tradeDO.getFee());
         instrumentData.addTradeVolume(tradeDO.getVolume());
@@ -193,7 +196,8 @@ public class OnMessageService {
         return true;
     }
 
-    private boolean depthMarketDataHandler(JSONObject msgJson) {
+    private boolean depthMarketDataHandler(JSONObject msgJson, String subAccount) {
+        MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
         JSONObject object = (JSONObject) msgJson.get("data");
         DepthMarketDataDO marketDataDO = JSONObject.parseObject(object.toJSONString(), DepthMarketDataDO.class);
         InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());

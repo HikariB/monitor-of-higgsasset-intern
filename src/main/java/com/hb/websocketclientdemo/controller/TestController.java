@@ -2,10 +2,10 @@ package com.hb.websocketclientdemo.controller;
 
 import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
-import com.hb.websocketclientdemo.model.data.jsonData.InstrumentInfoDO;
 import com.hb.websocketclientdemo.service.WebSocketService;
 import com.hb.websocketclientdemo.service.model.LoginResult;
 import com.hb.websocketclientdemo.service.model.MonitorData;
+import com.hb.websocketclientdemo.service.model.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.SubResult;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
 
 @Controller
 public class TestController {
@@ -24,21 +26,12 @@ public class TestController {
     private WebSocketService webSocketService;
 
     @Autowired
-    private LoginResult loginResult;
+    private MultiAccountMonitorData multiAccountData;
 
-    @Autowired
-    private SubResult subResult;
-
-    @Autowired
-    private InstrumentInfoDO instrumentInfo;
-
-    @Autowired
-    private MonitorData monitorData;
-
-    @Autowired
+    @Resource(name = "LoginInfoWS2")
     private LoginInfo loginInfo;
 
-    @Autowired
+    @Resource(name = "SubscribeInfoWS2")
     private SubscribeInfo subscribeInfo;
 
 
@@ -56,8 +49,8 @@ public class TestController {
     @RequestMapping("/connect")
     @ResponseBody
     public String connect() {
-        if (webSocketService.getWsClient() == null ||
-                !webSocketService.getWsClient().getReadyState().equals(WebSocket.READYSTATE.OPEN)) {
+        if ( webSocketService.isClientNull()||
+                !webSocketService.isClientOpen()) {
             webSocketService.connect();
             webSocketService.login();
             webSocketService.subscribe();
@@ -71,10 +64,10 @@ public class TestController {
     @RequestMapping("/close")
     @ResponseBody
     public String close() {
-        if (webSocketService.getWsClient() == null) {
+        if (webSocketService.isClientNull()) {
             return "connection not established";
         }
-        if (webSocketService.getWsClient().isClosed())
+        if (webSocketService.isClosed())
             return "closed ";
         else {
             webSocketService.close();
@@ -105,25 +98,19 @@ public class TestController {
     @RequestMapping("/login-result")
     @ResponseBody
     public LoginResult getLoginResult() {
-        return loginResult;
+        return multiAccountData.getLoginResult();
     }
 
     @RequestMapping("/sub-result")
     @ResponseBody
     public SubResult getSubResult() {
-        return subResult;
-    }
-
-    @RequestMapping("/instrument-info")
-    @ResponseBody
-    public InstrumentInfoDO getInstrumentInfo() {
-        return instrumentInfo;
+        return multiAccountData.getSubResult();
     }
 
     @RequestMapping("monitor-data")
     @ResponseBody
     public MonitorData getMonitorData() {
-        return monitorData;
+        return multiAccountData.getAccountsInfo().get("83925101");
     }
 
     @RequestMapping("/config-login-bean")
@@ -153,4 +140,9 @@ public class TestController {
         return "login-error";
     }
 
+    @RequestMapping("/all-data")
+    @ResponseBody
+    public MultiAccountMonitorData getAllData(){
+        return multiAccountData;
+    }
 }

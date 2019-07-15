@@ -1,19 +1,19 @@
 package com.hb.websocketclientdemo.service.model;
 
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+
 public class MonitorData {
     //string: instrumentId
     private Map<String, InstrumentData> instruments;
     private Map<String,Map<Integer, OrderData>> orders;
 
+
     public MonitorData(){
         instruments = new HashMap<>();
         orders = new HashMap<>();
+//        accountSummary = new AccountSummary();
     }
 
     public Map<String, InstrumentData> getInstruments() {
@@ -31,4 +31,5 @@ public class MonitorData {
     public void setOrders(Map<String, Map<Integer, OrderData>> orders) {
         this.orders = orders;
     }
+
 }

@@ -25,37 +25,95 @@
 </head>
 <body>
 <br>
-<div class="container-fluid">
-    <div class="select">
-        <select class="form-control" name="" id="account">
-            <option value="User1" selected>83925101</option>
-            <option value="User2">To be...</option>
-            <option value="Default" selected>Select an User Account</option>
-        </select>
+<!--<div class="container-fluid">-->
+<!--    <div class="select">-->
+<!--        <select class="form-control" name="" id="account">-->
+<!--            <option value="83925101" selected>Account: 83925101</option>-->
+<!--            <option value="83925105">Account: 83925105</option>-->
+<!--            <option value="ToBeSet">To be...</option>-->
+<!--            <option value="Default">Select an User Account</option>-->
+<!--        </select>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="container" align="center">
+    <div class="header">
+        <div style="float:left" class="menu" id="logo">
+            <a href="/"><img src="images/logo.png"/></a>
+        </div>
+        <div style="float:right" class="menu" id="nav">
+            <a class="tab located" href="/">首页</a>
+            <a class="tab " href="/about/">关于希格斯</a>
+            <a class="tab " href="/mission/">希格斯使命</a>
+            <a class="tab " href="/netvalue/">投资者关系</a>
+            <a class="tab " href="/recruit/">加入我们</a>
+        </div>
     </div>
 </div>
 
-<div class="row container-fluid">
+
+<div class="container-fluid text-center">
+    <table class="table-striped"
+           id="summary"
+           data-toggle="table"
+
+           data-url="summary"
+           data-method="get"
+
+           data-search="true"
+           data-show-button-icons="true"
+           data-icons="icons"
+           data-toolbar="#toolbar2"
+           data-show-columns="true"
+           data-show-refresh="true"
+           data-show-fullscreen="true"
+           data-sort-name="accountId"
+           data-sort-order="asc"
+           data-auto-refresh="true"
+           data-auto-refresh-status="true"
+           data-auto-refresh-interval="2">
+        <thead>
+        <tr>
+            <th data-sortable="true" data-field="accountId">AccountID</th>
+            <th data-sortable="true" data-field="tradeVolumeSum">成交量</th>
+            <th data-sortable="true" data-field="volumeRatio">市场占比</th>
+            <th data-sortable="true" data-field="positionCost" data-formatter="fractionDigits2">交易盈亏</th>
+            <th data-sortable="true" data-field="feeSum">手续费</th>
+            <th data-sortable="true" data-field="orderFeeSum">报单费</th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="fractionDigits2">净盈亏</th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+
+<br>
+<div class="row container-fluid text-center">
     <div class="col-7">
         <div id="toolbar">
-            <button id="connect" class="btn btn-secondary">
-                <!--        <i class="glyphicon glyphicon-remove"></i> Delete-->
-                Connect
-            </button>
-            <button id="disconnect" class="btn btn-secondary">Disconnect</button>
-            <button id="append" class="btn btn-secondary" disabled>Append 10000 Rows</button>
-            Total rows: <span id="total">12</span>
+            <div class="select">
+                <select class="form-control" name="" id="account">
+                    <option value="83925101" selected>Account: 83925101</option>
+                    <option value="83925105">Account: 83925105</option>
+                    <!--                    <option value="Default">Select an User Account</option>-->
+                </select>
+            </div>
+            <!--            <button id="connect" class="btn btn-secondary">-->
+            <!--                &lt;!&ndash;        <i class="glyphicon glyphicon-remove"></i> Delete&ndash;&gt;-->
+            <!--                Connect-->
+            <!--            </button>-->
+            <!--            <button id="disconnect" class="btn btn-secondary">Disconnect</button>-->
+            <!--            <button id="append" class="btn btn-secondary" disabled>Append 10000 Rows</button>-->
+            <!--            Total rows: <span id="total">12</span>-->
         </div>
-        <!--        要实现函数：detailFormatter-->
-        <!--data-content-type="application/x-www-form-urlencoded"-->
-        <!--data-show-search-button="true"-->
+
         <div>
             <table class="table-striped"
                    id="instrument-info"
                    data-toggle="table"
                    data-height="750"
 
-                   data-url="instruments"
+                   data-url="instruments/83925101"
                    data-method="get"
 
 
@@ -74,7 +132,7 @@
                    data-detail-view="false"
                    data-detail-formatter="detailFormatter"
                    data-show-export="false"
-                   data-click-to-select="true"
+                   data-click-to-select="false"
                    data-show-pagination-switch="false"
                    data-pagination="false"
                    data-silent-sort="false"
@@ -86,7 +144,7 @@
                    data-icons-prefix="icon"
                    data-icons="icons"
                    data-auto-refresh="true"
-                   data-auto-refresh-status="false"
+                   data-auto-refresh-status="true"
                    data-auto-refresh-interval="1"
                    ata-reorderable-columns="true"
             >
@@ -125,7 +183,7 @@
                         data-title-tooltip="下单总量">OrderFee
                     </th>
                     <th data-sortable="true" data-field="profit" data-footer-formatter="sumFormatter"
-                        data-formatter="profitFormatter" data-title-tooltip="利润">
+                        data-formatter="fractionDigits2" data-title-tooltip="利润">
                         Profit
                     </th>
                 </tr>
@@ -141,7 +199,7 @@
                data-toggle="table"
                data-height="750"
 
-               data-url="orders"
+               data-url="orders/83925101"
                data-method="get"
 
                data-search="true"
@@ -155,8 +213,8 @@
                data-sort-name="instrumentId"
                data-sort-order="asc"
                data-auto-refresh="true"
-               data-auto-refresh-status="false"
-               data-auto-refresh-interval="2">
+               data-auto-refresh-status="true"
+               data-auto-refresh-interval="4">
 
             <thead>
             <tr>
@@ -173,6 +231,7 @@
         </table>
     </div>
 </div>
+
 
 <script src="js/user_js/jquery-3.3.1.js"></script>
 <script src="js/user_js/popper.min.js"></script>

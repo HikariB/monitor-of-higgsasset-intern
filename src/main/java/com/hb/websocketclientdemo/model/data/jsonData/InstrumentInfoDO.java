@@ -1,7 +1,5 @@
 package com.hb.websocketclientdemo.model.data.jsonData;
 
-import org.springframework.stereotype.Component;
-
 /**【合约信息】
  * 合约名	instrument_id
  * 交易所	exchange_id
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 涨停价	upper_limit_price
  * 跌停价	lower_limit_price
  */
-@Component
+
 public class InstrumentInfoDO {
 
     //    合约名

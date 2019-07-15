@@ -24,4 +24,9 @@ public class WebsocketClientDemoApplicationTests {
         System.out.println(res2);
     }
 
+    @Test
+    public void orZero(){
+        double num = 1;
+        System.out.println(2|20);
+    }
 }

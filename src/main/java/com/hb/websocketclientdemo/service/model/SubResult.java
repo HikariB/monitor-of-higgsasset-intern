@@ -1,12 +1,10 @@
 package com.hb.websocketclientdemo.service.model;
 
 import com.hb.websocketclientdemo.model.Topic;
-import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@Component
 public class SubResult {
     private String result;
     private List<Topic> topics;
