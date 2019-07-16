@@ -36,7 +36,7 @@ public class MyAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
         response.getWriter().write(objectMapper.writeValueAsString(map));
 
 
-        new DefaultRedirectStrategy().sendRedirect(request,response,"/monitor-detail");
+        new DefaultRedirectStrategy().sendRedirect(request,response,"/monitor-summary");
 
 
     }

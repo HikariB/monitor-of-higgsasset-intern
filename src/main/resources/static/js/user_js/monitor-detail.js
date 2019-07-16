@@ -41,7 +41,6 @@ $(function () {
     // });
 
 
-
     // connectBTN.click(function () {
     //
     //     connectBTN.attr("disabled","disabled");
@@ -90,19 +89,21 @@ $(function () {
     // $("td,th").addClass("text-center");
 
 
-
     $('#account').change(function () {
         let selectVal = $(this).val();
         console.log(selectVal);
+        if (selectVal === 'default') {
+            alert("Select an User Account")
+        } else {
+            instrumentInfo.bootstrapTable('refreshOptions', {
+                url: 'instruments/' + selectVal,
+                autoRefreshStatus: true
 
-        instrumentInfo.bootstrapTable('refreshOptions', {
-            url: 'instruments/' + selectVal,
-            autoRefreshStatus: true
-
-        });
-        oredersInfo.bootstrapTable('refreshOptions', {
-            url: 'orders/' + selectVal,
-            autoRefreshStatus: true
-        });
+            });
+            oredersInfo.bootstrapTable('refreshOptions', {
+                url: 'orders/' + selectVal,
+                autoRefreshStatus: true
+            });
+        }
     });
 });

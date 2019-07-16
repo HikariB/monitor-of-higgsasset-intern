@@ -14,12 +14,12 @@
 
 <nav class="navbar bg-light navbar-light">
     <a class="navbar-brand" href="#">
-        <img src="images/logo.png" alt="logo" style="width: 219px;height: 40px">
+        <img src="images/banner.png" alt="logo" style="width: 200px;height: 15px">
     </a>
 
     <ul class="nav justify-content-end nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="#">Detail</a>
+            <a class="nav-link" href="/monitor-detail">Detail</a>
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="/monitor-summary">Summary</a>
@@ -51,7 +51,7 @@
         <tr>
             <th data-sortable="true" data-field="accountId">AccountID</th>
             <th data-sortable="true" data-field="tradeVolumeSum">成交量</th>
-            <th data-sortable="true" data-field="volumeRatio">市场占比</th>
+            <th data-sortable="true" data-field="volumeRatio" data-formatter="fractionDigits10">市场占比</th>
             <th data-sortable="true" data-field="positionCost" data-formatter="fractionDigits2">交易盈亏</th>
             <th data-sortable="true" data-field="feeSum">手续费</th>
             <th data-sortable="true" data-field="orderFeeSum">报单费</th>

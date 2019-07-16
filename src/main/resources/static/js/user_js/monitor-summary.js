@@ -15,6 +15,10 @@ function fractionDigits2(value) {
     return value.toFixed(2);
 }
 
+function fractionDigits10(value) {
+    return value.toFixed(10);
+}
+
 window.icons = {
     refresh: 'ion-md-refresh',
     columns: 'ion-md-menu',
