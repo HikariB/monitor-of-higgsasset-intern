@@ -24,6 +24,15 @@ public class WebSocketConfiguration {
     @Value("${login.account4}")
     private String loginAccount4;
 
+    @Value("${login.account5}")
+    private String loginAccount5;
+
+    @Value("${login.account6}")
+    private String loginAccount6;
+
+    @Value("${login.account7}")
+    private String loginAccount7;
+
     @Value("${subscribe.account1}")
     private String subAccount;
 
@@ -35,6 +44,15 @@ public class WebSocketConfiguration {
 
     @Value("${subscribe.account4}")
     private String subAccount4;
+
+    @Value("${subscribe.account5}")
+    private String subAccount5;
+
+    @Value("${subscribe.account6}")
+    private String subAccount6;
+
+    @Value("${subscribe.account7}")
+    private String subAccount7;
 
     @Value("${login.password}")
     private String password;
@@ -160,6 +178,78 @@ public class WebSocketConfiguration {
         topics[9] = new Topic(subAccount4, instrumentID_10);
         topics[10] = new Topic(subAccount4, instrumentID_11);
         topics[11] = new Topic(subAccount4, instrumentID_12);
+        return new SubscribeInfo("subscribe", topics);
+    }
+
+    @Bean(name = "LoginInfoWS5")
+    public LoginInfo getLoginInfoWS5(){
+        return new LoginInfo("login", new Info(loginAccount5, password));
+    }
+
+    @SuppressWarnings("all")
+    @Bean(name = "SubscribeInfoWS5")
+    public SubscribeInfo getSubInfoWS5(){
+        Topic[] topics = new Topic[12];
+        topics[0] = new Topic(subAccount5, instrumentID_1);
+        topics[1] = new Topic(subAccount5, instrumentID_2);
+        topics[2] = new Topic(subAccount5, instrumentID_3);
+        topics[3] = new Topic(subAccount5, instrumentID_4);
+        topics[4] = new Topic(subAccount5, instrumentID_5);
+        topics[5] = new Topic(subAccount5, instrumentID_6);
+        topics[6] = new Topic(subAccount5, instrumentID_7);
+        topics[7] = new Topic(subAccount5, instrumentID_8);
+        topics[8] = new Topic(subAccount5, instrumentID_9);
+        topics[9] = new Topic(subAccount5, instrumentID_10);
+        topics[10] = new Topic(subAccount5, instrumentID_11);
+        topics[11] = new Topic(subAccount5, instrumentID_12);
+        return new SubscribeInfo("subscribe", topics);
+    }
+
+    @Bean(name = "LoginInfoWS6")
+    public LoginInfo getLoginInfoWS6(){
+        return new LoginInfo("login", new Info(loginAccount6, password));
+    }
+
+    @SuppressWarnings("all")
+    @Bean(name = "SubscribeInfoWS6")
+    public SubscribeInfo getSubInfoWS6(){
+        Topic[] topics = new Topic[12];
+        topics[0] = new Topic(subAccount6, instrumentID_1);
+        topics[1] = new Topic(subAccount6, instrumentID_2);
+        topics[2] = new Topic(subAccount6, instrumentID_3);
+        topics[3] = new Topic(subAccount6, instrumentID_4);
+        topics[4] = new Topic(subAccount6, instrumentID_5);
+        topics[5] = new Topic(subAccount6, instrumentID_6);
+        topics[6] = new Topic(subAccount6, instrumentID_7);
+        topics[7] = new Topic(subAccount6, instrumentID_8);
+        topics[8] = new Topic(subAccount6, instrumentID_9);
+        topics[9] = new Topic(subAccount6, instrumentID_10);
+        topics[10] = new Topic(subAccount6, instrumentID_11);
+        topics[11] = new Topic(subAccount6, instrumentID_12);
+        return new SubscribeInfo("subscribe", topics);
+    }
+
+    @Bean(name = "LoginInfoWS7")
+    public LoginInfo getLoginInfoWS7(){
+        return new LoginInfo("login", new Info(loginAccount7, password));
+    }
+
+    @SuppressWarnings("all")
+    @Bean(name = "SubscribeInfoWS7")
+    public SubscribeInfo getSubInfoWS7(){
+        Topic[] topics = new Topic[12];
+        topics[0] = new Topic(subAccount7, instrumentID_1);
+        topics[1] = new Topic(subAccount7, instrumentID_2);
+        topics[2] = new Topic(subAccount7, instrumentID_3);
+        topics[3] = new Topic(subAccount7, instrumentID_4);
+        topics[4] = new Topic(subAccount7, instrumentID_5);
+        topics[5] = new Topic(subAccount7, instrumentID_6);
+        topics[6] = new Topic(subAccount7, instrumentID_7);
+        topics[7] = new Topic(subAccount7, instrumentID_8);
+        topics[8] = new Topic(subAccount7, instrumentID_9);
+        topics[9] = new Topic(subAccount7, instrumentID_10);
+        topics[10] = new Topic(subAccount7, instrumentID_11);
+        topics[11] = new Topic(subAccount7, instrumentID_12);
         return new SubscribeInfo("subscribe", topics);
     }
 
