@@ -2,42 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Index</title>
+    <link href="css/user_css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 
-<table id="datatable" width="100%" border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Operation</th>
-    </tr>
-    <thead>
-</table>
+<nav class="navbar bg-light navbar-light">
+
+    <a class="navbar-brand" href="/monitor-summary">
+        <img src="images/banner1.png" alt="logo" style="width: 200px;height: 15px">
+    </a>
+
+    <ul class="nav justify-content-end nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/monitor-detail">Detail</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/monitor-summary">Summary</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/">Dev</a>
+        </li>
+    </ul>
+</nav>
 
 
-<p> Ajax 轮询</p>
+
 <script src="js/jquery.min.js"></script>
 
 <script>
-
-    $(document).ready(function() {
-        $('#datatable').dataTable();
-    } );
-
-    // var test = function test() {
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "/state",
-    //         success: function (data) {
-    //             console.log(data);
-    //
-    //         }
-    //     });
-    // };
-    // setInterval(test, 1000);
 
 </script>
 

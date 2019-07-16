@@ -48,14 +48,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().loginPage("/login").loginProcessingUrl("//login/form").failureUrl("/login-error")
                 //自定义的登入认证成功或者失败拦截器
                 .successHandler(myAuthenticationSuccessHandler)
-                .failureHandler(myAuthenticationFailureHandler)
+//                .failureHandler(myAuthenticationFailureHandler)
                 .permitAll()
                 .and()
                 .authorizeRequests()
                 //对于特定资源不需要权限
                 .antMatchers("/index","/css/**","/js/**","/images/**").permitAll()
                 //需要指定 权限要求的 url资源/http方法
-                .antMatchers("/whoim").hasRole("ADMIN")
+                .antMatchers("/monitor-summary").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.POST).hasRole("ADMIN")
                 .anyRequest().authenticated()

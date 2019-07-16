@@ -4,11 +4,35 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>用户登录</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <title>Login Error</title>
+    <link href="css/user_css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/sign.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-<h3>用户名或密码错误</h3>
+<nav class="navbar bg-light navbar-light">
+
+    <a class="navbar-brand" href="/monitor-summary">
+        <img src="images/banner1.png" alt="logo" style="width: 200px;height: 15px">
+    </a>
+
+    <ul class="nav justify-content-end nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="/monitor-detail">Detail</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="/monitor-summary">Summary</a>
+        </li>
+    </ul>
+</nav>
+<div class="container text-center">
+    <p>用户名或密码错误</p>
+    <p><a href="/login">请重新登入</a></p>
+</div>
+
+
 </body>
 </html>
