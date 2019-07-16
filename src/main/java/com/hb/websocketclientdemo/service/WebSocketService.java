@@ -23,36 +23,62 @@ public class WebSocketService {
 
     private WebSocketClient wsClient = null;
     private WebSocketClient wsClient2 = null;
+    private WebSocketClient wsClient3 = null;
+    private WebSocketClient wsClient4 = null;
 
     @Autowired
     private OnMessageService onMessageService;
 
-    @Resource(name = "LoginInfo")
+    @Resource(name = "LoginInfoWS1")
     private LoginInfo loginInfo;
 
     @Resource(name = "LoginInfoWS2")
     private LoginInfo loginInfo2;
 
-    @Resource(name = "SubscribeInfo")
+    @Resource(name = "LoginInfoWS3")
+    private LoginInfo loginInfo3;
+
+    @Resource(name = "LoginInfoWS4")
+    private LoginInfo loginInfo4;
+
+    @Resource(name = "SubscribeInfoWS1")
     private SubscribeInfo subscribeInfo;
 
     @Resource(name = "SubscribeInfoWS2")
     private SubscribeInfo subscribeInfo2;
 
+    @Resource(name = "SubscribeInfoWS3")
+    private SubscribeInfo subscribeInfo3;
+
+    @Resource(name = "SubscribeInfoWS4")
+    private SubscribeInfo subscribeInfo4;
+
     //    ws://10.12.226.66:8085/socket
 //    ws://114.55.210.206:9999/
 //    new Draft_6455()
-    @Value("${WebSocketClient.url}")
+    @Value("${WebSocketClient.url1}")
     private String websocketUrl;
 
     @Value("${WebSocketClient.url2}")
     private String websocketUrl_2;
 
-    @Value("${subscribe.account}")
+    @Value("${WebSocketClient.url3}")
+    private String websocketUrl_3;
+
+    @Value("${WebSocketClient.url4}")
+    private String websocketUrl_4;
+
+    @Value("${subscribe.account1}")
     private String subAccount;
 
     @Value("${subscribe.account2}")
     private String subAccount2;
+
+    @Value("${subscribe.account3}")
+    private String subAccount3;
+
+    @Value("${subscribe.account4}")
+    private String subAccount4;
 
     {
         //最初想着初始化，类加载的时候完成websocket的连接，
@@ -70,7 +96,7 @@ public class WebSocketService {
                 @Override
                 public void onMessage(String s) {
                     logger.info("WS1 Received:" + s);
-                    boolean isReadable = onMessageService.messageDispatch(s,subAccount);
+                    boolean isReadable = onMessageService.messageDispatch(s, subAccount);
                     if (!isReadable)
                         logger.info("WebSocket_1 =====Unknown Message Received");
 
@@ -97,7 +123,7 @@ public class WebSocketService {
                 @Override
                 public void onMessage(String s) {
                     logger.info("WS2 Received:" + s);
-                    boolean isReadable = onMessageService.messageDispatch(s,subAccount2);
+                    boolean isReadable = onMessageService.messageDispatch(s, subAccount2);
                     if (!isReadable)
                         logger.info("WebSocket_2 =====Unknown Message Received");
 
@@ -116,60 +142,131 @@ public class WebSocketService {
                 }
             };
 
+            wsClient3 = new WebSocketClient(new URI(this.websocketUrl_3)) {
+                @Override
+                public void onOpen(ServerHandshake serverHandshake) {
+                    logger.info("WebSocket_3=====Connection Established");
+                }
+
+                @Override
+                public void onMessage(String s) {
+                    logger.info("WS3 Received:" + s);
+                    boolean isReadable = onMessageService.messageDispatch(s, subAccount3);
+                    if (!isReadable)
+                        logger.info("WebSocket_3 =====Unknown Message Received");
+                }
+
+                @Override
+                public void onClose(int i, String s, boolean b) {
+                    logger.info("WebSocket_3 =====Websocket Connection Closed");
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    e.printStackTrace();
+                    logger.info("WebSocket_3 Error =====Websocket Connection Failed!");
+                }
+            };
+
+            wsClient4 = new WebSocketClient(new URI(this.websocketUrl_4)) {
+                @Override
+                public void onOpen(ServerHandshake serverHandshake) {
+                    logger.info("WebSocket_4=====Connection Established");
+                }
+
+                @Override
+                public void onMessage(String s) {
+                    logger.info("WS4 Received:" + s);
+                    boolean isReadable = onMessageService.messageDispatch(s, subAccount4);
+                    if (!isReadable)
+                        logger.info("WebSocket_4 =====Unknown Message Received");
+                }
+
+                @Override
+                public void onClose(int i, String s, boolean b) {
+                    logger.info("WebSocket_4 =====Websocket Connection Closed");
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    e.printStackTrace();
+                    logger.info("WebSocket_4 Error =====Websocket Connection Failed!");
+                }
+            };
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         wsClient.connect();
         wsClient2.connect();
-        logger.info("WS1 WS2 =====Connecting");
+        wsClient3.connect();
+        wsClient4.connect();
+
+        logger.info("WS1-2-3-4=====Connecting");
         while (!wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient2.getReadyState().equals(WebSocket.READYSTATE.OPEN)) ;
+                !wsClient2.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+                !wsClient3.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+                !wsClient4.getReadyState().equals(WebSocket.READYSTATE.OPEN)) ;
+
     }
 
     public void login() {
         wsClient.send(JSON.toJSONString(loginInfo));
         wsClient2.send(JSON.toJSONString(loginInfo2));
-        logger.info("WS1 WS2 =====Logining...");
+        wsClient3.send(JSON.toJSONString(loginInfo3));
+        wsClient4.send(JSON.toJSONString(loginInfo4));
+        logger.info("WS1-2-3-4=====Logining...");
     }
 
     public void subscribe() {
         wsClient.send(JSON.toJSONString(subscribeInfo));
         wsClient2.send(JSON.toJSONString(subscribeInfo2));
-        logger.info("WS1 WS2 =====Subscribing...");
+        wsClient3.send(JSON.toJSONString(subscribeInfo3));
+        wsClient4.send(JSON.toJSONString(subscribeInfo4));
+        logger.info("WS1-2-3-4=====Subscribing...");
     }
+
 
     public void close() {
         wsClient.close();
         wsClient2.close();
-        logger.info("WS1 WS2 =====Closing...");
+        wsClient3.close();
+        wsClient4.close();
+        logger.info("WS1-2-3-4=====Closing...");
     }
+
+
+    public boolean isClientNull() {
+        return wsClient == null || wsClient2 == null || wsClient3 == null || wsClient4 == null;
+    }
+
+    public boolean isClientOpen() {
+        return wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN) &&
+                wsClient2.getReadyState().equals(WebSocket.READYSTATE.OPEN) &&
+                wsClient3.getReadyState().equals(WebSocket.READYSTATE.OPEN) &&
+                wsClient4.getReadyState().equals(WebSocket.READYSTATE.OPEN);
+    }
+
+    public boolean isClosed() {
+        return wsClient.isClosed() && wsClient2.isClosed() && wsClient3.isClosed() && wsClient4.isClosed();
+    }
+
 
     public WebSocketClient getWsClient() {
         return wsClient;
-    }
-
-    public void setWsClient(WebSocketClient wsClient) {
-        this.wsClient = wsClient;
     }
 
     public WebSocketClient getWsClient2() {
         return wsClient2;
     }
 
-    public void setWsClient2(WebSocketClient wsClient2) {
-        this.wsClient2 = wsClient2;
+    public WebSocketClient getWsClient3() {
+        return wsClient3;
     }
 
-    public boolean isClientNull() {
-        return wsClient == null || wsClient2 == null;
+    public WebSocketClient getWsClient4() {
+        return wsClient4;
     }
 
-    public boolean isClientOpen(){
-        return wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN) &&
-                wsClient2.getReadyState().equals(WebSocket.READYSTATE.OPEN);
-    }
 
-    public boolean isClosed(){
-        return wsClient.isClosed() && wsClient2.isClosed();
-    }
 }

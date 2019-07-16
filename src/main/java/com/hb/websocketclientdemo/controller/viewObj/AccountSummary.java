@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model;
+package com.hb.websocketclientdemo.controller.viewObj;
 
 public class AccountSummary {
     private String accountId;

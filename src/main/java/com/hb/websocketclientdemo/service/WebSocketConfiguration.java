@@ -12,17 +12,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebSocketConfiguration {
 
-    @Value("${login.account}")
+    @Value("${login.account1}")
     private String loginAccount;
 
     @Value("${login.account2}")
     private String loginAccount2;
 
-    @Value("${subscribe.account}")
+    @Value("${login.account3}")
+    private String loginAccount3;
+
+    @Value("${login.account4}")
+    private String loginAccount4;
+
+    @Value("${subscribe.account1}")
     private String subAccount;
 
     @Value("${subscribe.account2}")
     private String subAccount2;
+
+    @Value("${subscribe.account3}")
+    private String subAccount3;
+
+    @Value("${subscribe.account4}")
+    private String subAccount4;
 
     @Value("${login.password}")
     private String password;
@@ -55,13 +67,13 @@ public class WebSocketConfiguration {
     private String instrumentID_12;
 
 
-    @Bean(name = "LoginInfo")
+    @Bean(name = "LoginInfoWS1")
     public LoginInfo getLoginInfo() {
         return new LoginInfo("login", new Info(loginAccount, password));
     }
 
     @SuppressWarnings("all")
-    @Bean(name = "SubscribeInfo")
+    @Bean(name = "SubscribeInfoWS1")
     public SubscribeInfo getSubscribeInfo() {
         Topic[] topics = new Topic[12];
         topics[0] = new Topic(subAccount, instrumentID_1);
@@ -102,4 +114,55 @@ public class WebSocketConfiguration {
         topics[11] = new Topic(subAccount2, instrumentID_12);
         return new SubscribeInfo("subscribe", topics);
     }
+
+    @Bean(name = "LoginInfoWS3")
+    public LoginInfo getLoginInfoWS3(){
+        return new LoginInfo("login", new Info(loginAccount3, password));
+    }
+
+    @SuppressWarnings("all")
+    @Bean(name = "SubscribeInfoWS3")
+    public SubscribeInfo getSubInfoWS3(){
+        Topic[] topics = new Topic[12];
+        topics[0] = new Topic(subAccount3, instrumentID_1);
+        topics[1] = new Topic(subAccount3, instrumentID_2);
+        topics[2] = new Topic(subAccount3, instrumentID_3);
+        topics[3] = new Topic(subAccount3, instrumentID_4);
+        topics[4] = new Topic(subAccount3, instrumentID_5);
+        topics[5] = new Topic(subAccount3, instrumentID_6);
+        topics[6] = new Topic(subAccount3, instrumentID_7);
+        topics[7] = new Topic(subAccount3, instrumentID_8);
+        topics[8] = new Topic(subAccount3, instrumentID_9);
+        topics[9] = new Topic(subAccount3, instrumentID_10);
+        topics[10] = new Topic(subAccount3, instrumentID_11);
+        topics[11] = new Topic(subAccount3, instrumentID_12);
+        return new SubscribeInfo("subscribe", topics);
+    }
+
+    @Bean(name = "LoginInfoWS4")
+    public LoginInfo getLoginInfoWS4(){
+        return new LoginInfo("login", new Info(loginAccount4, password));
+    }
+
+    @SuppressWarnings("all")
+    @Bean(name = "SubscribeInfoWS4")
+    public SubscribeInfo getSubInfoWS4(){
+        Topic[] topics = new Topic[12];
+        topics[0] = new Topic(subAccount4, instrumentID_1);
+        topics[1] = new Topic(subAccount4, instrumentID_2);
+        topics[2] = new Topic(subAccount4, instrumentID_3);
+        topics[3] = new Topic(subAccount4, instrumentID_4);
+        topics[4] = new Topic(subAccount4, instrumentID_5);
+        topics[5] = new Topic(subAccount4, instrumentID_6);
+        topics[6] = new Topic(subAccount4, instrumentID_7);
+        topics[7] = new Topic(subAccount4, instrumentID_8);
+        topics[8] = new Topic(subAccount4, instrumentID_9);
+        topics[9] = new Topic(subAccount4, instrumentID_10);
+        topics[10] = new Topic(subAccount4, instrumentID_11);
+        topics[11] = new Topic(subAccount4, instrumentID_12);
+        return new SubscribeInfo("subscribe", topics);
+    }
+
+
+
 }

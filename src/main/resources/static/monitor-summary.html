@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Summary</title>
+    <link rel="stylesheet" href="css/user_css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/user_css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="css/user_css/all.css">
+    <!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
+    <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
+    <link href="css/user_css/dragtable.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar bg-light navbar-light">
+    <a class="navbar-brand" href="#">
+        <img src="images/logo.png" alt="logo" style="width: 219px;height: 40px">
+    </a>
+
+    <ul class="nav justify-content-end nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="#">Detail</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/monitor-summary">Summary</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container-fluid text-center">
+    <table class="table-striped"
+           id="summary"
+           data-toggle="table"
+
+           data-url="summary"
+           data-method="get"
+
+           data-search="true"
+           data-show-button-icons="true"
+           data-icons="icons"
+           data-toolbar="#toolbar2"
+           data-show-columns="true"
+           data-show-refresh="true"
+           data-show-fullscreen="true"
+           data-sort-name="accountId"
+           data-sort-order="asc"
+           data-auto-refresh="true"
+           data-auto-refresh-status="true"
+           data-auto-refresh-interval="2">
+        <thead>
+        <tr>
+            <th data-sortable="true" data-field="accountId">AccountID</th>
+            <th data-sortable="true" data-field="tradeVolumeSum">成交量</th>
+            <th data-sortable="true" data-field="volumeRatio">市场占比</th>
+            <th data-sortable="true" data-field="positionCost" data-formatter="fractionDigits2">交易盈亏</th>
+            <th data-sortable="true" data-field="feeSum">手续费</th>
+            <th data-sortable="true" data-field="orderFeeSum">报单费</th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="fractionDigits2">净盈亏</th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+
+<script src="js/user_js/jquery-3.3.1.js"></script>
+<script src="js/user_js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/user_js/bootstrap-table.min.js"></script>
+<script src="js/user_js/bootstrap_table_auto_refresh.min.js"></script>
+<script src="js/user_js/jquery-ui.min.js"></script>
+<script src="js/user_js/jquery.dragtable.js"></script>
+<script src="js/user_js/bootstrap-table-reorder-columns.min.js"></script>
+
+<script src="js/user_js/monitor-summary.js"></script>
+</body>
+</html>

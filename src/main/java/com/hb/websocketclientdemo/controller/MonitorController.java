@@ -1,6 +1,6 @@
 package com.hb.websocketclientdemo.controller;
 
-import com.hb.websocketclientdemo.model.AccountSummary;
+import com.hb.websocketclientdemo.controller.viewObj.AccountSummary;
 import com.hb.websocketclientdemo.service.model.InstrumentData;
 import com.hb.websocketclientdemo.service.model.MonitorData;
 import com.hb.websocketclientdemo.service.model.MultiAccountMonitorData;

@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //对于特定资源不需要权限
-                .antMatchers("/index").permitAll()
+                .antMatchers("/index","/css/**","/js/**","/images/**").permitAll()
                 //需要指定 权限要求的 url资源/http方法
                 .antMatchers("/whoim").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN")

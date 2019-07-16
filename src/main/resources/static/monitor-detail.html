@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Higgs Asset</title>
+    <title>Detail</title>
     <link rel="stylesheet" href="css/user_css/bootstrap.min.css">
     <link rel="stylesheet" href="css/user_css/bootstrap-table.min.css">
     <link rel="stylesheet" href="css/user_css/all.css">
@@ -24,84 +24,21 @@
     </style>
 </head>
 <body>
+<nav class="navbar bg-light navbar-light">
 
-<!--<div class="container-fluid">-->
-<!--    <div class="select">-->
-<!--        <select class="form-control" name="" id="account">-->
-<!--            <option value="83925101" selected>Account: 83925101</option>-->
-<!--            <option value="83925105">Account: 83925105</option>-->
-<!--            <option value="ToBeSet">To be...</option>-->
-<!--            <option value="Default">Select an User Account</option>-->
-<!--        </select>-->
-<!--    </div>-->
-<!--</div>-->
+    <a class="navbar-brand" href="#">
+        <img src="images/logo.png" alt="logo" style="width: 219px;height: 40px">
+    </a>
 
-
-<!--<div class="container" align="center">-->
-<!--    <div class="header">-->
-<!--        <div style="float:left" class="menu" id="logo">-->
-<!--            <a href="/monitor"><img src="images/logo.png"/></a>-->
-<!--        </div>-->
-<!--        <div style="float:right" class="menu" id="nav">-->
-<!--            <a class="tab located" href="/">首页</a>-->
-<!--            <a class="tab " href="/about/">关于希格斯</a>-->
-<!--            <a class="tab " href="/mission/">希格斯使命</a>-->
-<!--            <a class="tab " href="/netvalue/">投资者关系</a>-->
-<!--            <a class="tab " href="/recruit/">加入我们</a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<div class="container-fluid">
-    <nav class="navbar navbar-light bg-light">
-        <a href="#" class="navbar-brand h1">
-            <img src="images/logo.png" style="width: 20%" alt="" class="d-inline-block align-top">
-        </a>
-        <ul class="nav justify-content-end nav-tabs">
-            <li class="nav-item active"><a class="nav-item nav-link" href="#"><h5>Account Detail</h5></a></li>
-            <li class="nav-item"><a class="nav-item nav-link" href="/summary"><h5>Account Summary</h5></a></li>
-        </ul>
-
-    </nav>
-</div>
-
-
-<div class="container-fluid text-center">
-    <table class="table-striped"
-           id="summary"
-           data-toggle="table"
-
-           data-url="summary"
-           data-method="get"
-
-           data-search="true"
-           data-show-button-icons="true"
-           data-icons="icons"
-           data-toolbar="#toolbar2"
-           data-show-columns="true"
-           data-show-refresh="true"
-           data-show-fullscreen="true"
-           data-sort-name="accountId"
-           data-sort-order="asc"
-           data-auto-refresh="true"
-           data-auto-refresh-status="true"
-           data-auto-refresh-interval="2">
-        <thead>
-        <tr>
-            <th data-sortable="true" data-field="accountId">AccountID</th>
-            <th data-sortable="true" data-field="tradeVolumeSum">成交量</th>
-            <th data-sortable="true" data-field="volumeRatio">市场占比</th>
-            <th data-sortable="true" data-field="positionCost" data-formatter="fractionDigits2">交易盈亏</th>
-            <th data-sortable="true" data-field="feeSum">手续费</th>
-            <th data-sortable="true" data-field="orderFeeSum">报单费</th>
-            <th data-sortable="true" data-field="profitSum" data-formatter="fractionDigits2">净盈亏</th>
-        </tr>
-        </thead>
-    </table>
-
-</div>
-
-<br>
+    <ul class="nav justify-content-end nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Detail</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/monitor-summary">Summary</a>
+        </li>
+    </ul>
+</nav>
 <div class="row container-fluid text-center">
     <div class="col-7">
         <div id="toolbar">
@@ -256,11 +193,10 @@
 <script src="js/user_js/jquery.dragtable.js"></script>
 <script src="js/user_js/bootstrap-table-reorder-columns.min.js"></script>
 
-
-<script src="js/user_js/monitor.js"></script>
-
+<script src="js/user_js/monitor-detail.js"></script>
 
 </body>
+
 </html>
 
 

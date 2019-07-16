@@ -1,8 +1,6 @@
 package com.hb.websocketclientdemo;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hb.websocketclientdemo.model.Topic;
 import com.hb.websocketclientdemo.service.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +29,12 @@ public class WSClientThread implements InitializingBean {
     private WebSocketService webSocketService;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-//        new Thread(() -> {
-//            webSocketService.connect();
-//            try {
-//                webSocketService.login("gt_w", "higgspass");
-//                Topic[] topics = new Topic[1];
-//                topics[0] = new Topic("83925101", "IF1908");
-//                webSocketService.subscribe(topics);
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
+    public void afterPropertiesSet(){
+        new Thread(() -> {
+            webSocketService.connect();
+            webSocketService.login();
+            webSocketService.subscribe();
+        }).start();
         logger.info("thread is running");
     }
 }

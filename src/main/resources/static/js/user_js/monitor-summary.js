@@ -26,19 +26,18 @@ window.icons = {
 $(function () {
     // let connectBTN = $('#connect');
     // let disconnectBTN = $('#disconnect');
-    let instrumentInfo = $('#instrument-info');
-    let oredersInfo = $('#ordersInfo')
+
     let summary = $('#summary')
     // disconnectBTN.attr("disabled","disabled")
 
-
-    $.ajax({
-        type: "GET",
-        url: "/connect",
-        success: function (data) {
-            console.log(data);
-        }
-    });
+    //
+    // $.ajax({
+    //     type: "GET",
+    //     url: "/connect",
+    //     success: function (data) {
+    //         console.log(data);
+    //     }
+    // });
 
 
 
@@ -84,27 +83,26 @@ $(function () {
     //     align: 'center',
     //     valign: 'middle'
     // });
-    instrumentInfo.bootstrapTable();
-    oredersInfo.bootstrapTable();
+
     summary.bootstrapTable();
 
     // $("td,th").addClass("text-center");
 
 
+    //
+    // $('#account').change(function () {
+    //     let selectVal = $(this).val();
+    //     console.log(selectVal);
+    //
+    //     instrumentInfo.bootstrapTable('refreshOptions', {
+    //         url: 'instruments/' + selectVal,
+    //         autoRefreshStatus: true
+    //
+    //     });
+    //     oredersInfo.bootstrapTable('refreshOptions', {
+    //         url: 'orders/' + selectVal,
+    //         autoRefreshStatus: true
+    //     });
+    // })
 
-    $('#account').change(function () {
-        let selectVal = $(this).val();
-        console.log(selectVal);
-
-        instrumentInfo.bootstrapTable('refreshOptions', {
-            url: 'instruments/' + selectVal,
-            autoRefreshStatus: true
-
-        });
-        oredersInfo.bootstrapTable('refreshOptions', {
-            url: 'orders/' + selectVal,
-            autoRefreshStatus: true
-        });
-    })
-
-})
+});

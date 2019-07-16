@@ -125,9 +125,9 @@ public class TestController {
         return subscribeInfo;
     }
 
-    @RequestMapping("/monitor")
+    @RequestMapping("/monitor-detail")
     public String monitor(){
-        return "monitor";
+        return "monitor-detail";
     }
 
     @RequestMapping("/login")
@@ -139,6 +139,12 @@ public class TestController {
     public String loginError() {
         return "login-error";
     }
+
+    @RequestMapping("/monitor-summary")
+    public String summaryPage() {
+        return "monitor-summary";
+    }
+
 
     @RequestMapping("/all-data")
     @ResponseBody
