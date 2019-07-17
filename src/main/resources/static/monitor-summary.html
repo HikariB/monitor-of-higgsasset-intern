@@ -9,17 +9,19 @@
     <!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <link href="css/user_css/dragtable.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/user_css/colors.min.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
             padding-top: 0px;
             padding-bottom: 40px;
+            background-color: #0c0c0c;
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar bg-light navbar-light">
+<nav class="navbar bg-dark navbar-dark">
     <a class="navbar-brand" href="/monitor-summary">
         <img src="images/banner1.png" alt="logo" style="width: 200px;height: 15px">
     </a>
@@ -39,7 +41,7 @@
 </nav>
 
 <div class="container text-center">
-    <table class="table-striped table-borderless"
+    <table class="table-borderless table-dark"
            id="summary"
            data-toggle="table"
 
@@ -57,16 +59,33 @@
            data-sort-order="asc"
            data-auto-refresh="true"
            data-auto-refresh-status="true"
-           data-auto-refresh-interval="2">
+           data-auto-refresh-interval="2"
+           data-show-footer="true"
+           data-reorderable-columns="true">
         <thead>
         <tr>
-            <th data-sortable="true" data-field="accountId" data-formatter="accountName">AccountID</th>
-            <th data-sortable="true" data-field="tradeVolumeSum">成交量</th>
-            <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent">市场占比</th>
-            <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency">交易盈亏</th>
-            <th data-sortable="true" data-field="feeSum" data-formatter="formatCurrency">手续费</th>
-            <th data-sortable="true" data-field="orderFeeSum">报单费</th>
-            <th data-sortable="true" data-field="profitSum" data-formatter="formatCurrency">净盈亏</th>
+            <th data-sortable="true" data-field="accountId" data-formatter="accountName"
+                data-footer-formatter="idFormatter">AccountID
+            </th>
+            <th data-sortable="true" data-field="tradeVolumeSum"
+                data-footer-formatter="sumFormatter">成交量
+            </th>
+            <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent"
+                data-footer-formatter="sumFormatter">市场占比
+            </th>
+            <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter">交易盈亏
+            </th>
+            <th data-sortable="true" data-field="feeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter">手续费
+            </th>
+            <th data-sortable="true" data-field="orderFeeSum"
+                data-footer-formatter="sumFormatter">报单费
+            </th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter"
+                data-cell-style="cellStyle">净盈亏
+            </th>
         </tr>
         </thead>
     </table>

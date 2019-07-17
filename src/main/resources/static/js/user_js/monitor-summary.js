@@ -1,6 +1,31 @@
 function idFormatter() {
-    return 'Total'
+    return '统计'
 }
+
+
+function cellStyle(value, row, index) {
+
+
+    var classes = [
+        'bg-blue',
+        'bg-green',
+        'bg-orange',
+        'bg-yellow',
+        'bg-red'
+    ]
+
+    if (value > 20000) {
+        return {
+            classes: classes[1]
+        }
+    }
+    return {
+        css: {
+            color: 'red'
+        }
+    }
+}
+
 
 function sumFormatter(data) {
     let field = this.field;
@@ -8,14 +33,15 @@ function sumFormatter(data) {
         return (sum) + (row[field] || 0)
     }, 0);
 
-    return total_sum.toFixed(0);
+    return formatCurrency(total_sum)
+    // return total_sum.toFixed(2);
 }
 
-function toPercent(point){
-    if (point>1)
-        return 'NaN'
-    var str=Number(point*100).toFixed(3);
-    str+="%";
+function toPercent(point) {
+    if (point > 1 || point === 0)
+        return 'NaN';
+    var str = Number(point * 100).toFixed(3);
+    str += "%";
     return str;
 }
 
@@ -83,7 +109,6 @@ $(function () {
     //         console.log(data);
     //     }
     // });
-
 
 
     // connectBTN.click(function () {
