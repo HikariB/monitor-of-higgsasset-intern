@@ -135,7 +135,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS1 Received:" + s);
+//                    logger.info("WS1 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount);
                     if (!isReadable)
                         logger.info("WebSocket_1 =====Unknown Message Received");
@@ -162,7 +162,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS2 Received:" + s);
+//                    logger.info("WS2 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount2);
                     if (!isReadable)
                         logger.info("WebSocket_2 =====Unknown Message Received");
@@ -190,7 +190,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS3 Received:" + s);
+//                    logger.info("WS3 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount3);
                     if (!isReadable)
                         logger.info("WebSocket_3 =====Unknown Message Received");
@@ -216,7 +216,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS4 Received:" + s);
+//                    logger.info("WS4 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount4);
                     if (!isReadable)
                         logger.info("WebSocket_4 =====Unknown Message Received");
@@ -242,7 +242,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS5 Received:" + s);
+//                    logger.info("WS5 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount5);
                     if (!isReadable)
                         logger.info("WebSocket_5 =====Unknown Message Received");
@@ -268,7 +268,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS6 Received:" + s);
+//                    logger.info("WS6 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount6);
                     if (!isReadable)
                         logger.info("WebSocket_6 =====Unknown Message Received");
@@ -294,7 +294,7 @@ public class WebSocketService {
 
                 @Override
                 public void onMessage(String s) {
-                    logger.info("WS7 Received:" + s);
+//                    logger.info("WS7 Received:" + s);
                     boolean isReadable = onMessageService.messageDispatch(s, subAccount7);
                     if (!isReadable)
                         logger.info("WebSocket_7 =====Unknown Message Received");

@@ -126,4 +126,6 @@ public class TradeRtnDO {
     public void setFee(double fee) {
         this.fee = fee;
     }
+
+
 }

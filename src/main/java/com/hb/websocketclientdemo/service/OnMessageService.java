@@ -54,31 +54,32 @@ public class OnMessageService {
     }
 
     private boolean loginResultHandler(JSONObject msgJson) {
+
         //result 并非 Json 下面会报错
 //            JSONObject result = (JSONObject) msgJson.get("result");
         LoginResult loginResult = multiAccountData.getLoginResult();
         loginResult.setResult((String) msgJson.get("result"));
         loginResult.getAccount().add((String) msgJson.get("account"));
-
+        logger.info("loginResultHandler:" + msgJson.get("account") + ":" + msgJson.get("result"));
         if (loginResult.getResult().equals("success")) {
             //do sth to subscribe
             return true;
         }
-        logger.error("Login Failed");
+        logger.error("loginResultHandler: Login Failed");
         return false;
     }
 
     private boolean subResultHandler(JSONObject msgJson) {
         SubResult subResult = multiAccountData.getSubResult();
         subResult.setResult((String) msgJson.get("result"));
+        JSONObject objectTopic = (JSONObject) msgJson.get("topic");
+        logger.info("subResultHandler:" + objectTopic.toJSONString() + ":" + msgJson.get("result"));
         if (subResult.getResult().equals("success")) {
-            JSONObject objectTopic = (JSONObject) msgJson.get("topic");
             Topic topic = JSONObject.parseObject(objectTopic.toJSONString(), Topic.class);
-
             subResult.getTopics().add(topic);
             return true;
         }
-        logger.error("subscribe Failed");
+        logger.error("subResultHandler: Subscribe Failed");
         return false;
     }
 
@@ -92,6 +93,7 @@ public class OnMessageService {
         JSONObject object = (JSONObject) msgJson.get("data");
         //使用 copyProperties 进行修改，“=”赋值无效
         InstrumentInfoDO instrumentInfoDO = JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class);
+        logger.info("instrumentInfoHandler  " + subAccount + ":" + instrumentInfoDO.toString());
 //        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class), instrumentInfoDO);
 //        JSONObject.parseObject(object.toJSONString(), InstrumentInfo.class)
         String instrumentId = instrumentInfoDO.getInstrumentId();
@@ -116,6 +118,7 @@ public class OnMessageService {
 
         JSONObject object = (JSONObject) msgJson.get("data");
         InitPositionDO initPositionDO = JSONObject.parseObject(object.toJSONString(), InitPositionDO.class);
+        logger.info("initPositionHandler  " + subAccount + ":" + initPositionDO.toString());
 //        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InitPositionDO.class), initPosition);
         InstrumentData instrumentData = monitorData.getInstruments().get(initPositionDO.getInstrumentId());
         instrumentData.setInitLongPosition(initPositionDO.getLongPos());
@@ -130,6 +133,7 @@ public class OnMessageService {
     private boolean orderRtnHandler(JSONObject msgJson) {
         JSONObject object = (JSONObject) msgJson.get("data");
         OrderRtnDO orderDO = JSONObject.parseObject(object.toJSONString(), OrderRtnDO.class);
+        logger.info("orderRtnHandler  " + orderDO.toString());
         // 若之前不存在 订单表 则新增
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(orderDO.getUserId());
         if (!monitorData.getOrders().containsKey(orderDO.getInstrumentId())) {
@@ -170,13 +174,17 @@ public class OnMessageService {
     private boolean tradeRtnHandler(JSONObject msgJson) {
         JSONObject object = (JSONObject) msgJson.get("data");
         TradeRtnDO tradeDO = JSONObject.parseObject(object.toJSONString(), TradeRtnDO.class);
+        logger.info("tradeRtnHandler  " + object.toJSONString());
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(tradeDO.getUserId());
         InstrumentData instrumentData = monitorData.getInstruments().get(tradeDO.getInstrumentId());
-        instrumentData.addFee(tradeDO.getFee());
+
         instrumentData.addTradeVolume(tradeDO.getVolume());
 //        update position cost
         String direction = tradeDO.getDirection();
         double tradeNum = tradeDO.getVolume() * tradeDO.getPrice();
+        double newFee = tradeNum * instrumentData.getContractMultiplier() * instrumentData.getFeeRate();
+        instrumentData.addFee(newFee);
+
         if (direction.equals(DIRECTION.BUY.getValue())) {
             instrumentData.addPositionCost(tradeNum);
         } else {
@@ -193,12 +201,15 @@ public class OnMessageService {
         } else if (direction.equals(DIRECTION.BUY.getValue()) && offFlag.equals(OFFSET_FLAG.CLOSED.getValue())) {
             instrumentData.addCurrentShortPosition(tradeDO.getVolume() * (-1.0));
         }
+
         return true;
     }
 
     private boolean depthMarketDataHandler(JSONObject msgJson, String subAccount) {
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
         JSONObject object = (JSONObject) msgJson.get("data");
+        logger.info("depthMarketDataHandler  " + object.toJSONString());
+
         DepthMarketDataDO marketDataDO = JSONObject.parseObject(object.toJSONString(), DepthMarketDataDO.class);
         InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理

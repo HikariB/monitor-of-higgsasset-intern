@@ -31,6 +31,16 @@ public class InstrumentInfoDO {
     private double preClosePrice;
     //    前结算价
     private double preSettlementPrice;
+
+    @Override
+    public String toString() {
+        return "InstrumentInfoDO{" +
+                "instrumentId='" + instrumentId + '\'' +
+                ", contractMultiplier=" + contractMultiplier +
+                ", preSettlementPrice=" + preSettlementPrice +
+                '}';
+    }
+
     //    涨停价
     private double upperLimitPrice;
     //    跌停价

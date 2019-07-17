@@ -10,6 +10,12 @@
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <link href="css/user_css/dragtable.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        body {
+            padding-top: 0px;
+            padding-bottom: 40px;
+        }
+    </style>
 </head>
 <body>
 
@@ -20,16 +26,20 @@
 
     <ul class="nav justify-content-end nav-tabs">
         <li class="nav-item">
+            <a class="nav-link active" href="/monitor-summary">Summary</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="/monitor-detail">Detail</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="/monitor-summary">Summary</a>
+            <a class="nav-link" href="/logout">Login Out</a>
         </li>
     </ul>
+
 </nav>
 
-<div class="container-fluid text-center">
-    <table class="table-striped"
+<div class="container text-center">
+    <table class="table-striped table-borderless"
            id="summary"
            data-toggle="table"
 
@@ -50,13 +60,13 @@
            data-auto-refresh-interval="2">
         <thead>
         <tr>
-            <th data-sortable="true" data-field="accountId">AccountID</th>
+            <th data-sortable="true" data-field="accountId" data-formatter="accountName">AccountID</th>
             <th data-sortable="true" data-field="tradeVolumeSum">成交量</th>
-            <th data-sortable="true" data-field="volumeRatio" data-formatter="fractionDigits10">市场占比</th>
-            <th data-sortable="true" data-field="positionCost" data-formatter="fractionDigits2">交易盈亏</th>
-            <th data-sortable="true" data-field="feeSum">手续费</th>
+            <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent">市场占比</th>
+            <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency">交易盈亏</th>
+            <th data-sortable="true" data-field="feeSum" data-formatter="formatCurrency">手续费</th>
             <th data-sortable="true" data-field="orderFeeSum">报单费</th>
-            <th data-sortable="true" data-field="profitSum" data-formatter="fractionDigits2">净盈亏</th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="formatCurrency">净盈亏</th>
         </tr>
         </thead>
     </table>

@@ -36,14 +36,13 @@ public class TestController {
 
 
     @RequestMapping("/")
-    @ResponseBody
     public String hello() {
-        return "This is For Test";
+        return "login-sign";
     }
 
     @RequestMapping("/index")
     public String index() {
-        return "index";
+        return "login-sign";
     }
 
     @RequestMapping("/connect")

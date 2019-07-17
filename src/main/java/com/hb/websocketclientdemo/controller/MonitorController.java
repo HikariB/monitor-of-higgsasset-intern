@@ -58,19 +58,19 @@ public class MonitorController {
             int marketVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getVolume).sum();
             marketVolumeSum = (marketVolumeSum == 0) ? 1 : marketVolumeSum;
             double volumeRatio = 1.0 * tradeVolumeSum / (marketVolumeSum);
-            double positionCost = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getPositionCost).sum();
+//            double positionCost = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getPositionCost).sum();
             double feeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getFee).sum();
             double orderFeeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getOrderFee).sum();
             double profitSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getProfit).sum();
-
+            double profitNonSum = profitSum + orderFeeSum + feeSum;
 
             summary.setTradeVolumeSum(tradeVolumeSum);
             summary.setVolumeRatio(volumeRatio);
-            summary.setPositionCost(positionCost);
+//            summary.setPositionCost(positionCost);
             summary.setFeeSum(feeSum);
             summary.setOrderFeeSum(orderFeeSum);
             summary.setProfitSum(profitSum);
-
+            summary.setProfitNonNetSum(profitNonSum);
             res.add(summary);
 
 

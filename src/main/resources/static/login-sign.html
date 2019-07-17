@@ -9,50 +9,55 @@
     <link href="css/user_css/bootstrap.min.css" rel="stylesheet">
     <link href="css/user_css/signin.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/user_js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <style>
         body {
             padding-top: 0px;
             padding-bottom: 40px;
-            background-color: #eee;
+            background-color: #0c0c0c;
         }
     </style>
 </head>
 
 <body>
-<nav class="navbar bg-light navbar-light">
+<nav class="navbar bg-dark navbar-dark">
 
     <a class="navbar-brand" href="/monitor-summary">
         <img src="images/banner1.png" alt="logo" style="width: 200px;height: 15px">
     </a>
 
-    <ul class="nav justify-content-end nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" href="#">Login</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="/monitor-detail">Detail</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="/monitor-summary">Summary</a>
-        </li>
-    </ul>
+    <!--    <ul class="nav justify-content-end nav-tabs">-->
+    <!--        <li class="nav-item">-->
+    <!--            <a class="nav-link disabled" href="/monitor-summary">Summary</a>-->
+    <!--        </li>-->
+    <!--        <li class="nav-item">-->
+    <!--            <a class="nav-link disabled" href="/monitor-detail">Detail</a>-->
+    <!--        </li>-->
+    <!--        <li class="nav-item">-->
+    <!--            <a class="nav-link active" href="#">Login</a>-->
+    <!--        </li>-->
+    <!--    </ul>-->
+
+    <form class="form-inline" method="post" action="/login/form">
+        <label for="username" class="sr-only">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        <button class="btn btn-secondary" type="submit">Sign in</button>
+    </form>
 </nav>
 
+
 <div class="container">
-    <form class="form-signin" method="post" action="/login/form">
-<!--        <h2 class="form-signin-heading">Please sign in</h2>-->
-        <p>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required
-                   autofocus>
-        </p>
-        <p>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-        </p>
-<!--        <input name="_csrf" type="hidden" value="e36c4fef-cb93-4765-8650-629934a89595"/>-->
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <span style="font-size: 50px;font-weight: bolder;font-family:Arial;line-height: 50px;color: white">
+    <p>Make</p>
+    <p>A</p>
+    <p>Semi-Strong Efficient</p>
+    <p>Market</p>
+    </span>
 </div>
 
 </body>

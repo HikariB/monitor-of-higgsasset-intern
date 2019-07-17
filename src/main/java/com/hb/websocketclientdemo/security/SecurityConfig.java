@@ -51,6 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .failureHandler(myAuthenticationFailureHandler)
                 .permitAll()
                 .and()
+                .logout().logoutUrl("/logout")
+                .deleteCookies("JSESSIONID")
+                .and()
                 .authorizeRequests()
                 //对于特定资源不需要权限
                 .antMatchers("/index","/css/**","/js/**","/images/**").permitAll()

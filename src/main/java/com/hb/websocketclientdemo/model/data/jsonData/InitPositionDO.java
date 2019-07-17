@@ -51,4 +51,14 @@ public class InitPositionDO {
     public void setShortPos(int shortPos) {
         this.shortPos = shortPos;
     }
+
+    @Override
+    public String toString() {
+        return "InitPositionDO{" +
+                "userId='" + userId + '\'' +
+                ", instrumentId='" + instrumentId + '\'' +
+                ", longPos=" + longPos +
+                ", shortPos=" + shortPos +
+                '}';
+    }
 }

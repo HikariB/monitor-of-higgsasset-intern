@@ -149,4 +149,19 @@ public class OrderRtnDO {
     public void setTradedVolume(double tradedVolume) {
         this.tradedVolume = tradedVolume;
     }
+
+    @Override
+    public String toString() {
+        return "OrderRtnDO{" +
+                "userId='" + userId + '\'' +
+                ", instrumentId='" + instrumentId + '\'' +
+                ", orderSysId='" + orderSysId + '\'' +
+                ", direction='" + direction + '\'' +
+                ", offsetFlag='" + offsetFlag + '\'' +
+                ", price=" + price +
+                ", totalVolume=" + totalVolume +
+                ", tradedVolume=" + tradedVolume +
+                ", orderStatus='" + orderStatus + '\'' +
+                '}';
+    }
 }

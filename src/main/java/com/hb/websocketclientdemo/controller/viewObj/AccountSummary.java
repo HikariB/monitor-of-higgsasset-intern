@@ -8,6 +8,15 @@ public class AccountSummary {
     private double feeSum;
     private double orderFeeSum;
     private double profitSum;
+    private double profitNonNetSum;
+
+    public double getProfitNonNetSum() {
+        return profitNonNetSum;
+    }
+
+    public void setProfitNonNetSum(double profitNonNetSum) {
+        this.profitNonNetSum = profitNonNetSum;
+    }
 
     public String getAccountId() {
         return accountId;

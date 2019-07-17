@@ -17,6 +17,7 @@ public class InstrumentData {
     private double profit;
     private double currentValue;
     private int netPosition;
+    private double profitNonNet;
 
 
     //更新
@@ -38,11 +39,12 @@ public class InstrumentData {
     private int orderVolume;
     private int volume;
 
+    private double feeRate;
+
 
     public InstrumentData() {
 
         this.currentPrice = 0;
-
         this.instrumentId = "";
         this.currentLongPosition = 0;
         this.currentShortPosition = 0;
@@ -59,6 +61,7 @@ public class InstrumentData {
         this.initShortPosition = 0;
         this.preSettlementPrice = 0;
         this.isMarketDataInitialized = false;
+        this.feeRate = 0.000024;
     }
 
     public void addOrderCancelNum(int num) {
@@ -98,11 +101,15 @@ public class InstrumentData {
     }
 
     public double getProfit() {
-        return contractMultiplier * (currentValue - positionCost) - fee - orderFee;
+        return contractMultiplier * (getCurrentValue() - positionCost) - fee - orderFee;
+    }
+
+    public double getProfitNonNet() {
+        return contractMultiplier * (currentPrice - positionCost);
     }
 
     public double getCurrentValue() {
-        return currentPrice * (currentLongPosition - currentShortPosition);
+        return getCurrentPrice() * (currentLongPosition - currentShortPosition);
     }
 
     public double getCurrentPrice() {
@@ -243,5 +250,13 @@ public class InstrumentData {
 
     public void setMarketDataInitialized(boolean marketDataInitialized) {
         isMarketDataInitialized = marketDataInitialized;
+    }
+
+    public double getFeeRate() {
+        return feeRate;
+    }
+
+    public void setFeeRate(double feeRate) {
+        this.feeRate = feeRate;
     }
 }

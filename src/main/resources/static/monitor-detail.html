@@ -32,15 +32,23 @@
 
     <ul class="nav justify-content-end nav-tabs">
         <li class="nav-item">
+            <a class="nav-link" href="/monitor-summary">Summary</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link active" href="#">Detail</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/monitor-summary">Summary</a>
+            <a class="nav-link" href="/logout">Login Out</a>
         </li>
+
     </ul>
+
+<!--    <form class="form-inline">-->
+<!--        <button class="btn btn-success" type="button">Login Out</button>-->
+<!--    </form>-->
 </nav>
 <div class="row container-fluid text-center">
-    <div class="col-7">
+    <div class="col-xl-7">
         <div id="toolbar">
             <div class="select">
                 <select class="form-control" name="" id="account">
@@ -125,12 +133,21 @@
                         MarketVolume
                     </th>
                     <th data-sortable="true" data-field="fee" data-footer-formatter="sumFormatter"
-                        data-title-tooltip="交易费用">
+                        data-title-tooltip="交易费用" data-formatter="fractionDigits2">
                         Fee
                     </th>
                     <th data-sortable="true" data-field="orderFee" data-footer-formatter="sumFormatter"
                         data-title-tooltip="下单总量">OrderFee
                     </th>
+<!--                    <th data-field="currentPrice" data-footer-formatter="sumFormatter">-->
+<!--                        CurrentPrice-->
+<!--                    </th>-->
+<!--                    <th data-field="currentValue" data-footer-formatter="sumFormatter">-->
+<!--                        currentValue-->
+<!--                    </th>-->
+<!--                    <th data-field="positionCost" data-footer-formatter="sumFormatter">-->
+<!--                        PositionCost-->
+<!--                    </th>-->
                     <th data-sortable="true" data-field="profit" data-footer-formatter="sumFormatter"
                         data-formatter="fractionDigits2" data-title-tooltip="利润">
                         Profit
@@ -142,7 +159,7 @@
 
     </div>
 
-    <div class="col-5">
+    <div class="col-xl-5">
         <table class="table-striped"
                id="ordersInfo"
                data-toggle="table"
