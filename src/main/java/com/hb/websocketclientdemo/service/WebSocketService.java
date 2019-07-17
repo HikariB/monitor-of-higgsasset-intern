@@ -324,13 +324,13 @@ public class WebSocketService {
         wsClient7.connect();
 
         logger.info("WS1-7=====Connecting");
-        while (!wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient2.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient3.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient4.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient5.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient6.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
-                !wsClient7.getReadyState().equals(WebSocket.READYSTATE.OPEN)) ;
+//        while (!wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+//                !wsClient2.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+//                !wsClient3.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+//                !wsClient4.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+//                !wsClient5.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+//                !wsClient6.getReadyState().equals(WebSocket.READYSTATE.OPEN) ||
+//                !wsClient7.getReadyState().equals(WebSocket.READYSTATE.OPEN)) ;
 
     }
 
