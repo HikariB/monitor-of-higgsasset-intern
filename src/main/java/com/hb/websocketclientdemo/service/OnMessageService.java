@@ -5,6 +5,9 @@ import com.hb.websocketclientdemo.model.Topic;
 import com.hb.websocketclientdemo.model.jsonData.*;
 import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.*;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -210,18 +213,33 @@ public class OnMessageService {
     private boolean depthMarketDataHandler(JSONObject msgJson, String subAccount) {
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
         JSONObject object = (JSONObject) msgJson.get("data");
-        logger.info("depthMarketDataHandler  "+ subAccount+" "+ object.toJSONString());
+        logger.info("depthMarketDataHandler  " + subAccount + " " + object.toJSONString());
 
         DepthMarketDataDO marketDataDO = JSONObject.parseObject(object.toJSONString(), DepthMarketDataDO.class);
         InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
         //
+        if (instrumentData.isMarketDataInitialized()) {
+            //判断当前时间和上一次的更新时间
+            DateTime now = new DateTime();
+            DateTime updateTime = new LocalTime(instrumentData.getUpdateTime()).toDateTimeToday();
+            int secDelta = (int) new Duration(updateTime, now).getStandardSeconds();
+            if (secDelta > 10) {
+                instrumentData.setMarketDataValid(false);
+                logger.info(now.toString() + "更新超时");
+            }
+        }
+        //判断当前时间和当前更新时间
+        DateTime now = new DateTime();
+        DateTime newUpdateTime = new LocalTime(marketDataDO.getUpdateTime()).toDateTimeToday();
+        int secDelta = (int) new Duration(newUpdateTime, now).getStandardSeconds();
 
         //更新 currentPrice，Volume 属于整体市场的shux
         // 检查报价是否合理
         double[][] bids = marketDataDO.getBids();
         double[][] asks = marketDataDO.getAsks();
-        if (bids[0][1] == 0 || asks[0][1] == 0) {
+        if (secDelta > 10 || bids[0][1] == 0 || asks[0][1] == 0) {
+
             logger.info("市场行情：无效报价");
             return false;
         }
@@ -229,8 +247,9 @@ public class OnMessageService {
             instrumentData.setMarketDataInitialized(true);
         double marketPrice = 0.5 * (bids[0][0] + asks[0][0]);
         instrumentData.setCurrentPrice(marketPrice);
-
         instrumentData.setVolume(marketDataDO.getVolume());
+        instrumentData.setUpdateTime(marketDataDO.getUpdateTime());
+        instrumentData.setMarketDataValid(true);
         return true;
     }
 

@@ -44,7 +44,8 @@ namespace HFTR.Common.Models
         public int InitLongPosition { get; set; } = 0;
         public int InitShortPosition { get; set; } = 0;
         public double PreSettlementPrice { get; set; } = 0;
-        public bool IsMarketDataInitialized { get; set; } = false;
+        public bool IsMarketDataValid { get; set; } = false;
+        public string UpdateTime { get; set; }
     }
 
     public class OrderData
@@ -75,8 +76,22 @@ namespace HFTR.Common.Models
     public class MonitorData
     {
         public Dictionary<string, InstrumentData> Instruments { get; set; } = new Dictionary<string, InstrumentData>();
-        public Dictionary<string, Dictionary<int, OrderData>> Orders { get; set; } = new Dictionary<string, Dictionary<int, OrderData>>();
-//        public double TotalFunds { get; set; } = 0;
+        public Dictionary<int, OrderData> Orders { get; set; } = new Dictionary<int, OrderData>();
+
+        public double TotalFunds { get; set; } = 0;
+
+        public bool IsMarketDataValid
+        {
+            get
+            {
+                bool ret = true;
+                foreach( var instrument in Instruments)
+                {
+                    ret &= instrument.Value.IsMarketDataValid;
+                }
+                return ret;
+            }
+        }
 
         public double IFProfit
         {

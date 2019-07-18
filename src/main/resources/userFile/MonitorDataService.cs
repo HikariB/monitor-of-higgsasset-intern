@@ -22,6 +22,7 @@ namespace HFTR.Common.Services
         public event EventHandler<UpdateEventArgs> UpdateValueEvent;
         public event EventHandler<UpdateEventArgs> UpdateOrderEvent;
         public event EventHandler<UpdateEventArgs> UpdatePositionEvent;
+        public event EventHandler<UpdateEventArgs> DelayedMarketDataEvent;
 
         protected virtual void OnUpdateValueEvent(UpdateEventArgs e)
         {
@@ -36,6 +37,11 @@ namespace HFTR.Common.Services
         protected virtual void OnUpdatePositionEvent(UpdateEventArgs e)
         {
             UpdatePositionEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnDelayedMarketDataEvent(UpdateEventArgs e)
+        {
+            DelayedMarketDataEvent?.Invoke(this, e);
         }
 
         public MonitorData Data { get; private set; } = new MonitorData();
@@ -71,7 +77,7 @@ namespace HFTR.Common.Services
         void LoginResultHandler(object sender, SocketService.MessageEventArgs<LoginResult> e)
         {
             var result = e.Message;
-            
+
             if (result.Result == "success")
             {
                 log.Info("LoginResult\t" + result.Account + "\t" + result.Result);
@@ -80,7 +86,7 @@ namespace HFTR.Common.Services
             }
             else
             {
-                log.Info("LoginResult\t" + result.Account + "\t" + result.Result + "\t" + ((LoginFail)result).Reason);    
+                log.Info("LoginResult\t" + result.Account + "\t" + result.Result + "\t" + ((LoginFail)result).Reason);
             }
         }
 
@@ -104,7 +110,7 @@ namespace HFTR.Common.Services
             {
                 log.Info("SubResult\t" + result.Topic + "\t" + result.Result + "\t" + ((SubFail)result).Reason);
             }
-            
+
         }
 
         void InstrumentInfoHandler(object sender, SocketService.MessageEventArgs<Publish<InstrumentInfo>> e)
@@ -116,8 +122,6 @@ namespace HFTR.Common.Services
             instrument.ContractMultiplier = info.ContractMultiplier;
             instrument.PreSettlementPrice = info.PreSettlementPrice;
             instrument.CurrentPrice = info.PreSettlementPrice;
-
-            Data.Orders.Add(e.Message.Data.InstrumentId, new Dictionary<int, OrderData>());
 
             log.Info("InstrumentInfo\t" + info.InstrumentId + "\tContractMultipler\t" + instrument.ContractMultiplier
                 + "\tPreSettlementPrice\t" + info.PreSettlementPrice);
@@ -141,8 +145,24 @@ namespace HFTR.Common.Services
         void OrderRtnHandler(object sender, SocketService.MessageEventArgs<Publish<OrderRtn>> e)
         {
             var rtn = e.Message.Data;
-            var order = Data.Orders[rtn.InstrumentId];
+            var order = Data.Orders;
             var instrument = Data.Instruments[rtn.InstrumentId];
+
+            // Update IsMarketDataDelayed
+            if (instrument.IsMarketDataValid == true)
+            {
+                var time1 = DateTime.Now;
+                var time2 = Convert.ToDateTime(instrument.UpdateTime);
+                var ts1 = new TimeSpan(time1.Ticks);
+                var ts2 = new TimeSpan(time2.Ticks);
+                var ts = ts1.Subtract(ts2).Duration();
+                if (ts.Seconds > 10)
+                {
+                    instrument.IsMarketDataValid = false;
+                    OnDelayedMarketDataEvent(new UpdateEventArgs(instrument.InstrumentId));
+                }
+            }
+
             if (order.ContainsKey(rtn.OrderSysId))
             {
                 if (!rtn.IsFinished())
@@ -174,7 +194,23 @@ namespace HFTR.Common.Services
         {
             var rtn = e.Message.Data;
             var instrument = Data.Instruments[rtn.InstrumentId];
-            instrument.Fee += rtn.Fee;
+
+            // Update IsMarketDataDelayed
+            if (instrument.IsMarketDataValid == true)
+            {
+                var time1 = DateTime.Now;
+                var time2 = Convert.ToDateTime(instrument.UpdateTime);
+                var ts1 = new TimeSpan(time1.Ticks);
+                var ts2 = new TimeSpan(time2.Ticks);
+                var ts = ts1.Subtract(ts2).Duration();
+                if (ts.Seconds > 10)
+                {
+                    instrument.IsMarketDataValid = false;
+                    OnDelayedMarketDataEvent(new UpdateEventArgs(instrument.InstrumentId));
+                }
+            }
+
+            instrument.Fee += instrument.ContractMultiplier * rtn.Price * rtn.Volume * rtn.FeeRate;
             instrument.TradeVolume += rtn.Volume;
 
             if (rtn.Direction == Direction.Buy)
@@ -201,12 +237,12 @@ namespace HFTR.Common.Services
 
             OnUpdatePositionEvent(new UpdateEventArgs(rtn.InstrumentId));
 
-            if (instrument.IsMarketDataInitialized == true)
+            if (instrument.IsMarketDataValid == true)
             {
                 log.Info("UpdateValue\t" + rtn.InstrumentId + "\tCurrentValue\t" + instrument.CurrentValue + "\tPositionCost\t" + instrument.PositionCost + "\tProfit\t" + instrument.Profit + "\tTotalProfit\t" + Data.TotalProfit);
                 OnUpdateValueEvent(new UpdateEventArgs(rtn.InstrumentId));
             }
-                
+
         }
 
         void DepthMarketDataHandler(object sender, SocketService.MessageEventArgs<Publish<DepthMarketData>> e)
@@ -214,41 +250,49 @@ namespace HFTR.Common.Services
             var md = e.Message.Data;
             var instrument = Data.Instruments[md.InstrumentId];
 
-            // filter invalid md
-            // update time invalid
-            try
+            var UpdateNotValid = false;
+            // Update IsMarketDataDelayed
+            if (instrument.IsMarketDataValid == true)
             {
                 var time1 = DateTime.Now;
-                var time2 = Convert.ToDateTime(md.UpdateTime);
+                var time2 = Convert.ToDateTime(instrument.UpdateTime);
                 var ts1 = new TimeSpan(time1.Ticks);
                 var ts2 = new TimeSpan(time2.Ticks);
                 var ts = ts1.Subtract(ts2).Duration();
                 if (ts.Seconds > 10)
-                    return;
+                {
+                    instrument.IsMarketDataValid = false;
+                    UpdateNotValid = true;
+                }
             }
-            catch (Exception ex)
-            {
-                log.Error(ex.Message);
-                return;
-            }
-            
+
+            // filter invalid md
+            // update time invalid
             // price/volume invalid
-            if (md.Bids[0][1] == 0 || md.Asks[0][1] == 0)
-                return;
-
-            if (instrument.IsMarketDataInitialized == false)
-                instrument.IsMarketDataInitialized = true;
-
-            instrument.CurrentPrice = 0.5 * (md.Bids[0][0] + md.Asks[0][0]);
-            instrument.Volume = md.Volume;
-
-            log.Info("DepthMarketData\t" + md.InstrumentId + "\t" + instrument.CurrentPrice + "\t" + md.UpdateTime + "\t" + md.UpdateMillisec);
-
-            if (instrument.IsMarketDataInitialized == true)
+            var time3 = DateTime.Now;
+            var time4 = Convert.ToDateTime(md.UpdateTime);
+            var ts3 = new TimeSpan(time3.Ticks);
+            var ts4 = new TimeSpan(time4.Ticks);
+            var tsFromMd = ts3.Subtract(ts4).Duration();
+            if (tsFromMd.Seconds > 10 || md.Bids[0][1] == 0 || md.Asks[0][1] == 0)
             {
+                instrument.IsMarketDataValid |= false;
+            }
+            else
+            {
+                instrument.IsMarketDataValid = true;
+                instrument.UpdateTime = md.UpdateTime;
+                instrument.CurrentPrice = 0.5 * (md.Bids[0][0] + md.Asks[0][0]);
+                instrument.Volume = md.Volume;
+
+                log.Info("DepthMarketData\t" + md.InstrumentId + "\t" + instrument.CurrentPrice + "\t" + md.UpdateTime + "\t" + md.UpdateMillisec);
+
                 log.Info("UpdateValue\t" + md.InstrumentId + "\tCurrentValue\t" + instrument.CurrentValue + "\tPositionCost\t" + instrument.PositionCost + "\tProfit\t" + instrument.Profit + "\tTotalProfit\t" + Data.TotalProfit);
                 OnUpdateValueEvent(new UpdateEventArgs(md.InstrumentId));
             }
+
+            if (UpdateNotValid == true && instrument.IsMarketDataValid == false)
+                OnDelayedMarketDataEvent(new UpdateEventArgs(instrument.InstrumentId));
         }
     }
 }

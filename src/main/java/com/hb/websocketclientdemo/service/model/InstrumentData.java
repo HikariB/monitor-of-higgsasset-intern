@@ -42,6 +42,11 @@ public class InstrumentData {
     private double feeRate;
 
 
+
+    private boolean isMarketDataValid;
+    private String updateTime;
+
+
     public InstrumentData() {
 
         this.currentPrice = 0;
@@ -60,6 +65,7 @@ public class InstrumentData {
         this.initLongPosition = 0;
         this.initShortPosition = 0;
         this.preSettlementPrice = 0;
+        this.isMarketDataInitialized = false;
         this.isMarketDataInitialized = false;
         this.feeRate = 0.000024;
     }
@@ -258,5 +264,21 @@ public class InstrumentData {
 
     public void setFeeRate(double feeRate) {
         this.feeRate = feeRate;
+    }
+
+    public boolean isMarketDataValid() {
+        return isMarketDataValid;
+    }
+
+    public void setMarketDataValid(boolean marketDataValid) {
+        isMarketDataValid = marketDataValid;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }
