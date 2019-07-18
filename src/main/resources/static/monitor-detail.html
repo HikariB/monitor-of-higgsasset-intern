@@ -59,13 +59,13 @@
     <div id="toolbar">
         <div class="select">
             <select class="form-control" name="" id="account">
-                <option value="83925101" selected>国泰君安-文思捷</option>
-                <option value="83925105">国泰君安-李春晓</option>
-                <option value="118933">宝城-徐媛静</option>
-                <option value="83925087">国泰君安-赵鲲</option>
-                <option value="11803017">兴证-周永敏</option>
-                <option value="20087058">华泰-杨建委</option>
-                <option value="20092132">华泰-祁先桥</option>
+                <option value="83925101" id="83925101" selected>GTW</option>
+                <option value="83925105" id="83925105">GTL</option>
+                <option value="118933" id="118933">BCX</option>
+                <option value="83925087" id="83925087">GTZ</option>
+                <option value="11803017" id="11803017">XZY</option>
+                <option value="20087058" id="20087058">WTY</option>
+                <option value="20092132" id="20092132">WTQ</option>
                 <option value="default">Select an User Account</option>
             </select>
         </div>
@@ -114,21 +114,21 @@
             <!--        data-width="300"-->
             <tr>
                 <th data-sortable="true" data-field="instrumentId" data-footer-formatter="idFormatter"
-                    data-title-tooltip="合约信息表">合约</th>
+                    data-title-tooltip="合约信息表" >合约</th>
                 <th data-sortable="true" data-field="currentLongPosition" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="">净多头</th>
+                    data-title-tooltip="" data-formatter="formatCurrency">净多头</th>
                 <th data-sortable="true" data-field="currentShortPosition" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="">净空头</th>
+                    data-title-tooltip="" data-formatter="formatCurrency">净空头</th>
                 <th data-sortable="true" data-field="orderVolume" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="下单总量">Order</th>
+                    data-title-tooltip="下单总量" data-formatter="formatCurrency">Order</th>
                 <th data-sortable="true" data-field="tradeVolume" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="交易总量">Traded</th>
+                    data-title-tooltip="交易总量" data-formatter="formatCurrency">Traded</th>
                 <th data-sortable="true" data-field="volume" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="市场总量">Market</th>
+                    data-title-tooltip="市场总量" data-formatter="formatCurrency">Market</th>
                 <th data-sortable="true" data-field="fee" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="交易费用" data-formatter="fractionDigits2">Fee</th>
+                    data-title-tooltip="交易费用" data-formatter="formatCurrency">Fee</th>
                 <th data-sortable="true" data-field="orderFee" data-footer-formatter="sumFormatter"
-                    data-title-tooltip="下单总量">OFee</th>
+                    data-title-tooltip="下单总量" data-formatter="formatCurrency">OFee</th>
                 <!--                    <th data-field="currentPrice" data-footer-formatter="sumFormatter">-->
                 <!--                        CurrentPrice-->
                 <!--                    </th>-->
@@ -139,7 +139,7 @@
                 <!--                        PositionCost-->
                 <!--                    </th>-->
                 <th data-sortable="true" data-field="profit" data-footer-formatter="sumFormatter"
-                    data-formatter="fractionDigits2" data-title-tooltip="利润">净盈亏</th>
+                    data-formatter="formatCurrency" data-title-tooltip="利润">净盈亏</th>
             </tr>
             </thead>
         </table>

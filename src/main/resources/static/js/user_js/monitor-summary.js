@@ -1,5 +1,5 @@
 function idFormatter() {
-    return '统计'
+    return '总计'
 }
 
 
@@ -26,6 +26,12 @@ function cellStyle(value, row, index) {
     }
 }
 
+// function idCellStyle(value, row, index) {
+//     return {
+//
+//     }
+// }
+
 
 function sumFormatter(data) {
     let field = this.field;
@@ -37,6 +43,15 @@ function sumFormatter(data) {
     // return total_sum.toFixed(2);
 }
 
+function sumFormatterFraction(data) {
+    let field = this.field;
+    let total_sum = data.reduce(function (sum, row) {
+        return (sum) + (row[field] || 0)
+    }, 0);
+    return toPercent(total_sum)
+}
+
+
 function toPercent(point) {
     if (point > 1 || point === 0)
         return 'NaN';
@@ -47,19 +62,19 @@ function toPercent(point) {
 
 function accountName(value) {
     if (value === '83925101')
-        return '国泰君安-文思捷'
+        return '<a href="/monitor-detail?id=83925101">GTW</a>';
     if (value === '83925105')
-        return '国泰君安-李春晓'
+        return '<a href="/monitor-detail?id=83925105">GTL</a>';
     if (value === '118933')
-        return '宝城-徐媛静'
+        return '<a href="/monitor-detail?id=118933">BCX</a>';
     if (value === '83925087')
-        return '国泰君安-赵鲲'
+        return '<a href="/monitor-detail?id=83925087">GTZ</a>';
     if (value === '11803017')
-        return '兴证-周永敏'
+        return '<a href="/monitor-detail?id=11803017">XZY</a>';
     if (value === '20087058')
-        return '华泰-杨建委'
+        return '<a href="/monitor-detail?id=20087058">WTY</a>';
     if (value === '20092132')
-        return '华泰-祁先桥'
+        return '<a href="/monitor-detail?id=20092132">WTQ</a>';
     return 'unknown'
 }
 
@@ -83,7 +98,8 @@ function formatCurrency(num) {
         //4 ==> 三位小数加一个分隔符，
         num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
     }
-    return (((sign) ? '' : '-') + num + '.' + cents);
+    return (((sign) ? '' : '-') + num);
+    // return (((sign) ? '' : '-') + num + '.' + cents);
 }
 
 window.icons = {

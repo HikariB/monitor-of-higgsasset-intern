@@ -65,13 +65,14 @@
         <thead>
         <tr>
             <th data-sortable="true" data-field="accountId" data-formatter="accountName"
-                data-footer-formatter="idFormatter">AccountID
+                data-footer-formatter="idFormatter"
+                data-cell-style="idCellStyle">AccountID
             </th>
-            <th data-sortable="true" data-field="tradeVolumeSum"
+            <th data-sortable="true" data-field="tradeVolumeSum" data-formatter="formatCurrency"
                 data-footer-formatter="sumFormatter">成交量
             </th>
             <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent"
-                data-footer-formatter="sumFormatter">市场占比
+                data-footer-formatter="sumFormatterFraction">市场占比
             </th>
             <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency"
                 data-footer-formatter="sumFormatter">交易盈亏
