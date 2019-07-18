@@ -1,8 +1,8 @@
 package com.hb.websocketclientdemo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hb.websocketclientdemo.model.data.jsonData.DepthMarketDataDO;
-import com.hb.websocketclientdemo.model.data.jsonData.TradeRtnDO;
+import com.hb.websocketclientdemo.model.jsonData.DepthMarketDataDO;
+import com.hb.websocketclientdemo.model.jsonData.TradeRtnDO;
 
 public class FastJsonDemo {
 

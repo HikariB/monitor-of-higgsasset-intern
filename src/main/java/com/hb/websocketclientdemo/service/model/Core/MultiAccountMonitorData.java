@@ -1,5 +1,8 @@
-package com.hb.websocketclientdemo.service.model;
+package com.hb.websocketclientdemo.service.model.Core;
 
+import com.hb.websocketclientdemo.service.model.LoginResult;
+import com.hb.websocketclientdemo.service.model.MonitorData;
+import com.hb.websocketclientdemo.service.model.SubResult;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

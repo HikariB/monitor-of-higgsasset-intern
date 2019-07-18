@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.data.jsonData;
+package com.hb.websocketclientdemo.model.jsonData;
 
 /**【合约信息】
  * 合约名	instrument_id

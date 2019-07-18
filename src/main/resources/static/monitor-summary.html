@@ -34,7 +34,10 @@
             <a class="nav-link" href="/monitor-detail">Detail</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/logout">Login Out</a>
+<!--            <form action="/logout" method="get">-->
+            <button id="disconnect" class="btn btn-info" type="submit" >Login Out</button>
+<!--            <a class="nav-link" href="/logout">Login Out</a>-->
+<!--            </form>-->
         </li>
     </ul>
 
@@ -65,7 +68,7 @@
         <thead>
         <tr>
             <th data-sortable="true" data-field="accountId" data-formatter="accountName"
-                data-footer-formatter="idFormatter"
+                data-footer-formatter="idFormatter" data-width="70"
                 data-cell-style="idCellStyle">AccountID
             </th>
             <th data-sortable="true" data-field="tradeVolumeSum" data-formatter="formatCurrency"

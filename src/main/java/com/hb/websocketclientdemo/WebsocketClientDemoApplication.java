@@ -1,14 +1,8 @@
 package com.hb.websocketclientdemo;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.HttpMessageConverter;
 
 
 @SpringBootApplication
@@ -17,7 +11,10 @@ public class WebsocketClientDemoApplication {
     public static void main(String[] args) throws JsonProcessingException {
         SpringApplication.run(WebsocketClientDemoApplication.class, args);
     }
-//fastjackson
+}
+
+
+//     采用fastjackson解析JSON
 //    @Bean//使用@Bean注入fastJsonHttpMessageConvert
 //    public HttpMessageConverters fastJsonHttpMessageConverters() {
 ////1.需要定义一个Convert转换消息的对象
@@ -31,4 +28,4 @@ public class WebsocketClientDemoApplication {
 //        HttpMessageConverter<?> converter = fastConverter;
 //        return new HttpMessageConverters(converter);
 //    }
-}
+

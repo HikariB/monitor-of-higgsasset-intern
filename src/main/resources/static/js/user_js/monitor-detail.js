@@ -82,6 +82,13 @@ $(function () {
         });
     }
 
+    $('#disconnect').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/logout"
+        })
+        window.location.href="/login";
+    })
     // $('#118933').attr();
 
     // $("#account").each(function (i, j) {

@@ -31,10 +31,11 @@ public class WSClientThread implements InitializingBean {
     @Override
     public void afterPropertiesSet(){
         new Thread(() -> {
-            webSocketService.connect();
-            webSocketService.login();
-            webSocketService.subscribe();
+//            webSocketService.connect();
+//            webSocketService.login();
+//            webSocketService.subscribe();
+            webSocketService.webSocketStart();
         }).start();
-        logger.info("thread is running");
+        logger.info("Thread is running: Websocket Start!");
     }
 }

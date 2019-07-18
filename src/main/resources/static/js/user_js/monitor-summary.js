@@ -14,7 +14,7 @@ function cellStyle(value, row, index) {
         'bg-red'
     ]
 
-    if (value > 20000) {
+    if (value > 0) {
         return {
             classes: classes[1]
         }
@@ -125,6 +125,14 @@ $(function () {
     //         console.log(data);
     //     }
     // });
+
+    $('#disconnect').click(function () {
+        $.ajax({
+            type: "get",
+            url: "/logout"
+        })
+        window.location.href="/login";
+    })
 
 
     // connectBTN.click(function () {

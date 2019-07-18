@@ -8,13 +8,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * 核心配置类
- *
- *
  */
 @Configuration
 @EnableWebSecurity
@@ -25,22 +22,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationSuccessHandler myAuthenticationSuccessHandler;
 
-    @Autowired
-    private AuthenticationFailureHandler myAuthenticationFailureHandler;
+//    @Autowired
+//    private AuthenticationFailureHandler myAuthenticationFailureHandler;
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
-//                //fully accessible
-//                .antMatchers("/css/**", "index").permitAll()
-//                .antMatchers("/user/**").hasRole("USER")
-////                .antMatchers().denyAll()
-//                .and()
-//                .formLogin()
-//                .loginPage("/login").failureUrl("login-error");
-
         http
                 //loginPage 拦截后尚未拥有权限转入的url登入页面请求，需要配置相应的视图解析Controller，返回指定的html
                 //loginProcessingUrl 登入页面表单提交的地址
@@ -56,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //对于特定资源不需要权限
-                .antMatchers("/index","/css/**","/js/**","/images/**").permitAll()
+                .antMatchers("/index", "/css/**", "/js/**", "/images/**").permitAll()
                 //需要指定 权限要求的 url资源/http方法
                 .antMatchers("/monitor-summary").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN")
@@ -64,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();
-         // 允许对于网站静态资源的无授权访问
+    }
+    // 允许对于网站静态资源的无授权访问
 //                        .antMatchers(
 //                            HttpMethod.GET,
 //                            "/",
@@ -75,7 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                         ).permitAll()
 
 
-    }
 
     //不能没有 passwordEncoder()
     @Autowired

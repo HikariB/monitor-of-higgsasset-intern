@@ -2,7 +2,8 @@ package com.hb.websocketclientdemo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb.websocketclientdemo.model.Topic;
-import com.hb.websocketclientdemo.model.data.jsonData.*;
+import com.hb.websocketclientdemo.model.jsonData.*;
+import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class OnMessageService {
             return true;
         }
         logger.error("subResultHandler: Subscribe Failed");
+        logger.info(msgJson.toJSONString());
         return false;
     }
 
@@ -208,7 +210,7 @@ public class OnMessageService {
     private boolean depthMarketDataHandler(JSONObject msgJson, String subAccount) {
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
         JSONObject object = (JSONObject) msgJson.get("data");
-        logger.info("depthMarketDataHandler  " + object.toJSONString());
+        logger.info("depthMarketDataHandler  "+ subAccount+" "+ object.toJSONString());
 
         DepthMarketDataDO marketDataDO = JSONObject.parseObject(object.toJSONString(), DepthMarketDataDO.class);
         InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());
