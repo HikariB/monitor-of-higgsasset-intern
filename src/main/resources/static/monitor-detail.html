@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/user_css/bootstrap.min.css">
     <link rel="stylesheet" href="css/user_css/bootstrap-table.min.css">
     <link rel="stylesheet" href="css/user_css/all.css">
-    <!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <link href="css/user_css/dragtable.css" rel="stylesheet">
     <link rel="stylesheet" href="css/user_css/colors.min.css">
@@ -18,11 +17,9 @@
         #locale {
             width: 100%;
         }
-
         .like {
             margin-right: 10px;
         }
-
         body {
             padding-top: 0px;
             padding-bottom: 40px;
@@ -48,17 +45,10 @@
             <a class="nav-link active" href="#">Detail</a>
         </li>
         <li class="nav-item">
-            <!--            <form action="/logout" method="get">-->
             <button id="disconnect" class="btn btn-info" type="submit" >Login Out</button>
-            <!--            <a class="nav-link" href="/logout">Login Out</a>-->
-            <!--            </form>-->
         </li>
 
     </ul>
-
-    <!--    <form class="form-inline">-->
-    <!--        <button class="btn btn-success" type="button">Login Out</button>-->
-    <!--    </form>-->
 </nav>
 <div class="container text-center">
 
@@ -76,7 +66,6 @@
             </select>
         </div>
     </div>
-    <!--        data-height="750"-->
     <div>
         <table class="table-dark table-borderless"
                id="instrument-info"
@@ -135,15 +124,6 @@
                     data-title-tooltip="交易费用" data-formatter="formatCurrency">Fee</th>
                 <th data-sortable="true" data-field="orderFee" data-footer-formatter="sumFormatter"
                     data-title-tooltip="下单总量" data-formatter="formatCurrency">OFee</th>
-                <!--                    <th data-field="currentPrice" data-footer-formatter="sumFormatter">-->
-                <!--                        CurrentPrice-->
-                <!--                    </th>-->
-                <!--                    <th data-field="currentValue" data-footer-formatter="sumFormatter">-->
-                <!--                        currentValue-->
-                <!--                    </th>-->
-                <!--                    <th data-field="positionCost" data-footer-formatter="sumFormatter">-->
-                <!--                        PositionCost-->
-                <!--                    </th>-->
                 <th data-sortable="true" data-field="profit" data-footer-formatter="sumFormatter"
                     data-formatter="formatCurrency" data-title-tooltip="利润">净盈亏</th>
             </tr>
@@ -202,35 +182,9 @@
 <script src="js/user_js/jquery-ui.min.js"></script>
 <script src="js/user_js/jquery.dragtable.js"></script>
 <script src="js/user_js/bootstrap-table-reorder-columns.min.js"></script>
-
+<script src="js/user_js/monitor.js"></script>
 <script src="js/user_js/monitor-detail.js"></script>
 
 </body>
 
 </html>
-
-<!--            <button id="connect" class="btn btn-secondary">-->
-<!--                &lt;!&ndash;        <i class="glyphicon glyphicon-remove"></i> Delete&ndash;&gt;-->
-<!--                Connect-->
-<!--            </button>-->
-<!--            <button id="disconnect" class="btn btn-secondary">Disconnect</button>-->
-<!--            <button id="append" class="btn btn-secondary" disabled>Append 10000 Rows</button>-->
-<!--            Total rows: <span id="total">12</span>-->
-
-
-<!--Dependency-->
-
-<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"-->
-<!--          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">-->
-<!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"-->
-<!--          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">-->
-<!--    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">-->
-<!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"-->
-<!--        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"-->
-<!--        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"-->
-<!--        crossorigin="anonymous"></script>-->
-<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"-->
-<!--        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"-->
-<!--        crossorigin="anonymous"></script>-->
-<!--<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>-->

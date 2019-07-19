@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="css/user_css/bootstrap.min.css">
     <link rel="stylesheet" href="css/user_css/bootstrap-table.min.css">
     <link rel="stylesheet" href="css/user_css/all.css">
-    <!--    <link rel="stylesheet" href="css/user_css/ionicons.min.css">-->
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <link href="css/user_css/dragtable.css" rel="stylesheet">
     <link rel="stylesheet" href="css/user_css/colors.min.css">
@@ -22,7 +21,7 @@
 <body>
 
 <nav class="navbar bg-dark navbar-dark">
-    <a class="navbar-brand" href="/monitor-summary">
+    <a class="navbar-brand" href="/monitor-summary" id="logo-brand">
         <img src="images/banner1.png" alt="logo" style="width: 200px;height: 15px">
     </a>
 
@@ -34,10 +33,7 @@
             <a class="nav-link" href="/monitor-detail">Detail</a>
         </li>
         <li class="nav-item">
-<!--            <form action="/logout" method="get">-->
             <button id="disconnect" class="btn btn-info" type="submit" >Login Out</button>
-<!--            <a class="nav-link" href="/logout">Login Out</a>-->
-<!--            </form>-->
         </li>
     </ul>
 
@@ -104,7 +100,7 @@
 <script src="js/user_js/jquery-ui.min.js"></script>
 <script src="js/user_js/jquery.dragtable.js"></script>
 <script src="js/user_js/bootstrap-table-reorder-columns.min.js"></script>
-
+<script src="js/user_js/monitor.js"></script>
 <script src="js/user_js/monitor-summary.js"></script>
 </body>
 </html>

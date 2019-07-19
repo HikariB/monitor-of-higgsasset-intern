@@ -17,7 +17,7 @@ public class ViewController {
 
     @RequestMapping("/index")
     public String index() {
-        return "login-sign";
+        return "index";
     }
 
     @RequestMapping("/login")

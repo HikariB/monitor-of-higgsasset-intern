@@ -42,7 +42,6 @@ public class InstrumentData {
     private double feeRate;
 
 
-
     private boolean isMarketDataValid;
     private String updateTime;
 

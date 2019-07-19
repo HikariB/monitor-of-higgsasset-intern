@@ -18,6 +18,10 @@ public class MyUserDetailsService implements UserDetailsService {
             UserInfo userInfo = new UserInfo("admin","123456","ROLE_ADMIN", true,true,true, true);
             return  userInfo;
         }
+        if (username.equals("dev")){
+            UserInfo userInfo = new UserInfo("dev","higgspass","ROLE_DEV",true,true,true,true);
+            return userInfo;
+        }
         return null;
     }
 }

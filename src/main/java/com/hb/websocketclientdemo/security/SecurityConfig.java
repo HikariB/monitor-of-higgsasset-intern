@@ -43,11 +43,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //对于特定资源不需要权限
-                .antMatchers("/index", "/css/**", "/js/**", "/images/**").permitAll()
+                .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 //需要指定 权限要求的 url资源/http方法
-                .antMatchers("/monitor-summary").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.POST).hasRole("ADMIN")
+                .antMatchers("/index", "/login-result", "/sub-result", "/connect", "/close-all-client", "/config-login-bean", "/config-subscribe-bean", "/all-data", "/client-state/0")
+                .hasAnyRole("DEV")
+                .antMatchers("/monitor-summary").hasAnyRole("ADMIN", "DEV")
+                .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "DEV")
+                .antMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "DEV")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();
@@ -61,7 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                            "/**/*.css",
 //                            "/**/*.js"
 //                         ).permitAll()
-
 
 
     //不能没有 passwordEncoder()

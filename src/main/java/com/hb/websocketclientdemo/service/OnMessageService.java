@@ -22,6 +22,8 @@ public class OnMessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(OnMessageService.class);
 
+    private final int DELAY_MAX = 10;
+
     @Autowired
     private MultiAccountMonitorData multiAccountData;
 
@@ -147,6 +149,13 @@ public class OnMessageService {
         }
         Map<Integer, OrderData> ordersInfo = monitorData.getOrders().get(orderDO.getInstrumentId());
         InstrumentData instrumentData = monitorData.getInstruments().get(orderDO.getInstrumentId());
+
+        //Check UpdateTime
+        if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
+            logger.info("无市场行情，更新超时");
+            instrumentData.setMarketDataValid(false);
+        }
+
         //根据订单唯一表示 order_sys_id，判断之前是否存在
         int orderSysId = Integer.valueOf(orderDO.getOrderSysId().trim());
         if (ordersInfo.containsKey(orderSysId)) {
@@ -177,11 +186,20 @@ public class OnMessageService {
     }
 
     private boolean tradeRtnHandler(JSONObject msgJson) {
+
+
+
         JSONObject object = (JSONObject) msgJson.get("data");
         TradeRtnDO tradeDO = JSONObject.parseObject(object.toJSONString(), TradeRtnDO.class);
         logger.info("tradeRtnHandler  " + object.toJSONString());
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(tradeDO.getUserId());
         InstrumentData instrumentData = monitorData.getInstruments().get(tradeDO.getInstrumentId());
+
+        //Check UpdateTime
+        if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
+            logger.info("无市场行情，更新超时");
+            instrumentData.setMarketDataValid(false);
+        }
 
         instrumentData.addTradeVolume(tradeDO.getVolume());
 //        update position cost
@@ -217,39 +235,35 @@ public class OnMessageService {
 
         DepthMarketDataDO marketDataDO = JSONObject.parseObject(object.toJSONString(), DepthMarketDataDO.class);
         InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());
-        //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
-        //
-        if (instrumentData.isMarketDataInitialized()) {
-            //判断当前时间和上一次的更新时间
-            DateTime now = new DateTime();
-            DateTime updateTime = new LocalTime(instrumentData.getUpdateTime()).toDateTimeToday();
-            int secDelta = (int) new Duration(updateTime, now).getStandardSeconds();
-            if (secDelta > 10) {
+
+        //通过比较当前时间和上一次的更新时间，判断数据是否有效
+        if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
+                logger.info("无市场行情，更新超时");
                 instrumentData.setMarketDataValid(false);
-                logger.info(now.toString() + "更新超时");
-            }
         }
+        //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
         //判断当前时间和当前更新时间
-        DateTime now = new DateTime();
-        DateTime newUpdateTime = new LocalTime(marketDataDO.getUpdateTime()).toDateTimeToday();
-        int secDelta = (int) new Duration(newUpdateTime, now).getStandardSeconds();
+        if (!checkUpdateMarketDataValid(marketDataDO.getUpdateTime())) {
+            logger.info("市场行情延迟");
+            return false;
+        }
 
         //更新 currentPrice，Volume 属于整体市场的shux
         // 检查报价是否合理
         double[][] bids = marketDataDO.getBids();
         double[][] asks = marketDataDO.getAsks();
-        if (secDelta > 10 || bids[0][1] == 0 || asks[0][1] == 0) {
-
+        if (bids[0][1] == 0 || asks[0][1] == 0) {
             logger.info("市场行情：无效报价");
             return false;
         }
-        if (!instrumentData.isMarketDataInitialized())
-            instrumentData.setMarketDataInitialized(true);
         double marketPrice = 0.5 * (bids[0][0] + asks[0][0]);
         instrumentData.setCurrentPrice(marketPrice);
         instrumentData.setVolume(marketDataDO.getVolume());
         instrumentData.setUpdateTime(marketDataDO.getUpdateTime());
         instrumentData.setMarketDataValid(true);
+        if (!instrumentData.isMarketDataInitialized()) {
+            instrumentData.setMarketDataInitialized(true);
+        }
         return true;
     }
 
@@ -258,6 +272,14 @@ public class OnMessageService {
         BeanUtils.copyProperties(orderDO, newObj);
         newObj.setOrderSysId(Integer.parseInt(orderDO.getOrderSysId().trim()));
         return newObj;
+    }
+
+    private boolean checkUpdateMarketDataValid(String time) {
+        DateTime now = new DateTime();
+        DateTime updateTime = new LocalTime(time).toDateTimeToday();
+        //now - updateTime
+        int secDelta = (int) new Duration(updateTime, now).getStandardSeconds();
+        return (secDelta < DELAY_MAX);
     }
 
 
