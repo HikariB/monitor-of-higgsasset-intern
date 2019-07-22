@@ -2,6 +2,31 @@ function idFormatter() {
     return '总计'
 }
 
+function profitStyle(value, row, index) {
+    var classes = [
+        'bg-blue',
+        'bg-green',
+        'bg-orange',
+        'bg-yellow',
+        'bg-red'
+    ];
+    if (value > 0) {
+        return {
+            css: {
+                color: 'red'
+            }
+        }
+    } else {
+        return {
+            classes: classes[1]
+        }
+    }
+    // return {
+    //     css: {
+    //         color: 'red'
+    //     }
+    // }
+}
 
 function sumFormatter(data) {
     let field = this.field;
