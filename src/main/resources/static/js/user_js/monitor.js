@@ -16,6 +16,12 @@ function profitStyle(value, row, index) {
                 color: 'red'
             }
         }
+    } else if (value > -20000) {
+        return {
+            css: {
+                color: 'green'
+            }
+        }
     } else {
         return {
             classes: classes[1]

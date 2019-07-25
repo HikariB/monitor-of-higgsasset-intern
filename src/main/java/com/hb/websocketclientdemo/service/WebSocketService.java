@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ public class WebSocketService {
     @Autowired
     private OnMessageService onMessageService;
 
+    @Resource(name = "AccountList")
+    private List<String> accountList;
+
     {
         //最初想着初始化，类加载的时候完成websocket的连接，
         //发现不太行，将websocket 初始化的部分搬入connect();
@@ -52,7 +56,7 @@ public class WebSocketService {
 
                     @Override
                     public void onMessage(String s) {
-                        boolean isReadable = onMessageService.messageDispatch(s, wsInfos.getSubAccountList().get(finalI));
+                        boolean isReadable = onMessageService.messageDispatch(s, accountList.get(finalI));
                         if (!isReadable)
 //                        logger.info("WebSocket_1 =====Unknown Message Received");
                             logger.info("WS" + finalI + " onMessage: Unknown Message Received");

@@ -16,7 +16,6 @@ import java.util.List;
  * ws服务器配置类
  * 每个服务器需要新增url+loginAccount+SubAccount
  * 配置存放在websocket.properties
- *
  */
 @Configuration
 @PropertySource("classpath:websocket.properties")
@@ -33,9 +32,14 @@ public class WSServerInfoConfig {
 
     private String password;
 
+    private List<String> siSubAccountList = new ArrayList<>();
+
+    private List<String> siInstrumentIdList = new ArrayList<>();
+
     /**
      * 根据url个数即服务器个数N
      * 产生N个loginInfo，便于后续websocket.send产生Json String
+     *
      * @return
      */
     @Bean
@@ -50,12 +54,14 @@ public class WSServerInfoConfig {
 
     /**
      * 产生N个subscribeInfos，便于后续websocket.send产生Json String
+     *
      * @return
      */
+    @SuppressWarnings("all")
     @Bean
-    public List<SubscribeInfo> getSubscribeInfos(){
+    public List<SubscribeInfo> getSubscribeInfos() {
         List<SubscribeInfo> subscribeInfos = new ArrayList<>();
-        for (int i = 0; i <subAccountList.size() ; i++) {
+        for (int i = 0; i < subAccountList.size(); i++) {
             Topic[] topics = new Topic[instrumentIdList.size()];
             for (int j = 0; j < instrumentIdList.size(); j++) {
                 topics[j] = new Topic(subAccountList.get(i), instrumentIdList.get(j));
@@ -63,9 +69,28 @@ public class WSServerInfoConfig {
             SubscribeInfo subscribeInfo = new SubscribeInfo("subscribe", topics);
             subscribeInfos.add(subscribeInfo);
         }
+
+        // inject stock index info
+        for (int i = 0; i < siSubAccountList.size(); i++) {
+            Topic[] topics = new Topic[siInstrumentIdList.size()];
+            for (int j = 0; j < siInstrumentIdList.size(); j++) {
+                topics[j] = new Topic(siSubAccountList.get(i), siInstrumentIdList.get(j));
+            }
+            SubscribeInfo subscribeInfo = new SubscribeInfo("subscribe", topics);
+            subscribeInfos.add(subscribeInfo);
+        }
+
         return subscribeInfos;
     }
 
+    // merge stock index
+    @Bean(name = "AccountList")
+    public List<String> getAccountList(){
+        List<String> res = new ArrayList<>();
+        res.addAll(this.subAccountList);
+        res.addAll(this.siSubAccountList);
+        return res;
+    }
 
 
     public String getPassword() {
@@ -107,5 +132,21 @@ public class WSServerInfoConfig {
 
     public void setInstrumentIdList(List<String> instrumentIdList) {
         this.instrumentIdList = instrumentIdList;
+    }
+
+    public List<String> getSiSubAccountList() {
+        return siSubAccountList;
+    }
+
+    public void setSiSubAccountList(List<String> siSubAccountList) {
+        this.siSubAccountList = siSubAccountList;
+    }
+
+    public List<String> getSiInstrumentIdList() {
+        return siInstrumentIdList;
+    }
+
+    public void setSiInstrumentIdList(List<String> siInstrumentIdList) {
+        this.siInstrumentIdList = siInstrumentIdList;
     }
 }

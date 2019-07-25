@@ -1,3 +1,17 @@
+function footerStyle(column) {
+    return {
+        id: {
+            classes: 'uppercase'
+        },
+        name: {
+            css: {'font-weight': 'normal'}
+        },
+        price: {
+            css: {color: 'red'}
+        }
+    }[column.field]
+}
+
 function cellStyle(value, row, index) {
     var classes = [
         'bg-blue',
@@ -52,7 +66,15 @@ function accountName(value) {
         return '<a href="/monitor-detail?id=20087058">WTY</a>';
     if (value === '20092132')
         return '<a href="/monitor-detail?id=20092132">WTQ</a>';
+    if (value === '26000616')
+        return '<a href="/monitor-detail?id=26000616">FZT</a>';
     return 'unknown'
+}
+
+function responseHandler(res) {
+    console.log(res[0].profitSum);
+
+    return res;
 }
 
 

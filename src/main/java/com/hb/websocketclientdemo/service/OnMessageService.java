@@ -152,7 +152,7 @@ public class OnMessageService {
 
         //Check UpdateTime
         if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-            logger.info("无市场行情，更新超时");
+            logger.info("OrderRtnHandler: 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
 
@@ -197,7 +197,7 @@ public class OnMessageService {
 
         //Check UpdateTime
         if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-            logger.info("无市场行情，更新超时");
+            logger.info("TradeRtnHandler: 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
 
@@ -238,7 +238,7 @@ public class OnMessageService {
 
         //通过比较当前时间和上一次的更新时间，判断数据是否有效
         if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-                logger.info("无市场行情，更新超时");
+                logger.info("DepthMarketDataHandler： 无市场行情，更新超时");
                 instrumentData.setMarketDataValid(false);
         }
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
