@@ -1,6 +1,8 @@
 package com.hb.websocketclientdemo.controller.viewObj;
 
 public class AccountSummary {
+
+    public final static double TOTAL_PROFIT_LIMIT = -30000;
     private String accountId;
     private int tradeVolumeSum;
     private double volumeRatio;
@@ -9,6 +11,15 @@ public class AccountSummary {
     private double orderFeeSum;
     private double profitSum;
     private double profitNonNetSum;
+    private boolean isTotalProfitWarn;
+
+    public boolean isTotalProfitWarn() {
+        return isTotalProfitWarn;
+    }
+
+    public void setTotalProfitWarn(boolean totalProfitWarn) {
+        isTotalProfitWarn = totalProfitWarn;
+    }
 
     public double getProfitNonNetSum() {
         return profitNonNetSum;

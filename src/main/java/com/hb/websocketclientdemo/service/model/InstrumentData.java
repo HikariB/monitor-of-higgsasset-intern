@@ -2,6 +2,10 @@ package com.hb.websocketclientdemo.service.model;
 
 public class InstrumentData {
 
+    public final static double CANCEL_WARN_RATIO = 0.98;
+    public final static double PROFIT_LIMIT = -20000;
+    public final static int ORDER_CANCEL_LIMIT = 390;
+    public final static int NET_POSITION_LIMIT = 5;
     //instrumentInfo 初始化
     private String instrumentId;
     private int contractMultiplier;
@@ -45,6 +49,12 @@ public class InstrumentData {
     private boolean isMarketDataValid;
     private String updateTime;
 
+    //Info Limit WARNING
+    private boolean isCancelRatioWarn;
+    private boolean isCancelNumWarn;
+    private boolean isProfitWarn;
+    private boolean isNetPositionWarn;
+
 
     public InstrumentData() {
 
@@ -67,6 +77,27 @@ public class InstrumentData {
         this.isMarketDataInitialized = false;
         this.isMarketDataInitialized = false;
         this.feeRate = 0.000024;
+
+        this.isCancelRatioWarn = false;
+        this.isCancelNumWarn = false;
+        this.isProfitWarn = false;
+        this.isNetPositionWarn = false;
+    }
+
+    public boolean isCancelRatioWarn() {
+        return (double)(this.orderCancelNum/ORDER_CANCEL_LIMIT) > CANCEL_WARN_RATIO;
+    }
+
+    public boolean isCancelNumWarn() {
+        return (this.orderCancelNum > ORDER_CANCEL_LIMIT);
+    }
+
+    public boolean isProfitWarn() {
+        return (this.profit < PROFIT_LIMIT);
+    }
+
+    public boolean isNetPositionWarn() {
+        return Math.abs(this.getNetPosition()) > NET_POSITION_LIMIT;
     }
 
     public void addOrderCancelNum(int num) {

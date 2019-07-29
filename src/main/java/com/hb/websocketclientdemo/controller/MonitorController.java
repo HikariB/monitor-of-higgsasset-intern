@@ -4,7 +4,7 @@ import com.hb.websocketclientdemo.controller.viewObj.AccountSummary;
 import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
 import com.hb.websocketclientdemo.service.WSServerInfoConfig;
-import com.hb.websocketclientdemo.service.WebSocketService;
+import com.hb.websocketclientdemo.service.impl.WebSocketService;
 import com.hb.websocketclientdemo.service.model.*;
 import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import org.java_websocket.WebSocket;
@@ -71,6 +71,7 @@ public class MonitorController {
             double orderFeeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getOrderFee).sum();
             double profitSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getProfit).sum();
             double profitNonSum = profitSum + orderFeeSum + feeSum;
+            boolean profitWarn = (profitSum < AccountSummary.TOTAL_PROFIT_LIMIT);
 
             summary.setTradeVolumeSum(tradeVolumeSum);
             summary.setVolumeRatio(volumeRatio);
@@ -79,6 +80,8 @@ public class MonitorController {
             summary.setOrderFeeSum(orderFeeSum);
             summary.setProfitSum(profitSum);
             summary.setProfitNonNetSum(profitNonSum);
+            summary.setTotalProfitWarn(profitWarn);
+
             res.add(summary);
         });
         return res;

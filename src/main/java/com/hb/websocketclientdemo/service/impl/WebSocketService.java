@@ -1,8 +1,10 @@
-package com.hb.websocketclientdemo.service;
+package com.hb.websocketclientdemo.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
+import com.hb.websocketclientdemo.service.WSServerInfoConfig;
+import com.hb.websocketclientdemo.service.WebSocketControlService;
 import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class WebSocketService {
+public class WebSocketService implements WebSocketControlService {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
@@ -43,6 +45,7 @@ public class WebSocketService {
         //发现不太行，将websocket 初始化的部分搬入connect();
     }
 
+    @Override
     public void connect() {
         //根据URL 生成WSClient
         for (int i = 0; i < wsInfos.getUrlList().size(); i++) {
@@ -84,6 +87,7 @@ public class WebSocketService {
 
     }
 
+    @Override
     public void login() {
         for (int i = 0; i < wsClients.size(); i++) {
             wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
@@ -92,6 +96,7 @@ public class WebSocketService {
     }
 
 
+    @Override
     public void subscribe() {
         for (int i = 0; i < wsClients.size(); i++) {
             wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
@@ -99,6 +104,7 @@ public class WebSocketService {
         }
     }
 
+    @Override
     public void webSocketStart() {
         this.connect();
         for (int i = 0; i < wsClients.size(); i++) {
@@ -110,6 +116,7 @@ public class WebSocketService {
     }
 
 
+    @Override
     public void close() {
         for (int i = 0; i < wsClients.size(); i++) {
             wsClients.get(i).close();
@@ -117,7 +124,7 @@ public class WebSocketService {
         }
     }
 
-
+    @Override
     public boolean isClientNull() {
         for (int i = 0; i < wsClients.size(); i++) {
             if (wsClients.get(i) == null)
@@ -127,7 +134,7 @@ public class WebSocketService {
     }
 //        return wsClient == null || wsClient2 == null || wsClient3 == null || wsClient4 == null;
 
-
+    @Override
     public boolean isClientOpen() {
         for (int i = 0; i < wsClients.size(); i++) {
             if (!wsClients.get(i).getReadyState().equals(WebSocket.READYSTATE.OPEN))
@@ -140,7 +147,7 @@ public class WebSocketService {
 //                wsClient3.getReadyState().equals(WebSocket.READYSTATE.OPEN) &&
 //                wsClient4.getReadyState().equals(WebSocket.READYSTATE.OPEN);
 
-
+    @Override
     public boolean isClosed() {
         for (int i = 0; i < wsClients.size(); i++) {
             if (!wsClients.get(i).isClosed())
@@ -150,7 +157,7 @@ public class WebSocketService {
     }
 //        return wsClient.isClosed() && wsClient2.isClosed() && wsClient3.isClosed() && wsClient4.isClosed();
 
-
+    @Override
     public List<WebSocketClient> getWsClients() {
         return wsClients;
     }

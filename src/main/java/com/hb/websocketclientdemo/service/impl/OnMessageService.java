@@ -1,8 +1,9 @@
-package com.hb.websocketclientdemo.service;
+package com.hb.websocketclientdemo.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb.websocketclientdemo.model.Topic;
 import com.hb.websocketclientdemo.model.jsonData.*;
+import com.hb.websocketclientdemo.service.WebSocketCallbackService;
 import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.*;
 import org.joda.time.DateTime;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class OnMessageService {
+public class OnMessageService implements WebSocketCallbackService {
 
     private static final Logger logger = LoggerFactory.getLogger(OnMessageService.class);
 
@@ -28,6 +29,7 @@ public class OnMessageService {
     private MultiAccountMonitorData multiAccountData;
 
     //websocket client onMessage 方法后总转发，根据channel
+    @Override
     public boolean messageDispatch(String msg, String subAccount) {
         if (msg == null || msg.equals(""))
             return false;
