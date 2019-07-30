@@ -25,8 +25,40 @@ public class WebsocketClientDemoApplicationTests {
     }
 
     @Test
-    public void orZero(){
+    public void orZero() {
         double num = 1;
-        System.out.println(2|20);
+        System.out.println(2 | 20);
     }
+
+// leetcode
+//    public ListNode oddEvenList(ListNode head) {
+//
+//        if (head == null || head.next == null || head.next.next == null)
+//            return head;
+//        ListNode lhead = head;
+//        ListNode lsecond = head.next;
+//        ListNode odd = head;
+//        ListNode even = odd.next;
+//
+//        while (even != null && even.next != null) {
+//            //连接
+//            odd.next = even.next;
+//            even.next = even.next.next;
+//            //移动指针
+//            odd = odd.next;
+//            even = even.next;
+//        }
+//        odd.next = lsecond;
+//        return lhead;
+//
+//    }
+//
+//    class ListNode {
+//        int val;
+//        ListNode next;
+//
+//        ListNode(int x) {
+//            val = x;
+//        }
+//    }
 }

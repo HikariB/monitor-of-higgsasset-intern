@@ -53,21 +53,21 @@ function toPercent(point) {
 
 function accountName(value) {
     if (value === '83925101')
-        return '<a href="/monitor-detail?id=83925101">GTW</a>';
+        return '<a href="monitor-detail?id=83925101">GTW</a>';
     if (value === '83925105')
-        return '<a href="/monitor-detail?id=83925105">GTL</a>';
+        return '<a href="monitor-detail?id=83925105">GTL</a>';
     if (value === '118933')
-        return '<a href="/monitor-detail?id=118933">BCX</a>';
+        return '<a href="monitor-detail?id=118933">BCX</a>';
     if (value === '83925087')
-        return '<a href="/monitor-detail?id=83925087">GTZ</a>';
+        return '<a href="monitor-detail?id=83925087">GTZ</a>';
     if (value === '11803017')
-        return '<a href="/monitor-detail?id=11803017">XZY</a>';
+        return '<a href="monitor-detail?id=11803017">XZY</a>';
     if (value === '20087058')
-        return '<a href="/monitor-detail?id=20087058">WTY</a>';
+        return '<a href="monitor-detail?id=20087058">WTY</a>';
     if (value === '20092132')
-        return '<a href="/monitor-detail?id=20092132">WTQ</a>';
+        return '<a href="monitor-detail?id=20092132">WTQ</a>';
     if (value === '26000616')
-        return '<a href="/monitor-detail?id=26000616">FZT</a>';
+        return '<a href="monitor-detail?id=26000616">FZT</a>';
     return 'unknown'
 }
 
@@ -82,13 +82,7 @@ $(function () {
 
     let summary = $('#summary')
 
-    $('#disconnect').click(function () {
-        $.ajax({
-            type: "get",
-            url: "/logout"
-        });
-        window.location.href = "/login";
-    });
+    $('#disconnect').click(btnlogout);
 
     summary.bootstrapTable();
 });

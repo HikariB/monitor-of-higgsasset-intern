@@ -65,7 +65,7 @@ public class MonitorController {
             summary.setAccountId(k);
             int tradeVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getTradeVolume).sum();
             int marketVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getVolume).sum();
-            double volumeRatio = (marketVolumeSum == 0) ? 0 : (1.0 * tradeVolumeSum / (marketVolumeSum));
+            double volumeRatio = (marketVolumeSum == 0) ? 0  : (1.0 * tradeVolumeSum / (marketVolumeSum));
 //            double positionCost = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getPositionCost).sum();
             double feeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getFee).sum();
             double orderFeeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getOrderFee).sum();

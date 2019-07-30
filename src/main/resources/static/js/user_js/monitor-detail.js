@@ -36,13 +36,7 @@ $(function () {
         });
     }
 
-    $('#disconnect').click(function () {
-        $.ajax({
-            type: "get",
-            url: "/logout"
-        })
-        window.location.href = "/login";
-    })
+    $('#disconnect').click(btnlogout);
 
 
     instrumentInfo.bootstrapTable();

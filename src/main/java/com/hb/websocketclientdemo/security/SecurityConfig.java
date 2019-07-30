@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //loginPage 拦截后尚未拥有权限转入的url登入页面请求，需要配置相应的视图解析Controller，返回指定的html
                 //loginProcessingUrl 登入页面表单提交的地址
                 //failureUrl 密码错误跳转的url请求，同样需要进行视图解析配置，详见TestController
-                .formLogin().loginPage("/login").loginProcessingUrl("//login/form").failureUrl("/login-error")
+                .formLogin().loginPage("/login").loginProcessingUrl("/login/form").failureUrl("/login-error")
                 //自定义的登入认证成功或者失败拦截器
                 .successHandler(myAuthenticationSuccessHandler)
 //                .failureHandler(myAuthenticationFailureHandler)
@@ -45,7 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //对于特定资源不需要权限
                 .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 //需要指定 权限要求的 url资源/http方法
-                .antMatchers("/index", "/login-result", "/sub-result", "/connect", "/close-all-client", "/config-login-bean", "/config-subscribe-bean", "/all-data", "/client-state/0")
+                .antMatchers("/index", "/login-result",
+                        "/sub-result", "/connect",
+                        "/close-all-client", "/config-login-bean",
+                        "/config-subscribe-bean", "/all-data", "/client-state/0")
                 .hasAnyRole("DEV")
                 .antMatchers("/monitor-summary").hasAnyRole("ADMIN", "DEV")
                 .antMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "DEV")
@@ -53,6 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();
+
+
     }
     // 允许对于网站静态资源的无授权访问
 //                        .antMatchers(

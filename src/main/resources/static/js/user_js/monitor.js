@@ -10,16 +10,16 @@ function profitStyle(value, row, index) {
         'bg-yellow',
         'bg-red'
     ];
-    if (value > 0) {
+    if (value >= 0) {
+        return {
+            css: {
+                color: 'white'
+            }
+        }
+    } else if (value > -20000 && value < 0) {
         return {
             css: {
                 color: 'red'
-            }
-        }
-    } else if (value > -20000) {
-        return {
-            css: {
-                color: 'green'
             }
         }
     } else {
@@ -75,6 +75,15 @@ window.icons = {
     fullscreen: 'ion-md-expand',
     autoRefresh: 'ion-md-time'
 };
+
+
+function btnlogout() {
+    $.ajax({
+        type: "get",
+        url: "logout"
+    });
+    window.location.href = "login";
+}
 
 // $.extend($.fn.bootstrapTable.columnDefaults, {
 //     align: 'center',
