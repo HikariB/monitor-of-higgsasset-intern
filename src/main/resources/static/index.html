@@ -54,6 +54,12 @@
     <li>使用nginx 反向代理，可能出现spring security登入的问题（由于没有保存session信息，cookie），会重复登入，无法认证</li>
 </ul>
 
+<h3>BUG</h3>
+<ul>
+    <li>WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client 均无法发送Login和Subscribe信息。
+        <p>修复为：1. 添加try catch 保证程序继续进行；2. 在连接OnError 回调函数中移除客户端 </p>
+    </li>
+</ul>
 <script src="js/jquery.min.js"></script>
 <script>
     $('#disconnect').click(function () {

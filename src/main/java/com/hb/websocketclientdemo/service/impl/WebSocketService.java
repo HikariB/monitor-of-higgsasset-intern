@@ -74,6 +74,8 @@ public class WebSocketService implements WebSocketControlService {
                     public void onError(Exception e) {
                         e.printStackTrace();
                         logger.info("WS" + finalI + " onError: Websocket Connection Failed!");
+                        wsClients.remove(this);
+                        logger.info("Remove WsClient "+finalI);
                     }
                 };
                 webSocketClient.connect();
@@ -90,8 +92,13 @@ public class WebSocketService implements WebSocketControlService {
     @Override
     public void login() {
         for (int i = 0; i < wsClients.size(); i++) {
-            wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
-            logger.info("Ws" + i + " Logining...");
+            try {
+                wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
+                logger.info("Ws" + i + " Logining...");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.info("Ws" + i + "LoginInfo Send Failed");
+            }
         }
     }
 
@@ -99,8 +106,13 @@ public class WebSocketService implements WebSocketControlService {
     @Override
     public void subscribe() {
         for (int i = 0; i < wsClients.size(); i++) {
-            wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
-            logger.info("Ws" + i + " Subscribing...");
+            try {
+                wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
+                logger.info("Ws" + i + " Subscribing...");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.info("Ws" + i + "SubscribeInfo Send Failed");
+            }
         }
     }
 
@@ -108,10 +120,15 @@ public class WebSocketService implements WebSocketControlService {
     public void webSocketStart() {
         this.connect();
         for (int i = 0; i < wsClients.size(); i++) {
-            wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
-            logger.info("Ws" + i + " Logining...");
-            wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
-            logger.info("Ws" + i + " Subscribing...");
+            try {
+                wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
+                logger.info("Ws" + i + " Logining...");
+                wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
+                logger.info("Ws" + i + " Subscribing...");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.info("Ws" + i + "Start Failed");
+            }
         }
     }
 

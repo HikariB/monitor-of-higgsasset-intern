@@ -44,7 +44,7 @@ function sumFormatterFraction(data) {
 
 
 function toPercent(point) {
-    if (point > 1 || point === 0)
+    if (point > 1 || point < 0)
         return 'NaN';
     var str = Number(point * 100).toFixed(3);
     str += "%";
