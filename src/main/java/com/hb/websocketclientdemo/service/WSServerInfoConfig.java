@@ -32,9 +32,9 @@ public class WSServerInfoConfig {
 
     private String password;
 
-    private List<String> siSubAccountList = new ArrayList<>();
-
-    private List<String> siInstrumentIdList = new ArrayList<>();
+//    private List<String> siSubAccountList = new ArrayList<>();
+//
+//    private List<String> siInstrumentIdList = new ArrayList<>();
 
     /**
      * 根据url个数即服务器个数N
@@ -70,15 +70,15 @@ public class WSServerInfoConfig {
             subscribeInfos.add(subscribeInfo);
         }
 
-        // inject stock index info
-        for (int i = 0; i < siSubAccountList.size(); i++) {
-            Topic[] topics = new Topic[siInstrumentIdList.size()];
-            for (int j = 0; j < siInstrumentIdList.size(); j++) {
-                topics[j] = new Topic(siSubAccountList.get(i), siInstrumentIdList.get(j));
-            }
-            SubscribeInfo subscribeInfo = new SubscribeInfo("subscribe", topics);
-            subscribeInfos.add(subscribeInfo);
-        }
+//        // inject stock index info
+//        for (int i = 0; i < siSubAccountList.size(); i++) {
+//            Topic[] topics = new Topic[siInstrumentIdList.size()];
+//            for (int j = 0; j < siInstrumentIdList.size(); j++) {
+//                topics[j] = new Topic(siSubAccountList.get(i), siInstrumentIdList.get(j));
+//            }
+//            SubscribeInfo subscribeInfo = new SubscribeInfo("subscribe", topics);
+//            subscribeInfos.add(subscribeInfo);
+//        }
 
         return subscribeInfos;
     }
@@ -88,7 +88,7 @@ public class WSServerInfoConfig {
     public List<String> getAccountList(){
         List<String> res = new ArrayList<>();
         res.addAll(this.subAccountList);
-        res.addAll(this.siSubAccountList);
+//        res.addAll(this.siSubAccountList);
         return res;
     }
 
@@ -134,19 +134,19 @@ public class WSServerInfoConfig {
         this.instrumentIdList = instrumentIdList;
     }
 
-    public List<String> getSiSubAccountList() {
-        return siSubAccountList;
-    }
-
-    public void setSiSubAccountList(List<String> siSubAccountList) {
-        this.siSubAccountList = siSubAccountList;
-    }
-
-    public List<String> getSiInstrumentIdList() {
-        return siInstrumentIdList;
-    }
-
-    public void setSiInstrumentIdList(List<String> siInstrumentIdList) {
-        this.siInstrumentIdList = siInstrumentIdList;
-    }
+//    public List<String> getSiSubAccountList() {
+//        return siSubAccountList;
+//    }
+//
+//    public void setSiSubAccountList(List<String> siSubAccountList) {
+//        this.siSubAccountList = siSubAccountList;
+//    }
+//
+//    public List<String> getSiInstrumentIdList() {
+//        return siInstrumentIdList;
+//    }
+//
+//    public void setSiInstrumentIdList(List<String> siInstrumentIdList) {
+//        this.siInstrumentIdList = siInstrumentIdList;
+//    }
 }

@@ -17,7 +17,27 @@ function getParam(pname) {
     }
 }
 
+var MarketDataNoTValidid = 0;
+
+function responseHandler(res) {
+    // console.log(res[0].profitSum);
+    res.forEach(function (e) {
+        if (!e.marketDataValid) {
+            MarketDataNoTValidid++;
+            if (MarketDataNoTValidid > 11)
+                alert("连续出现10次以上无效市场标志！")
+        } else {
+            MarketDataNoTValidid = 0;
+        }
+    });
+
+
+    return res;
+}
+
 $(function () {
+
+    console.log("当前合同更新频率:1Hz, 订单更新频率:0.25Hz，出现10次以上无效市场数据标志时将报警，当利润低于-20000时将变为绿色背景")
 
     let instrumentInfo = $('#instrument-info');
     let oredersInfo = $('#ordersInfo');
@@ -41,7 +61,6 @@ $(function () {
 
     instrumentInfo.bootstrapTable();
     oredersInfo.bootstrapTable();
-
 
 
     $('#account').change(function () {

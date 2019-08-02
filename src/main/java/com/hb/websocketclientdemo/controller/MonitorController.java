@@ -72,7 +72,6 @@ public class MonitorController {
             double profitSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getProfit).sum();
             double profitNonSum = profitSum + orderFeeSum + feeSum;
             boolean profitWarn = (profitSum < AccountSummary.TOTAL_PROFIT_LIMIT);
-
             summary.setTradeVolumeSum(tradeVolumeSum);
             summary.setVolumeRatio(volumeRatio);
 //            summary.setPositionCost(positionCost);

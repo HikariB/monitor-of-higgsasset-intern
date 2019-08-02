@@ -246,6 +246,7 @@ public class OnMessageService implements WebSocketCallbackService {
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
         //判断当前时间和当前更新时间
         if (!checkUpdateMarketDataValid(marketDataDO.getUpdateTime())) {
+            instrumentData.setMarketDataValid(false);
             logger.info("市场行情延迟");
             return false;
         }
@@ -256,6 +257,7 @@ public class OnMessageService implements WebSocketCallbackService {
         double[][] asks = marketDataDO.getAsks();
         if (bids[0][1] == 0 || asks[0][1] == 0) {
             logger.info("市场行情：无效报价");
+            instrumentData.setMarketDataValid(false);
             return false;
         }
         double marketPrice = 0.5 * (bids[0][0] + asks[0][0]);

@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 @Component
 public class WebSocketService implements WebSocketControlService {
@@ -24,7 +25,7 @@ public class WebSocketService implements WebSocketControlService {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
     @Autowired
-    private WSServerInfoConfig wsInfos;
+    private  WSServerInfoConfig wsInfos;
 
     private List<WebSocketClient> wsClients = new ArrayList<>();
 
@@ -40,6 +41,8 @@ public class WebSocketService implements WebSocketControlService {
     @Resource(name = "AccountList")
     private List<String> accountList;
 
+    private static CountDownLatch countDownLatch;
+
     {
         //最初想着初始化，类加载的时候完成websocket的连接，
         //发现不太行，将websocket 初始化的部分搬入connect();
@@ -47,6 +50,10 @@ public class WebSocketService implements WebSocketControlService {
 
     @Override
     public void connect() {
+
+        countDownLatch = new CountDownLatch(wsInfos.getUrlList().size());
+
+
         //根据URL 生成WSClient
         for (int i = 0; i < wsInfos.getUrlList().size(); i++) {
             int finalI = i;
@@ -55,6 +62,7 @@ public class WebSocketService implements WebSocketControlService {
                     @Override
                     public void onOpen(ServerHandshake serverHandshake) {
                         logger.info("WS" + finalI + " onOpen: Connection Established");
+                        countDownLatch.countDown();
                     }
 
                     @Override
@@ -72,6 +80,7 @@ public class WebSocketService implements WebSocketControlService {
 
                     @Override
                     public void onError(Exception e) {
+                        countDownLatch.countDown();
                         e.printStackTrace();
                         logger.info("WS" + finalI + " onError: Websocket Connection Failed!");
                         wsClients.remove(this);
@@ -86,6 +95,13 @@ public class WebSocketService implements WebSocketControlService {
                 logger.info("Exception Occur when in WSClient init");
             }
         }
+        try {
+            countDownLatch.await();
+        } catch (Exception e){
+            e.printStackTrace();
+            logger.info("Waiting For All WebSocketClient Connection Established , CountDownLatch Error");
+        }
+
 
     }
 
@@ -127,7 +143,7 @@ public class WebSocketService implements WebSocketControlService {
                 logger.info("Ws" + i + " Subscribing...");
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.info("Ws" + i + "Start Failed");
+                logger.info("Ws" + i + " Start Failed");
             }
         }
     }

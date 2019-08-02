@@ -52,12 +52,17 @@
 <ul>
     <li>提醒功能：具体的文档详见userFile/前端提醒备忘。挺难修改cell的属性或者row的属性。考虑另一种较简单的实现方式：新增一列添加暗示错误代码</li>
     <li>使用nginx 反向代理，可能出现spring security登入的问题（由于没有保存session信息，cookie），会重复登入，无法认证</li>
+    <li>在monitor-detail页下，检测MarketDataValid标志，如果出现连续超过10次以上无效标志，将提示报警alert</li>
 </ul>
 
 <h3>BUG</h3>
 <ul>
-    <li>WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client 均无法发送Login和Subscribe信息。
+    <li>20190801 WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client
+        均无法发送Login和Subscribe信息。
         <p>修复为：1. 添加try catch 保证程序继续进行；2. 在连接OnError 回调函数中移除客户端 </p>
+    </li>
+    <li>20190802，在进行websocketclient 连接建立的时候，会发现websocketclient出现尚未建立连接，会进行登入和订阅消息的发送，导致异常出现
+        <p>修复为：采用同步策略，即所有连接均已经建立后再发送其他请求。采用CountLatchDown类，在OnConnected和OnError中进行倒计数，避免其余所有websocket client一直被阻塞</p>
     </li>
 </ul>
 <script src="js/jquery.min.js"></script>
