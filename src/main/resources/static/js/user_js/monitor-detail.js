@@ -18,22 +18,50 @@ function getParam(pname) {
 }
 
 var MarketDataNoTValidid = 0;
+var MDValidFlag = true;
 
 function responseHandler(res) {
     // console.log(res[0].profitSum);
     res.forEach(function (e) {
         if (!e.marketDataValid) {
             MarketDataNoTValidid++;
-            if (MarketDataNoTValidid > 11)
-                alert("连续出现10次以上无效市场标志！")
+            if (MarketDataNoTValidid > 9) {
+                console.log("连续出现10次以上无效市场标志！")
+                MarketDataNoTValidid = 0;
+                MDValidFlag = false;
+            }
         } else {
             MarketDataNoTValidid = 0;
+            MDValidFlag = true;
         }
     });
 
 
     return res;
 }
+
+function warnStyle(value, row, index) {
+    var classes = [
+        'bg-blue',
+        'bg-green',
+        'bg-orange',
+        'bg-yellow',
+        'bg-red',
+        'bg-danger',
+        'bg-info'
+    ];
+    if (!MDValidFlag) {
+        return {
+            classes: classes[6]
+        }
+    } else {
+        return {
+            // classes: classes[1]
+        };
+    }
+
+}
+
 
 $(function () {
 

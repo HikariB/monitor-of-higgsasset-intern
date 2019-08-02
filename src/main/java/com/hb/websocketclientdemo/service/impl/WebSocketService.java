@@ -18,14 +18,17 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class WebSocketService implements WebSocketControlService {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
+    private static final int CONNECTION_TIME_OUT = 3;
+
     @Autowired
-    private  WSServerInfoConfig wsInfos;
+    private WSServerInfoConfig wsInfos;
 
     private List<WebSocketClient> wsClients = new ArrayList<>();
 
@@ -80,15 +83,15 @@ public class WebSocketService implements WebSocketControlService {
 
                     @Override
                     public void onError(Exception e) {
-                        countDownLatch.countDown();
+//                        countDownLatch.countDown();
                         e.printStackTrace();
                         logger.info("WS" + finalI + " onError: Websocket Connection Failed!");
                         wsClients.remove(this);
-                        logger.info("Remove WsClient "+finalI);
+                        logger.info("Remove WsClient " + finalI);
                     }
                 };
                 webSocketClient.connect();
-                logger.info("WS" + i + " :Connecting");
+                logger.info("WS" + i + " :Connecting...");
                 wsClients.add(webSocketClient);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -96,8 +99,9 @@ public class WebSocketService implements WebSocketControlService {
             }
         }
         try {
-            countDownLatch.await();
-        } catch (Exception e){
+            countDownLatch.await(CONNECTION_TIME_OUT, TimeUnit.SECONDS);
+            logger.info("WebsocketClient 尚未连接数：" + countDownLatch.getCount());
+        } catch (Exception e) {
             e.printStackTrace();
             logger.info("Waiting For All WebSocketClient Connection Established , CountDownLatch Error");
         }
@@ -109,6 +113,10 @@ public class WebSocketService implements WebSocketControlService {
     public void login() {
         for (int i = 0; i < wsClients.size(); i++) {
             try {
+                if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
+                    logger.info("WebSocket Login Skip Ws"+i);
+                    continue;
+                }
                 wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
                 logger.info("Ws" + i + " Logining...");
             } catch (Exception e) {
@@ -123,6 +131,10 @@ public class WebSocketService implements WebSocketControlService {
     public void subscribe() {
         for (int i = 0; i < wsClients.size(); i++) {
             try {
+                if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
+                    logger.info("WebSocket Subscribe: Skip Ws"+i);
+                    continue;
+                }
                 wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
                 logger.info("Ws" + i + " Subscribing...");
             } catch (Exception e) {
@@ -137,6 +149,10 @@ public class WebSocketService implements WebSocketControlService {
         this.connect();
         for (int i = 0; i < wsClients.size(); i++) {
             try {
+                if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
+                    logger.info("WebSocket Start: Skip Ws"+i);
+                    continue;
+                }
                 wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
                 logger.info("Ws" + i + " Logining...");
                 wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
@@ -152,6 +168,10 @@ public class WebSocketService implements WebSocketControlService {
     @Override
     public void close() {
         for (int i = 0; i < wsClients.size(); i++) {
+            if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
+                logger.info("WebSocket Close: Skip Ws"+i);
+                continue;
+            }
             wsClients.get(i).close();
             logger.info("Ws" + i + " Closing...");
         }

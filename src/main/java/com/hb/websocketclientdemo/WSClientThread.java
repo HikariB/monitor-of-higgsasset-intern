@@ -36,6 +36,6 @@ public class WSClientThread implements InitializingBean {
 //            webSocketService.subscribe();
             webSocketService.webSocketStart();
         }).start();
-        logger.info("Thread is running: Websocket Start!");
+        logger.info("New Thread is running: Websocket Start!");
     }
 }

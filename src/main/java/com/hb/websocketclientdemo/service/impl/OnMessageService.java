@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -65,11 +66,13 @@ public class OnMessageService implements WebSocketCallbackService {
 
         //result 并非 Json 下面会报错
 //            JSONObject result = (JSONObject) msgJson.get("result");
-        LoginResult loginResult = multiAccountData.getLoginResult();
-        loginResult.setResult((String) msgJson.get("result"));
-        loginResult.getAccount().add((String) msgJson.get("account"));
+        List<LoginResult> loginResults = multiAccountData.getLoginResult();
+        LoginResult result = new LoginResult();
+        result.setResult((String) msgJson.get("result"));
+        result.setAccount((String) msgJson.get("account"));
+        loginResults.add(result);
         logger.info("loginResultHandler:" + msgJson.get("account") + ":" + msgJson.get("result"));
-        if (loginResult.getResult().equals("success")) {
+        if (result.getResult().equals("success")) {
             //do sth to subscribe
             return true;
         }
@@ -153,7 +156,7 @@ public class OnMessageService implements WebSocketCallbackService {
         InstrumentData instrumentData = monitorData.getInstruments().get(orderDO.getInstrumentId());
 
         //Check UpdateTime
-        if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
+        if (instrumentData.isMarketDataValid() && checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
             logger.info("OrderRtnHandler: 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
@@ -190,7 +193,6 @@ public class OnMessageService implements WebSocketCallbackService {
     private boolean tradeRtnHandler(JSONObject msgJson) {
 
 
-
         JSONObject object = (JSONObject) msgJson.get("data");
         TradeRtnDO tradeDO = JSONObject.parseObject(object.toJSONString(), TradeRtnDO.class);
         logger.info("tradeRtnHandler  " + object.toJSONString());
@@ -198,7 +200,7 @@ public class OnMessageService implements WebSocketCallbackService {
         InstrumentData instrumentData = monitorData.getInstruments().get(tradeDO.getInstrumentId());
 
         //Check UpdateTime
-        if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
+        if (instrumentData.isMarketDataValid() && checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
             logger.info("TradeRtnHandler: 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
@@ -239,24 +241,24 @@ public class OnMessageService implements WebSocketCallbackService {
         InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());
 
         //通过比较当前时间和上一次的更新时间，判断数据是否有效
-        if (instrumentData.isMarketDataValid() && !checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-                logger.info("DepthMarketDataHandler： 无市场行情，更新超时");
-                instrumentData.setMarketDataValid(false);
+        if (instrumentData.isMarketDataValid() && checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
+            logger.info("DepthMarketDataHandler： 无市场行情，更新超时");
+            instrumentData.setMarketDataValid(false);
         }
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
         //判断当前时间和当前更新时间
-        if (!checkUpdateMarketDataValid(marketDataDO.getUpdateTime())) {
+        if (checkUpdateMarketDataValid(marketDataDO.getUpdateTime())) {
             instrumentData.setMarketDataValid(false);
-            logger.info("市场行情延迟");
+            logger.info("DepthMarketDataHandler：市场行情延迟");
             return false;
         }
 
-        //更新 currentPrice，Volume 属于整体市场的shux
+        //更新 currentPrice，Volume 属于整体市场的
         // 检查报价是否合理
         double[][] bids = marketDataDO.getBids();
         double[][] asks = marketDataDO.getAsks();
         if (bids[0][1] == 0 || asks[0][1] == 0) {
-            logger.info("市场行情：无效报价");
+            logger.info("DepthMarketDataHandler：市场行情：无效报价");
             instrumentData.setMarketDataValid(false);
             return false;
         }
@@ -283,7 +285,9 @@ public class OnMessageService implements WebSocketCallbackService {
         DateTime updateTime = new LocalTime(time).toDateTimeToday();
         //now - updateTime
         int secDelta = (int) new Duration(updateTime, now).getStandardSeconds();
-        return (secDelta < DELAY_MAX);
+        if (secDelta < 0)
+            logger.info("行情信息超前" + (-secDelta) + "s，时间错误");
+        return (secDelta >= DELAY_MAX);
     }
 
 

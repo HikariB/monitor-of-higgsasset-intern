@@ -87,7 +87,7 @@ public class MonitorController {
     }
 
     @RequestMapping("/login-result")
-    public LoginResult getLoginResult() {
+    public List<LoginResult> getLoginResult() {
         return multiAccountData.getLoginResult();
     }
 

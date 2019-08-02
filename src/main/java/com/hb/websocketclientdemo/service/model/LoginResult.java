@@ -1,19 +1,15 @@
 package com.hb.websocketclientdemo.service.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
-
 public class LoginResult {
     private String result;
-    private List<String> account;
+    private String account;
 
-    public List<String> getAccount() {
-        return account;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
-    public void setAccount(List<String> account) {
-        this.account = account;
+    public String getAccount() {
+        return account;
     }
 
     public String getResult() {
@@ -22,11 +18,6 @@ public class LoginResult {
 
     public void setResult(String result) {
         this.result = result;
-    }
-
-    public LoginResult() {
-        this.result = " ";
-        this.account = new LinkedList<>();
     }
 
     @Override

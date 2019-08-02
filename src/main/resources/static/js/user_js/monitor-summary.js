@@ -72,13 +72,29 @@ function accountName(value) {
 }
 
 function responseHandler(res) {
-    console.log(res[0].profitSum);
+    // console.log(res[0].profitSum);
 
     return res;
 }
 
 
 $(function () {
+
+    $.ajax({
+        type: "get",
+        url: "login-result",
+        success: function (data) {
+            console.log(data);
+        }
+    });
+
+    $.ajax({
+        type: "get",
+        url: "sub-result",
+        success: function (data) {
+            console.log(data);
+        }
+    });
 
     let summary = $('#summary')
 

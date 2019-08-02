@@ -6,13 +6,15 @@ import com.hb.websocketclientdemo.service.model.SubResult;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class MultiAccountMonitorData {
     private Map<String, MonitorData> accountsInfo;
 
-    private LoginResult loginResult;
+    private List<LoginResult> loginResult;
 
     private SubResult subResult;
 
@@ -21,16 +23,16 @@ public class MultiAccountMonitorData {
 
     public MultiAccountMonitorData() {
         this.accountsInfo = new HashMap<>();
-        this.loginResult = new LoginResult();
+        this.loginResult = new LinkedList<>();
         this.subResult = new SubResult();
     }
 
 
-    public LoginResult getLoginResult() {
+    public List<LoginResult> getLoginResult() {
         return loginResult;
     }
 
-    public void setLoginResult(LoginResult loginResult) {
+    public void setLoginResult(List<LoginResult> loginResult) {
         this.loginResult = loginResult;
     }
 
