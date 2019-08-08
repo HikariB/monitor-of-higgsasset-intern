@@ -33,6 +33,29 @@ function cellStyle(value, row, index) {
     }
 }
 
+function delayWarnStyle(value, row, index) {
+    var classes = [
+        'bg-blue',
+        'bg-green',
+        'bg-orange',
+        'bg-yellow',
+        'bg-red'
+    ];
+    if (value > 10){
+        return  {
+            css: {
+                color: 'red'
+            }
+        }
+    }
+    return {
+        css: {
+            color: 'green'
+        }
+    }
+
+}
+
 
 function sumFormatterFraction(data) {
     let field = this.field;
@@ -68,11 +91,27 @@ function accountName(value) {
         return '<a href="monitor-detail?id=20092132">WTQ</a>';
     if (value === '26000616')
         return '<a href="monitor-detail?id=26000616">FZT</a>';
-    return 'unknown'
+    return value;
 }
+
+
+var MDValidFlag = true;
+
 
 function responseHandler(res) {
     // console.log(res[0].profitSum);
+    MDValidFlag = true;
+    res.forEach(function (e) {
+        if (!e.marketDataValid) {
+            MDValidFlag = false;
+        }
+    });
+
+    if (MDValidFlag) {
+
+    } else {
+
+    }
 
     return res;
 }

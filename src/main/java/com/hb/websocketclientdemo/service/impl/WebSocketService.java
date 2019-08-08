@@ -25,7 +25,7 @@ public class WebSocketService implements WebSocketControlService {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketService.class);
 
-    private static final int CONNECTION_TIME_OUT = 3;
+    private static final int CONNECTION_TIME_OUT = 5;
 
     @Autowired
     private WSServerInfoConfig wsInfos;
@@ -70,7 +70,7 @@ public class WebSocketService implements WebSocketControlService {
 
                     @Override
                     public void onMessage(String s) {
-                        boolean isReadable = onMessageService.messageDispatch(s, accountList.get(finalI));
+                        boolean isReadable = onMessageService.messageDispatch(s, accountList.get(finalI),finalI);
                         if (!isReadable)
 //                        logger.info("WebSocket_1 =====Unknown Message Received");
                             logger.info("WS" + finalI + " onMessage: Unknown Message Received");
@@ -86,8 +86,8 @@ public class WebSocketService implements WebSocketControlService {
 //                        countDownLatch.countDown();
                         e.printStackTrace();
                         logger.info("WS" + finalI + " onError: Websocket Connection Failed!");
-                        wsClients.remove(this);
-                        logger.info("Remove WsClient " + finalI);
+//                        wsClients.remove(this);
+//                        logger.info("Remove WsClient " + finalI);
                     }
                 };
                 webSocketClient.connect();
@@ -155,8 +155,11 @@ public class WebSocketService implements WebSocketControlService {
                 }
                 wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
                 logger.info("Ws" + i + " Logining...");
-                wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
-                logger.info("Ws" + i + " Subscribing...");
+                // 这里是否应该考虑 必须先登入成功以后再进行订阅
+                // 1. 同步策略
+                // 2. 在收到订阅成功的消息后再进行订阅 --
+//                wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
+//                logger.info("Ws" + i + " Subscribing...");
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.info("Ws" + i + " Start Failed");
@@ -214,4 +217,9 @@ public class WebSocketService implements WebSocketControlService {
     public List<WebSocketClient> getWsClients() {
         return wsClients;
     }
+
+
+
+
+
 }

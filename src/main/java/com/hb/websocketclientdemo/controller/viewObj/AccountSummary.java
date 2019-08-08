@@ -12,6 +12,24 @@ public class AccountSummary {
     private double profitSum;
     private double profitNonNetSum;
     private boolean isTotalProfitWarn;
+    private boolean isMarketDataValid;
+    private long maxMDDelaySec;
+
+    public long getMaxMDDelaySec() {
+        return maxMDDelaySec;
+    }
+
+    public void setMaxMDDelaySec(long maxMDDelaySec) {
+        this.maxMDDelaySec = maxMDDelaySec;
+    }
+
+    public boolean isMarketDataValid() {
+        return isMarketDataValid;
+    }
+
+    public void setMarketDataValid(boolean marketDataValid) {
+        isMarketDataValid = marketDataValid;
+    }
 
     public boolean isTotalProfitWarn() {
         return isTotalProfitWarn;

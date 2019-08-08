@@ -14,57 +14,123 @@
         <img src="images/banner1.png" alt="logo" style="width: 200px;height: 15px">
     </a>
 
-    <ul class="nav justify-content-end nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" href="monitor-detail">Detail</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="monitor-summary">Summary</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="#">Dev</a>
-        </li>
-        <li class="nav-item">
-            <button id="disconnect" class="btn btn-info" type="submit">Login Out</button>
-        </li>
-    </ul>
+    <button id="disconnect" class="btn btn-info" type="submit">Login Out</button>
 </nav>
 <br>
-<h3>后台信息</h3>
+<div class="container">
 
-<ul>
-    <li><a href="login-result">Websocket Login Result</a></li>
-    <li><a href="sub-result">Websocket Subscribe result</a></li>
-    <li><a href="connect">Warning: Websocket Client Reconnect</a>重新连接存在问题，待调试</li>
-    <li><a href="close-all-client">Warning: Websocket Client Closed All</a></li>
-    <li><a href="config-login-bean">Login Bean Info</a></li>
-    <li><a href="config-subscribe-bean">Subscribe Bean Info</a></li>
-    <li><a href="all-data">All Data</a></li>
-    <li><a href="client-state/0">WebSocket Client-0 State</a>目前只能查询一个</li>
-</ul>
-<br>
-<h3>前台</h3>
-<ul>
-    <li><a href="monitor-detail">Detail</a></li>
-    <li><a href="monitor-summary">Summary</a></li>
-</ul>
-<h3>开发日志</h3>
-<ul>
-    <li>提醒功能：具体的文档详见userFile/前端提醒备忘。挺难修改cell的属性或者row的属性。考虑另一种较简单的实现方式：新增一列添加暗示错误代码</li>
-    <li>使用nginx 反向代理，可能出现spring security登入的问题（由于没有保存session信息，cookie），会重复登入，无法认证</li>
-    <li>在monitor-detail页下，检测MarketDataValid标志，如果出现连续超过10次以上无效标志，将提示报警alert</li>
-</ul>
+    <br>
+    <h3>后台信息</h3>
+    <ul>
+        <li><a href="login-result">Websocket Login Result</a></li>
+        <li><a href="sub-result">Websocket Subscribe result</a></li>
+        <li><a href="connect">Warning: Websocket Client Reconnect</a>重新连接存在问题，待调试</li>
+        <li><a href="close-all-client">Warning: Websocket Client Closed All</a></li>
+        <li><a href="config-login-bean">Login Bean Info</a></li>
+        <li><a href="config-subscribe-bean">Subscribe Bean Info</a></li>
+        <li><a href="all-data">All Data</a></li>
+        <li><a href="client-state/0">WebSocket Client-0 State</a>目前只能查询一个</li>
+    </ul>
 
-<h3>BUG</h3>
-<ul>
-    <li>20190801 WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client
-        均无法发送Login和Subscribe信息。
-        <p>修复为：1. 添加try catch 保证程序继续进行；2. 在连接OnError 回调函数中移除客户端 </p>
-    </li>
-    <li>20190802，在进行websocketclient 连接建立的时候，会发现websocketclient出现尚未建立连接，会进行登入和订阅消息的发送，导致异常出现
-        <p>修复为：采用同步策略，即所有连接均已经建立后再发送其他请求。采用CountLatchDown类，在OnConnected和OnError中进行倒计数，避免其余所有websocket client一直被阻塞</p>
-    </li>
-</ul>
+    <br>
+    <h3>前台</h3>
+    <ul>
+        <li><a href="monitor-detail">Detail</a></li>
+        <li><a href="monitor-summary">Summary</a></li>
+    </ul>
+
+    <hr>
+    <h3>控制台</h3>
+    <h5>Parameter Limit</h5>
+    <div class="form-group row">
+        <div class="col-2">
+            <label class="col-form-label">账号亏损界限</label>
+            <input type="text" class="form-control" id="totalProfitLimit" placeholder="Default: -30000">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">合同亏损界限</label>
+            <input type="text" class="form-control" id="profitLimit" placeholder="Default: -20000">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">撤单比例界限</label>
+            <input type="text" class="form-control" id="cancelWarnRatio" placeholder="Default: 0.98">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">撤单数界限</label>
+            <input type="text" class="form-control" id="orderCancelLimit" placeholder="Default: 390">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">净持仓界限</label>
+            <input type="text" class="form-control" id="netPositionLimit" placeholder="Default: 5">
+        </div>
+
+        <div class="col-2">
+            <label class="col-form-label">行情最大延迟</label>
+            <input type="text" class="form-control" id="mDDelaySecLimit" placeholder="Default: 10">
+        </div>
+    </div>
+
+    <div>
+        <button class="btn btn-primary" id="limit-btn" type="submit">
+            Submit Parameter
+        </button>
+    </div>
+
+
+    <br>
+    <h5>New WebSocket Client</h5>
+    <div class="form-group row">
+        <div class="col-4">
+            <label class="col-form-label">url</label>
+            <input type="text" class="form-control" id="wsUrl" placeholder="example: ws://114.55.210.206:9999/">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">LoginAccount</label>
+            <input type="text" class="form-control" id="loginAccount" placeholder="gt_w">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">Password</label>
+            <input type="text" class="form-control" id="loginPassword" placeholder="higgspass">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">Subscribe Account</label>
+            <input type="text" class="form-control" id="subscribeAccount" placeholder="83925101">
+        </div>
+        <div class="col-2">
+            <label class="col-form-label">Websocket连接超时</label>
+            <input type="text" class="form-control" id="connectionTimeout" placeholder="Default: 3">
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-primary" id="newWs-btn" type="submit">
+            Create And Start
+        </button>
+    </div>
+    <p>合同默认为IF IH IC</p>
+
+    <h5>账号及权限控制</h5>
+
+    <hr>
+    <h3>开发日志</h3>
+    <ul>
+        <li>提醒功能：具体的文档详见userFile/前端提醒备忘。挺难修改cell的属性或者row的属性。考虑另一种较简单的实现方式：新增一列添加暗示错误代码</li>
+        <li>使用nginx 反向代理，可能出现spring security登入的问题（由于没有保存session信息，cookie），会重复登入，无法认证</li>
+        <li>在monitor-detail页下，检测MarketDataValid标志，如果出现连续超过10次以上无效标志，将提示报警alert</li>
+    </ul>
+
+    <h3>BUG</h3>
+    <ul>
+        <li>20190801 WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client
+            均无法发送Login和Subscribe信息。
+            <p>修复为：1. 添加try catch 保证程序继续进行；2. 在连接OnError 回调函数中移除客户端 </p>
+        </li>
+        <li>20190802，在进行websocketclient 连接建立的时候，会发现websocketclient出现尚未建立连接，会进行登入和订阅消息的发送，导致异常出现
+            <p>修复为：采用同步策略，即所有连接均已经建立后再发送其他请求。采用CountLatchDown类，在OnConnected和OnError中进行倒计数，避免其余所有websocket
+                client一直被阻塞</p>
+        </li>
+        <li>把订阅的命令放在，登入成功后的回调函数处理中；遵循先登入后订阅的原则；【待完成】应该把登入的命令放在connect连接的回调，onOpen函数中，所有流程都同步的话，是不需要进行CountLatchDown同步的</li>
+    </ul>
+</div>
 <script src="js/jquery.min.js"></script>
 <script>
     $('#disconnect').click(function () {
@@ -77,3 +143,18 @@
 </script>
 </body>
 </html>
+
+<!--    <ul class="nav justify-content-end nav-tabs">-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="monitor-detail">Detail</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="monitor-summary">Summary</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link active" href="#">Dev</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <button id="disconnect" class="btn btn-info" type="submit">Login Out</button>-->
+<!--        </li>-->
+<!--    </ul>-->

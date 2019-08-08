@@ -1,9 +1,12 @@
 package com.hb.websocketclientdemo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hb.websocketclientdemo.model.SubscribeInfo;
 import com.hb.websocketclientdemo.model.Topic;
 import com.hb.websocketclientdemo.model.jsonData.*;
 import com.hb.websocketclientdemo.service.WebSocketCallbackService;
+import com.hb.websocketclientdemo.service.WebSocketControlService;
 import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.*;
 import org.joda.time.DateTime;
@@ -24,14 +27,20 @@ public class OnMessageService implements WebSocketCallbackService {
 
     private static final Logger logger = LoggerFactory.getLogger(OnMessageService.class);
 
-    private final int DELAY_MAX = 10;
+    private final static int DELAY_MAX = 10;
 
     @Autowired
     private MultiAccountMonitorData multiAccountData;
 
+    @Autowired
+    private WebSocketControlService wsControlService;
+
+    @Autowired
+    private List<SubscribeInfo> subscribeInfos;
+
     //websocket client onMessage 方法后总转发，根据channel
     @Override
-    public boolean messageDispatch(String msg, String subAccount) {
+    public boolean messageDispatch(String msg, String subAccount, int wsClientNo) {
         if (msg == null || msg.equals(""))
             return false;
         JSONObject msgJson = JSONObject.parseObject(msg);
@@ -39,7 +48,7 @@ public class OnMessageService implements WebSocketCallbackService {
         if (channel == null || channel.equals(""))
             return false;
         if (channel.equals("login_result")) {
-            return loginResultHandler(msgJson);
+            return loginResultHandler(msgJson, wsClientNo);
         }
         if (channel.equals("sub_result")) {
             return subResultHandler(msgJson);
@@ -62,7 +71,7 @@ public class OnMessageService implements WebSocketCallbackService {
         return false;
     }
 
-    private boolean loginResultHandler(JSONObject msgJson) {
+    private boolean loginResultHandler(JSONObject msgJson, int wsClientNo) {
 
         //result 并非 Json 下面会报错
 //            JSONObject result = (JSONObject) msgJson.get("result");
@@ -74,9 +83,11 @@ public class OnMessageService implements WebSocketCallbackService {
         logger.info("loginResultHandler:" + msgJson.get("account") + ":" + msgJson.get("result"));
         if (result.getResult().equals("success")) {
             //do sth to subscribe
+            wsControlService.getWsClients().get(wsClientNo).send(JSON.toJSONString(subscribeInfos.get(wsClientNo)));
+            logger.info("Ws" + wsClientNo + ",account " + msgJson.get("account") + " Subscribing...");
             return true;
         }
-        logger.error("loginResultHandler: Login Failed");
+        logger.error("Ws" + wsClientNo + "account " + msgJson.get("account") + " NOT Subscribe");
         return false;
     }
 
@@ -247,10 +258,13 @@ public class OnMessageService implements WebSocketCallbackService {
         }
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
         //判断当前时间和当前更新时间
-        if (checkUpdateMarketDataValid(marketDataDO.getUpdateTime())) {
+        long delay = getMDDelaySec(marketDataDO.getUpdateTime());
+        instrumentData.setMDDelaySec(delay);
+        if (delay >= DELAY_MAX) {
             instrumentData.setMarketDataValid(false);
             logger.info("DepthMarketDataHandler：市场行情延迟");
-            return false;
+            // 2019 08 05
+//            return false;
         }
 
         //更新 currentPrice，Volume 属于整体市场的
@@ -288,6 +302,16 @@ public class OnMessageService implements WebSocketCallbackService {
         if (secDelta < 0)
             logger.info("行情信息超前" + (-secDelta) + "s，时间错误");
         return (secDelta >= DELAY_MAX);
+    }
+
+    private long getMDDelaySec(String time){
+        DateTime now = new DateTime();
+        DateTime updateTime = new LocalTime(time).toDateTimeToday();
+        //now - updateTime
+        long secDelta = new Duration(updateTime, now).getStandardSeconds();
+        if (secDelta < 0)
+            logger.info("行情信息超前" + (-secDelta) + "s，时间错误");
+        return secDelta;
     }
 
 

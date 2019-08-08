@@ -54,6 +54,8 @@ public class InstrumentData {
     private boolean isCancelNumWarn;
     private boolean isProfitWarn;
     private boolean isNetPositionWarn;
+    private long MDDelaySec;
+
 
 
     public InstrumentData() {
@@ -75,13 +77,22 @@ public class InstrumentData {
         this.initShortPosition = 0;
         this.preSettlementPrice = 0;
         this.isMarketDataInitialized = false;
-        this.isMarketDataInitialized = false;
+        this.isMarketDataValid = false;
         this.feeRate = 0.000024;
 
         this.isCancelRatioWarn = false;
         this.isCancelNumWarn = false;
         this.isProfitWarn = false;
         this.isNetPositionWarn = false;
+        this.MDDelaySec = -1;
+    }
+
+    public long getMDDelaySec() {
+        return MDDelaySec;
+    }
+
+    public void setMDDelaySec(long MDDelaySec) {
+        this.MDDelaySec = MDDelaySec;
     }
 
     public boolean isCancelRatioWarn() {

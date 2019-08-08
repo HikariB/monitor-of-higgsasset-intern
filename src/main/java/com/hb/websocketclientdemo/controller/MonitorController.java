@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -72,6 +70,12 @@ public class MonitorController {
             double profitSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getProfit).sum();
             double profitNonSum = profitSum + orderFeeSum + feeSum;
             boolean profitWarn = (profitSum < AccountSummary.TOTAL_PROFIT_LIMIT);
+            // 全部合同没有延迟，则该账号无延迟，否则有延迟
+            boolean isMarketDataValid = monitorData.getInstruments().values().stream().allMatch(instrumentData -> instrumentData.isMarketDataValid());
+            // 合同中的最大延迟时间
+            Optional<Long> maxDelay = monitorData.getInstruments().values().stream().map(InstrumentData::getMDDelaySec).max(Long::compareTo);
+
+
             summary.setTradeVolumeSum(tradeVolumeSum);
             summary.setVolumeRatio(volumeRatio);
 //            summary.setPositionCost(positionCost);
@@ -80,6 +84,8 @@ public class MonitorController {
             summary.setProfitSum(profitSum);
             summary.setProfitNonNetSum(profitNonSum);
             summary.setTotalProfitWarn(profitWarn);
+            summary.setMarketDataValid(isMarketDataValid);
+            summary.setMaxMDDelaySec(maxDelay.get());
 
             res.add(summary);
         });
