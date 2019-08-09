@@ -128,7 +128,14 @@
             <p>修复为：采用同步策略，即所有连接均已经建立后再发送其他请求。采用CountLatchDown类，在OnConnected和OnError中进行倒计数，避免其余所有websocket
                 client一直被阻塞</p>
         </li>
-        <li>把订阅的命令放在，登入成功后的回调函数处理中；遵循先登入后订阅的原则；【待完成】应该把登入的命令放在connect连接的回调，onOpen函数中，所有流程都同步的话，是不需要进行CountLatchDown同步的</li>
+        <li>
+            把订阅的命令放在，登入成功后的回调函数处理中；遵循先登入后订阅的原则；【已完成】应该把登入的命令放在connect连接的回调，onOpen函数中，所有流程都同步的话，是不需要进行CountLatchDown同步的
+        </li>
+        <li>
+            系统初始运行时，数据结构的建立是发生在instrumentInfo第一次出现的时候，比如各种Map数据，但似乎会出现异常情况即：同时多线程InstrumentInfo回调时，会出现NullpointerExceptio；
+            考虑解决方案是：将容器的初始化放在Subscribe 或者 Login 的回调函数中
+        </li>
+
     </ul>
 </div>
 <script src="js/jquery.min.js"></script>

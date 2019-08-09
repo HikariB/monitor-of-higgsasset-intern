@@ -66,6 +66,9 @@ public class WebSocketService implements WebSocketControlService {
                     public void onOpen(ServerHandshake serverHandshake) {
                         logger.info("WS" + finalI + " onOpen: Connection Established");
                         countDownLatch.countDown();
+                        wsClients.get(finalI).send(JSON.toJSONString(loginInfos.get(finalI)));
+                        logger.info("Ws" + finalI + " Logining...");
+
                     }
 
                     @Override
@@ -85,7 +88,7 @@ public class WebSocketService implements WebSocketControlService {
                     public void onError(Exception e) {
 //                        countDownLatch.countDown();
                         e.printStackTrace();
-                        logger.info("WS" + finalI + " onError: Websocket Connection Failed!");
+                        logger.info("WS" + finalI + " onError: Websocket Exception");
 //                        wsClients.remove(this);
 //                        logger.info("Remove WsClient " + finalI);
                     }
@@ -127,6 +130,8 @@ public class WebSocketService implements WebSocketControlService {
     }
 
 
+
+
     @Override
     public void subscribe() {
         for (int i = 0; i < wsClients.size(); i++) {
@@ -147,24 +152,26 @@ public class WebSocketService implements WebSocketControlService {
     @Override
     public void webSocketStart() {
         this.connect();
-        for (int i = 0; i < wsClients.size(); i++) {
-            try {
-                if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
-                    logger.info("WebSocket Start: Skip Ws"+i);
-                    continue;
-                }
-                wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
-                logger.info("Ws" + i + " Logining...");
-                // 这里是否应该考虑 必须先登入成功以后再进行订阅
-                // 1. 同步策略
-                // 2. 在收到订阅成功的消息后再进行订阅 --
-//                wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
-//                logger.info("Ws" + i + " Subscribing...");
-            } catch (Exception e) {
-                e.printStackTrace();
-                logger.info("Ws" + i + " Start Failed");
-            }
-        }
+        // 考虑到发送信息必须是建立连接后才能发送的，所以需要判断getReadyState
+        // 更简单而符合逻辑的做法是,把登入请求放在OnOpen中,即连接的Callback 函数中
+//        for (int i = 0; i < wsClients.size(); i++) {
+//            try {
+//                if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
+//                    logger.info("WebSocket Start: Skip Ws"+i);
+//                    continue;
+//                }
+//                wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
+//                logger.info("Ws" + i + " Logining...");
+//                // 这里是否应该考虑 必须先登入成功以后再进行订阅
+//                // 1. 同步策略
+//                // 2. 在收到订阅成功的消息后再进行订阅 --
+////                wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
+////                logger.info("Ws" + i + " Subscribing...");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                logger.info("Ws" + i + " Start Failed");
+//            }
+//        }
     }
 
 
