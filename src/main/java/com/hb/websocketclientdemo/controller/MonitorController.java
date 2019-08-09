@@ -5,8 +5,8 @@ import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
 import com.hb.websocketclientdemo.service.WSServerInfoConfig;
 import com.hb.websocketclientdemo.service.impl.WebSocketService;
-import com.hb.websocketclientdemo.service.model.*;
 import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
+import com.hb.websocketclientdemo.service.model.*;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class MonitorController {
@@ -35,7 +34,7 @@ public class MonitorController {
     public List<InstrumentData> getInstrumentInfo(@PathVariable String accountID) {
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(accountID);
         //      试一下Java8 Stream功能
-        return monitorData.getInstruments().values().stream().collect(Collectors.toList());
+        return new ArrayList<>(monitorData.getInstruments().values());
 
 //        List<InstrumentData> res = new LinkedList<>();
 //        Map<String, InstrumentData> instruments = monitorData.getInstruments();
@@ -71,7 +70,7 @@ public class MonitorController {
             double profitNonSum = profitSum + orderFeeSum + feeSum;
             boolean profitWarn = (profitSum < AccountSummary.TOTAL_PROFIT_LIMIT);
             // 全部合同没有延迟，则该账号无延迟，否则有延迟
-            boolean isMarketDataValid = monitorData.getInstruments().values().stream().allMatch(instrumentData -> instrumentData.isMarketDataValid());
+            boolean isMarketDataValid = monitorData.getInstruments().values().stream().allMatch(InstrumentData::isMarketDataValid);
             // 合同中的最大延迟时间
             Optional<Long> maxDelay = monitorData.getInstruments().values().stream().map(InstrumentData::getMDDelaySec).max(Long::compareTo);
 
@@ -110,7 +109,6 @@ public class MonitorController {
     /**
      * connect
      * 先断开，再重连是有问题
-     * @return
      */
     @RequestMapping("/connect")
     public String connect() {

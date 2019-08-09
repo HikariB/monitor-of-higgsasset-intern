@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.net.SocketException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,11 @@ public class WebSocketService implements WebSocketControlService {
                         countDownLatch.countDown();
                         wsClients.get(finalI).send(JSON.toJSONString(loginInfos.get(finalI)));
                         logger.info("Ws" + finalI + " Logining...");
+                        try {
+                            this.getSocket().setKeepAlive(true);
+                        } catch (SocketException e) {
+                            e.printStackTrace();
+                        }
 
                     }
 
@@ -95,6 +101,7 @@ public class WebSocketService implements WebSocketControlService {
                 };
                 webSocketClient.connect();
                 logger.info("WS" + i + " :Connecting...");
+
                 wsClients.add(webSocketClient);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,6 +111,7 @@ public class WebSocketService implements WebSocketControlService {
         try {
             countDownLatch.await(CONNECTION_TIME_OUT, TimeUnit.SECONDS);
             logger.info("WebsocketClient 尚未连接数：" + countDownLatch.getCount());
+
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("Waiting For All WebSocketClient Connection Established , CountDownLatch Error");
@@ -189,8 +197,8 @@ public class WebSocketService implements WebSocketControlService {
 
     @Override
     public boolean isClientNull() {
-        for (int i = 0; i < wsClients.size(); i++) {
-            if (wsClients.get(i) == null)
+        for (WebSocketClient wsClient : wsClients) {
+            if (wsClient == null)
                 return true;
         }
         return false;
@@ -199,8 +207,8 @@ public class WebSocketService implements WebSocketControlService {
 
     @Override
     public boolean isClientOpen() {
-        for (int i = 0; i < wsClients.size(); i++) {
-            if (!wsClients.get(i).getReadyState().equals(WebSocket.READYSTATE.OPEN))
+        for (WebSocketClient wsClient : wsClients) {
+            if (!wsClient.getReadyState().equals(WebSocket.READYSTATE.OPEN))
                 return false;
         }
         return true;
@@ -212,10 +220,9 @@ public class WebSocketService implements WebSocketControlService {
 
     @Override
     public boolean isClosed() {
-        for (int i = 0; i < wsClients.size(); i++) {
-            if (!wsClients.get(i).isClosed())
+        for (WebSocketClient wsClient : wsClients)
+            if (!wsClient.isClosed())
                 return false;
-        }
         return true;
     }
 //        return wsClient.isClosed() && wsClient2.isClosed() && wsClient3.isClosed() && wsClient4.isClosed();

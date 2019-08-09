@@ -40,7 +40,7 @@ public class WSServerInfoConfig {
      * 根据url个数即服务器个数N
      * 产生N个loginInfo，便于后续websocket.send产生Json String
      *
-     * @return
+     * @return 返回登入的LoginInfo 的List
      */
     @Bean
     public List<LoginInfo> getLoginInfos() {
@@ -86,10 +86,8 @@ public class WSServerInfoConfig {
     // merge stock index
     @Bean(name = "AccountList")
     public List<String> getAccountList(){
-        List<String> res = new ArrayList<>();
-        res.addAll(this.subAccountList);
-//        res.addAll(this.siSubAccountList);
-        return res;
+        //        res.addAll(this.siSubAccountList);
+        return new ArrayList<>(this.subAccountList);
     }
 
 

@@ -15,12 +15,10 @@ public class MyUserDetailsService implements UserDetailsService {
 
         //为了快捷测试 直接内部写入
         if(username.equals("admin")){
-            UserInfo userInfo = new UserInfo("admin","123456","ROLE_ADMIN", true,true,true, true);
-            return  userInfo;
+            return new UserInfo("admin","123456","ROLE_ADMIN", true,true,true, true);
         }
         if (username.equals("dev")){
-            UserInfo userInfo = new UserInfo("dev","higgspass","ROLE_DEV",true,true,true,true);
-            return userInfo;
+            return new UserInfo("dev","higgspass","ROLE_DEV",true,true,true,true);
         }
         return null;
     }
