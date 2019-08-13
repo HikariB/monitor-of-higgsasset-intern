@@ -27,7 +27,7 @@ public class OnMessageService implements WebSocketCallbackService {
 
     private static final Logger logger = LoggerFactory.getLogger(OnMessageService.class);
 
-    private final static int DELAY_MAX = 10;
+    private static int DELAY_MAX = 10;
 
     @Autowired
     private MultiAccountMonitorData multiAccountData;
@@ -54,7 +54,7 @@ public class OnMessageService implements WebSocketCallbackService {
             return subResultHandler(msgJson);
         }
         if (channel.equals("instrument_info")) {
-            return instrumentInfoHandler(msgJson, subAccount);
+            return instrumentInfoHandler(msgJson, subAccount,wsClientNo);
         }
         if (channel.equals("init_position")) {
             return initPositionHandler(msgJson, subAccount);
@@ -106,10 +106,10 @@ public class OnMessageService implements WebSocketCallbackService {
         return false;
     }
 
-    private boolean instrumentInfoHandler(JSONObject msgJson, String subAccount) {
+    private boolean instrumentInfoHandler(JSONObject msgJson, String subAccount, int wsClientNo) {
         //检查是否已存在
         if (!multiAccountData.getAccountsInfo().containsKey(subAccount)) {
-            multiAccountData.getAccountsInfo().put(subAccount, new MonitorData());
+            multiAccountData.getAccountsInfo().put(subAccount, new MonitorData(wsClientNo));
         }
         MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
 
@@ -314,5 +314,11 @@ public class OnMessageService implements WebSocketCallbackService {
         return secDelta;
     }
 
+    public static int getDelayMax() {
+        return DELAY_MAX;
+    }
 
+    public static void setDelayMax(int delayMax) {
+        DELAY_MAX = delayMax;
+    }
 }

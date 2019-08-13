@@ -12,9 +12,9 @@ function profitStyle(value, row, index) {
     ];
     if (value >= 0) {
         return {
-            css: {
-                color: 'white'
-            }
+            // css: {
+            //     color: 'white'
+            // }
         }
     } else if (value > -20000 && value < 0) {
         return {

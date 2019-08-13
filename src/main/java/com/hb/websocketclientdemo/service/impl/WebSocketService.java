@@ -1,8 +1,10 @@
 package com.hb.websocketclientdemo.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.hb.websocketclientdemo.model.Info;
 import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
+import com.hb.websocketclientdemo.model.Topic;
 import com.hb.websocketclientdemo.service.WSServerInfoConfig;
 import com.hb.websocketclientdemo.service.WebSocketControlService;
 import org.java_websocket.WebSocket;
@@ -33,6 +35,8 @@ public class WebSocketService implements WebSocketControlService {
 
     private List<WebSocketClient> wsClients = new ArrayList<>();
 
+    private List<WsStatus> wsClientsStatus = new ArrayList<>();
+
     @Autowired
     private List<LoginInfo> loginInfos;
 
@@ -54,32 +58,22 @@ public class WebSocketService implements WebSocketControlService {
 
     @Override
     public void connect() {
-
         countDownLatch = new CountDownLatch(wsInfos.getUrlList().size());
-
 
         //根据URL 生成WSClient
         for (int i = 0; i < wsInfos.getUrlList().size(); i++) {
+            wsClientsStatus.add(i, WsStatus.INIT);
             int finalI = i;
             try {
                 WebSocketClient webSocketClient = new WebSocketClient(new URI(wsInfos.getUrlList().get(finalI))) {
                     @Override
                     public void onOpen(ServerHandshake serverHandshake) {
-                        logger.info("WS" + finalI + " onOpen: Connection Established");
-                        countDownLatch.countDown();
-                        wsClients.get(finalI).send(JSON.toJSONString(loginInfos.get(finalI)));
-                        logger.info("Ws" + finalI + " Logining...");
-                        try {
-                            this.getSocket().setKeepAlive(true);
-                        } catch (SocketException e) {
-                            e.printStackTrace();
-                        }
-
+                        onOpenHandler(finalI);
                     }
 
                     @Override
                     public void onMessage(String s) {
-                        boolean isReadable = onMessageService.messageDispatch(s, accountList.get(finalI),finalI);
+                        boolean isReadable = onMessageService.messageDispatch(s, accountList.get(finalI), finalI);
                         if (!isReadable)
 //                        logger.info("WebSocket_1 =====Unknown Message Received");
                             logger.info("WS" + finalI + " onMessage: Unknown Message Received");
@@ -88,6 +82,9 @@ public class WebSocketService implements WebSocketControlService {
                     @Override
                     public void onClose(int i, String s, boolean b) {
                         logger.info("WS" + finalI + " onClose: Connection Closed");
+                        // 重新连接
+                        wsClientsStatus.set(finalI, WsStatus.CLOSE);
+//                        wsClients.get(finalI).connect();
                     }
 
                     @Override
@@ -95,6 +92,7 @@ public class WebSocketService implements WebSocketControlService {
 //                        countDownLatch.countDown();
                         e.printStackTrace();
                         logger.info("WS" + finalI + " onError: Websocket Exception");
+                        wsClientsStatus.set(finalI, WsStatus.ERROR);
 //                        wsClients.remove(this);
 //                        logger.info("Remove WsClient " + finalI);
                     }
@@ -105,7 +103,7 @@ public class WebSocketService implements WebSocketControlService {
                 wsClients.add(webSocketClient);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.info("Exception Occur when in WSClient init");
+                logger.info("Exception Occur in WSClient Init");
             }
         }
         try {
@@ -125,7 +123,7 @@ public class WebSocketService implements WebSocketControlService {
         for (int i = 0; i < wsClients.size(); i++) {
             try {
                 if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
-                    logger.info("WebSocket Login Skip Ws"+i);
+                    logger.info("WebSocket Login Skip Ws" + i);
                     continue;
                 }
                 wsClients.get(i).send(JSON.toJSONString(loginInfos.get(i)));
@@ -138,14 +136,12 @@ public class WebSocketService implements WebSocketControlService {
     }
 
 
-
-
     @Override
     public void subscribe() {
         for (int i = 0; i < wsClients.size(); i++) {
             try {
                 if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
-                    logger.info("WebSocket Subscribe: Skip Ws"+i);
+                    logger.info("WebSocket Subscribe: Skip Ws" + i);
                     continue;
                 }
                 wsClients.get(i).send(JSON.toJSONString(subscribeInfos.get(i)));
@@ -182,12 +178,80 @@ public class WebSocketService implements WebSocketControlService {
 //        }
     }
 
+    private void onOpenHandler(int clientNo) {
+        logger.info("WS" + clientNo + " onOpen: Connection Established");
+        wsClients.get(clientNo).send(JSON.toJSONString(loginInfos.get(clientNo)));
+        logger.info("Ws" + clientNo + " Logining...");
+        try {
+            wsClients.get(clientNo).getSocket().setKeepAlive(true);
+        } catch (SocketException e) {
+            logger.info("Ws" + clientNo + "setKeepAlive Exception");
+            e.printStackTrace();
+        }
+        wsClientsStatus.set(clientNo, WsStatus.OPEN);
+    }
+
+    // 前端控制台 手动添加 webSocket Client 并启动
+    public void startNewWebSocketClient(String url, String userId, String password, String subAccount) {
+        int clientNo = wsClients.size();
+        LoginInfo loginInfo = new LoginInfo("login", new Info(userId, password));
+        loginInfos.add(loginInfo);
+        accountList.add(clientNo,subAccount);
+        int instrumentListSize =wsInfos.getInstrumentIdList().size();
+        Topic[] topics= new Topic[instrumentListSize];
+        for (int i = 0; i < wsInfos.getInstrumentIdList().size(); i++) {
+            topics[i] = new Topic(subAccount,wsInfos.getInstrumentIdList().get(i));
+        }
+        SubscribeInfo subscribeInfo = new SubscribeInfo("subscribe",topics);
+        subscribeInfos.add(subscribeInfo);
+
+        wsClientsStatus.add(clientNo, WsStatus.INIT);
+        try {
+            WebSocketClient newClient = new WebSocketClient(new URI(url)) {
+                @Override
+                public void onOpen(ServerHandshake serverHandshake) {
+                    onOpenHandler(clientNo);
+                }
+
+                @Override
+                public void onMessage(String s) {
+                    boolean isReadable = onMessageService.messageDispatch(s, accountList.get(clientNo), clientNo);
+                    if (!isReadable)
+//                        logger.info("WebSocket_1 =====Unknown Message Received");
+                        logger.info("WS" + clientNo + " onMessage: Unknown Message Received");
+
+                }
+
+                @Override
+                public void onClose(int i, String s, boolean b) {
+                    logger.info("WS" + clientNo + " onClose: Connection Closed");
+                    // 重新连接
+                    wsClientsStatus.set(clientNo, WsStatus.CLOSE);
+//                    wsClients.get(clientNo).connect();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    e.printStackTrace();
+                    logger.info("WS" + clientNo + " onError: Websocket Exception");
+                    wsClientsStatus.set(clientNo, WsStatus.ERROR);
+                }
+            };
+            newClient.connect();
+            logger.info("WS" + clientNo + " :Connecting...");
+            wsClients.add(newClient);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("Exception Occur in WsClient Init");
+        }
+    }
+
 
     @Override
     public void close() {
         for (int i = 0; i < wsClients.size(); i++) {
             if (wsClients.get(i).getReadyState() != WebSocket.READYSTATE.OPEN) {
-                logger.info("WebSocket Close: Skip Ws"+i);
+                logger.info("WebSocket Close: Skip Ws" + i);
                 continue;
             }
             wsClients.get(i).close();
@@ -232,8 +296,7 @@ public class WebSocketService implements WebSocketControlService {
         return wsClients;
     }
 
-
-
-
-
+    public List<WsStatus> getWsClientsStatus() {
+        return wsClientsStatus;
+    }
 }

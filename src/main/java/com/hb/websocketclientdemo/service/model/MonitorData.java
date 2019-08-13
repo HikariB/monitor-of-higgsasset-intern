@@ -8,7 +8,15 @@ public class MonitorData {
     //string: instrumentId
     private Map<String, InstrumentData> instruments;
     private Map<String,Map<Integer, OrderData>> orders;
+    private int wsClientNum;
 
+
+    public MonitorData(int wsClientNo){
+        instruments = new HashMap<>();
+        orders = new HashMap<>();
+        wsClientNum = wsClientNo;
+//        accountSummary = new AccountSummary();
+    }
 
     public MonitorData(){
         instruments = new HashMap<>();
@@ -32,4 +40,11 @@ public class MonitorData {
         this.orders = orders;
     }
 
+    public int getWsClientNum() {
+        return wsClientNum;
+    }
+
+    public void setWsClientNum(int wsClientNum) {
+        this.wsClientNum = wsClientNum;
+    }
 }

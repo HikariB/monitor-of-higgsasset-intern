@@ -2,7 +2,7 @@ package com.hb.websocketclientdemo.controller.viewObj;
 
 public class AccountSummary {
 
-    public final static double TOTAL_PROFIT_LIMIT = -30000;
+    public static double TOTAL_PROFIT_LIMIT = -30000;
     private String accountId;
     private int tradeVolumeSum;
     private double volumeRatio;
@@ -14,6 +14,14 @@ public class AccountSummary {
     private boolean isTotalProfitWarn;
     private boolean isMarketDataValid;
     private long maxMDDelaySec;
+
+    public static double getTotalProfitLimit() {
+        return TOTAL_PROFIT_LIMIT;
+    }
+
+    public static void setTotalProfitLimit(double totalProfitLimit) {
+        TOTAL_PROFIT_LIMIT = totalProfitLimit;
+    }
 
     public long getMaxMDDelaySec() {
         return maxMDDelaySec;

@@ -41,12 +41,19 @@ function delayWarnStyle(value, row, index) {
         'bg-yellow',
         'bg-red'
     ];
-    if (value > 10){
-        return  {
+    if (value > 10) {
+        return {
             css: {
                 color: 'red'
             }
         }
+    }
+    // -1000 表示初始化
+    // -2000 表示已连接
+    // -3000 表示关闭
+    // -4000 表示Error
+    if (value === -3000 || value === -4000) {
+        return classes[4];
     }
     return {
         css: {
@@ -54,6 +61,14 @@ function delayWarnStyle(value, row, index) {
         }
     }
 
+}
+
+function delayDF(value) {
+    if (value === -1)
+        return "Init..."
+    if (value < -10)
+        return '<span style="color: #85144B">异常</span>';
+    return value;
 }
 
 

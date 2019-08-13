@@ -36,4 +36,7 @@ public class ViewController {
         return "monitor-detail";
     }
 
+    @RequestMapping("/light-summary")
+    public String lightSummaryPage(){ return "light-summary"; }
+
 }

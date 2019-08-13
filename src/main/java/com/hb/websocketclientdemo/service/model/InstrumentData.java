@@ -2,10 +2,10 @@ package com.hb.websocketclientdemo.service.model;
 
 public class InstrumentData {
 
-    public final static double CANCEL_WARN_RATIO = 0.98;
-    public final static double PROFIT_LIMIT = -20000;
-    public final static int ORDER_CANCEL_LIMIT = 390;
-    public final static int NET_POSITION_LIMIT = 5;
+    public static double CANCEL_WARN_RATIO = 0.98;
+    public static double PROFIT_LIMIT = -20000;
+    public static int ORDER_CANCEL_LIMIT = 390;
+    public static int NET_POSITION_LIMIT = 5;
     //instrumentInfo 初始化
     private String instrumentId;
     private int contractMultiplier;
@@ -57,7 +57,6 @@ public class InstrumentData {
     private long MDDelaySec;
 
 
-
     public InstrumentData() {
 
         this.currentPrice = 0;
@@ -96,7 +95,7 @@ public class InstrumentData {
     }
 
     public boolean isCancelRatioWarn() {
-        return (double)(this.orderCancelNum/ORDER_CANCEL_LIMIT) > CANCEL_WARN_RATIO;
+        return (double) (this.orderCancelNum / ORDER_CANCEL_LIMIT) > CANCEL_WARN_RATIO;
     }
 
     public boolean isCancelNumWarn() {
@@ -321,5 +320,37 @@ public class InstrumentData {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public static double getCancelWarnRatio() {
+        return CANCEL_WARN_RATIO;
+    }
+
+    public static void setCancelWarnRatio(double cancelWarnRatio) {
+        CANCEL_WARN_RATIO = cancelWarnRatio;
+    }
+
+    public static double getProfitLimit() {
+        return PROFIT_LIMIT;
+    }
+
+    public static void setProfitLimit(double profitLimit) {
+        PROFIT_LIMIT = profitLimit;
+    }
+
+    public static int getOrderCancelLimit() {
+        return ORDER_CANCEL_LIMIT;
+    }
+
+    public static void setOrderCancelLimit(int orderCancelLimit) {
+        ORDER_CANCEL_LIMIT = orderCancelLimit;
+    }
+
+    public static int getNetPositionLimit() {
+        return NET_POSITION_LIMIT;
+    }
+
+    public static void setNetPositionLimit(int netPositionLimit) {
+        NET_POSITION_LIMIT = netPositionLimit;
     }
 }

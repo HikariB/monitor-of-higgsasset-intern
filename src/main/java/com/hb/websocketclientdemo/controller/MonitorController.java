@@ -4,21 +4,22 @@ import com.hb.websocketclientdemo.controller.viewObj.AccountSummary;
 import com.hb.websocketclientdemo.model.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
 import com.hb.websocketclientdemo.service.WSServerInfoConfig;
+import com.hb.websocketclientdemo.service.impl.OnMessageService;
 import com.hb.websocketclientdemo.service.impl.WebSocketService;
+import com.hb.websocketclientdemo.service.impl.WsStatus;
 import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.*;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 public class MonitorController {
+    public static final String CONTENT_TYPE_FORMED = "application/x-www-form-urlencoded";
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorController.class);
     @Autowired
@@ -62,7 +63,7 @@ public class MonitorController {
             summary.setAccountId(k);
             int tradeVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getTradeVolume).sum();
             int marketVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getVolume).sum();
-            double volumeRatio = (marketVolumeSum == 0) ? 0  : (1.0 * tradeVolumeSum / (marketVolumeSum));
+            double volumeRatio = (marketVolumeSum == 0) ? 0 : (1.0 * tradeVolumeSum / (marketVolumeSum));
 //            double positionCost = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getPositionCost).sum();
             double feeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getFee).sum();
             double orderFeeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getOrderFee).sum();
@@ -72,7 +73,11 @@ public class MonitorController {
             // 全部合同没有延迟，则该账号无延迟，否则有延迟
             boolean isMarketDataValid = monitorData.getInstruments().values().stream().allMatch(InstrumentData::isMarketDataValid);
             // 合同中的最大延迟时间
-            Optional<Long> maxDelay = monitorData.getInstruments().values().stream().map(InstrumentData::getMDDelaySec).max(Long::compareTo);
+            Optional<Long> maxDelayOP = monitorData.getInstruments().values().stream().map(InstrumentData::getMDDelaySec).max(Long::compareTo);
+            int clientNum = monitorData.getWsClientNum();
+            int wsClientStatus = webSocketService.getWsClientsStatus().get(clientNum).getValue();
+
+            long maxDelay = (wsClientStatus == WsStatus.OPEN.getValue() && maxDelayOP.isPresent()) ? maxDelayOP.get() : wsClientStatus;
 
 
             summary.setTradeVolumeSum(tradeVolumeSum);
@@ -84,7 +89,7 @@ public class MonitorController {
             summary.setProfitNonNetSum(profitNonSum);
             summary.setTotalProfitWarn(profitWarn);
             summary.setMarketDataValid(isMarketDataValid);
-            summary.setMaxMDDelaySec(maxDelay.get());
+            summary.setMaxMDDelaySec(maxDelay);
 
             res.add(summary);
         });
@@ -112,15 +117,33 @@ public class MonitorController {
      */
     @RequestMapping("/connect")
     public String connect() {
-        if (webSocketService.isClientNull() ||
-                !webSocketService.isClientOpen()) {
-            webSocketService.getWsClients().clear();
-            webSocketService.webSocketStart();
-        } else {
-            logger.info("remote server has been connected");
-            return "connected";
+//        if (webSocketService.isClientNull() ||
+//                !webSocketService.isClientOpen()) {
+//            webSocketService.getWsClients().clear();
+//            webSocketService.webSocketStart();
+//        } else {
+//            logger.info("remote server has been connected");
+//            return "connected";
+//        }
+//        return "Connecting";
+
+        webSocketService.close();
+        try {
+            Thread.currentThread().sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return "Connecting";
+        multiAccountData.getLoginResult().clear();
+        multiAccountData.setSubResult(new SubResult());
+        multiAccountData.getAccountsInfo().clear();
+
+        webSocketService.getWsClientsStatus().clear();
+        webSocketService.getWsClients().clear();
+
+        webSocketService.connect();
+
+        return "OK";
+
     }
 
     @RequestMapping("/close-all-client")
@@ -154,6 +177,41 @@ public class MonitorController {
         return "error";
 
     }
+
+    //Control Form INDEX
+    @RequestMapping(value = "/set/para", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
+    public String setPara(
+            @RequestParam(name = "totalProfitLimit") Double totalProfitLimit,
+            @RequestParam(name = "profitLimit") Double instrumentProfitLimit,
+            @RequestParam(name = "cancelWarnRatio") Double cancelWarnRatio,
+            @RequestParam(name = "orderCancelLimit") Integer orderCancelLimit,
+            @RequestParam(name = "netPositionLimit") Integer netPositionLimit,
+            @RequestParam(name = "mDDelaySecLimit") Integer maxDelay
+    ) {
+        AccountSummary.setTotalProfitLimit(totalProfitLimit);
+        InstrumentData.setProfitLimit(instrumentProfitLimit);
+        InstrumentData.setCancelWarnRatio(cancelWarnRatio);
+        InstrumentData.setOrderCancelLimit(orderCancelLimit);
+        InstrumentData.setNetPositionLimit(netPositionLimit);
+        OnMessageService.setDelayMax(maxDelay);
+        return "OK";
+    }
+
+    @RequestMapping(value = "/new/wsClient", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
+    public String setPara(
+            @RequestParam(name = "wsUrl") String url,
+            @RequestParam(name = "loginAccount") String loginAccount,
+            @RequestParam(name = "loginPassword") String loginPassword,
+            @RequestParam(name = "subscribeAccount") String subscribeAccount
+    ) {
+        // 重连 之前断开的WebSocket Client，由于之前的MonitorData数据仍存在，将会出现问题
+        // 可能需要清空原先保存的数据
+        if (wsServerInfos.getAccountList().contains(subscribeAccount) || wsServerInfos.getLoginAccountList().contains(loginAccount))
+            return "Connection Already Exist";
+        webSocketService.startNewWebSocketClient(url,loginAccount, loginPassword,subscribeAccount);
+        return "OK";
+    }
+
 
     @RequestMapping("/config-login-bean")
     public List<LoginInfo> getLoginInfo() {
