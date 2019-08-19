@@ -69,6 +69,7 @@ public class WebSocketService implements WebSocketControlService {
                     @Override
                     public void onOpen(ServerHandshake serverHandshake) {
                         onOpenHandler(finalI);
+                        countDownLatch.countDown();
                     }
 
                     @Override
@@ -189,6 +190,7 @@ public class WebSocketService implements WebSocketControlService {
             e.printStackTrace();
         }
         wsClientsStatus.set(clientNo, WsStatus.OPEN);
+
     }
 
     // 前端控制台 手动添加 webSocket Client 并启动

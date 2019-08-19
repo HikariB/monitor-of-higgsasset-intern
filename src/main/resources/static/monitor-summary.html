@@ -17,49 +17,36 @@
             background-color: #0c0c0c;
         }
 
-        .container{
-            max-width: 50%;
-            margin-left: 1%;
-        }
+        /*.container {*/
+        /*    max-width: 60%;*/
+        /*}*/
     </style>
 </head>
 <body>
 
-<nav class="navbar bg-dark navbar-dark">
+<nav class="navbar bg-light navbar-dark">
     <a class="navbar-brand" href="light-summary" id="logo-brand">
         <img src="images/banner1.png" alt="logo" style="width: 30%">
     </a>
 
     <ul class="nav justify-content-end">
-        <!--        <li class="nav-item">-->
-        <!--            <a class="nav-link active" href="monitor-summary">Summary</a>-->
-        <!--        </li>-->
-        <!--        <li class="nav-item">-->
-        <!--            <a class="nav-link" href="monitor-detail">Detail</a>-->
-        <!--        </li>-->
         <li class="nav-item">
-            <button id="disconnect" class="btn btn-info" type="submit">Login Out</button>
+            <button id="disconnect" class="btn btn-secondary" type="submit">Login Out</button>
         </li>
     </ul>
 
 </nav>
-<!--data-show-button-icons="true"-->
-<!--data-search="true"-->
-<!--data-icons="icons"-->
-<!--data-toolbar="#toolbar2"-->
-<!--data-show-columns="true"-->
-<!--data-show-refresh="true"-->
-<!--data-show-fullscreen="true"-->
+
+<!--margin-left: 1%;-->
 <br>
 <div class="container text-center">
+
+    <p class="text-center bg-info" style="color:#ffffff ; margin-bottom: 0%">股指期货</p>
     <table class="table-borderless table-dark table-sm"
            id="summary"
            data-toggle="table"
-
            data-url="summary"
            data-method="get"
-
-
            data-sort-name="accountId"
            data-sort-order="asc"
            data-auto-refresh="true"
@@ -103,10 +90,59 @@
     </table>
 
 </div>
-<br>
-<!--<div class="container text-white">-->
-<!--    <p>当前延迟：</p>-->
-<!--</div>-->
+
+<div class="container text-center">
+
+    <p class="text-center bg-maroon" style="color:#ffffff ; margin-bottom: 0%">商品期货</p>
+    <table class="table-borderless table-dark table-sm"
+           id="summary-commodity"
+           data-toggle="table"
+           data-url="summary"
+           data-method="get"
+           data-sort-name="accountId"
+           data-sort-order="asc"
+           data-auto-refresh="true"
+           data-auto-refresh-status="true"
+           data-auto-refresh-interval="1"
+           data-show-footer="true"
+           data-reorderable-columns="true"
+           data-footer-style="footerStyle"
+           data-response-handler="responseHandler"
+           data-show-header="false">
+        <thead>
+        <tr>
+            <th data-sortable="true" data-field="accountId" data-formatter="accountName"
+                data-footer-formatter="idFormatter" data-width="50"
+                data-cell-style="idCellStyle">账号
+            </th>
+            <th data-sortable="true" data-field="tradeVolumeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">成交量
+            </th>
+            <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent"
+                data-footer-formatter="sumFormatterFraction" data-width="80">市场占比
+            </th>
+            <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">交易盈亏
+            </th>
+            <th data-sortable="true" data-field="feeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">手续费
+            </th>
+            <th data-sortable="true" data-field="orderFeeSum"
+                data-footer-formatter="sumFormatter" data-width="80">报单费
+            </th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter"
+                data-cell-style="profitStyle" data-width="80">净盈亏
+            </th>
+            <th data-field="maxMDDelaySec" data-cell-style="delayWarnStyle" data-formatter="delayDF"
+                data-width="80">
+                延迟(s)
+            </th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
 
 <script src="js/user_js/jquery-3.3.1.js"></script>
 <script src="js/user_js/popper.min.js"></script>
@@ -120,3 +156,20 @@
 <script src="js/user_js/monitor-summary.js"></script>
 </body>
 </html>
+
+
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link active" href="monitor-summary">Summary</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="monitor-detail">Detail</a>-->
+<!--        </li>-->
+
+
+<!--data-show-button-icons="true"-->
+<!--data-search="true"-->
+<!--data-icons="icons"-->
+<!--data-toolbar="#toolbar2"-->
+<!--data-show-columns="true"-->
+<!--data-show-refresh="true"-->
+<!--data-show-fullscreen="true"-->
