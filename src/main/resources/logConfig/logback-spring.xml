@@ -53,6 +53,6 @@
     </logger>
 
     <logger name="org.springframework.scheduling">
-        <level value="info" />
+        <level value="loginInfo" />
     </logger>
 </configuration>

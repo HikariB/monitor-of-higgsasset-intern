@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.service.model;
+package com.hb.websocketclientdemo.service.model.base;
 
 public class OrderData {
     private int orderSysId;

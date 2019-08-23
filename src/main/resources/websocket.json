@@ -1,0 +1,15 @@
+[
+  {
+    "url": "ws://116.62.36.238:9998/",
+    "account": "fz_t",
+    "password": "higgspass",
+    "accountType": 4,
+    "topics": [
+      {
+        "instrumentId": "",
+        "productId": "ni",
+        "productClass": "Futures"
+      }
+    ]
+  }
+]

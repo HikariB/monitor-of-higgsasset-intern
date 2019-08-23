@@ -31,9 +31,6 @@ public class WSClientThread implements InitializingBean {
     @Override
     public void afterPropertiesSet(){
         new Thread(() -> {
-//            webSocketService.connect();
-//            webSocketService.login();
-//            webSocketService.subscribe();
             webSocketService.webSocketStart();
         }).start();
         logger.info("New Thread is running: Websocket Start!");

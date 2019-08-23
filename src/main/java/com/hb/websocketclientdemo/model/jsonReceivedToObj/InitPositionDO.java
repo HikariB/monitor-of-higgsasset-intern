@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.jsonData;
+package com.hb.websocketclientdemo.model.jsonReceivedToObj;
 
 /**
  * 【初始持仓】

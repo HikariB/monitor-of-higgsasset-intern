@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model;
+package com.hb.websocketclientdemo.model.loginAndSubscribe;
 
 public class Topic {
     private String account;

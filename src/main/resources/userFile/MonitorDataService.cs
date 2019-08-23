@@ -50,7 +50,7 @@ namespace HFTR.Common.Services
         public List<Topic> Topics { get; private set; }
         public Dictionary<Topic, bool> SubResults { get; private set; } = new Dictionary<Topic, bool>();
 
-        public MonitorDataService(SocketService socketService, LoginInfo loginInfo, List<Topic> topics, log4net.ILog log)
+        public MonitorDataService(SocketService socketService, LoginInfo loginJson, List<Topic> topics, log4net.ILog log)
         {
             this.socketService = socketService;
             socketService.OpenedEvent += OpenedHandler;
@@ -62,7 +62,7 @@ namespace HFTR.Common.Services
             socketService.TradeRtnEvent += TradeRtnHandler;
             socketService.DepthMarketDataEvent += DepthMarketDataHandler;
 
-            this.LoginInfo = loginInfo;
+            this.LoginInfo = loginJson;
             this.Topics = topics;
             this.log = log;
         }
@@ -115,16 +115,16 @@ namespace HFTR.Common.Services
 
         void InstrumentInfoHandler(object sender, SocketService.MessageEventArgs<Publish<InstrumentInfo>> e)
         {
-            var info = e.Message.Data;
-            Data.Instruments.Add(info.InstrumentId, new InstrumentData());
-            var instrument = Data.Instruments[info.InstrumentId];
-            instrument.InstrumentId = info.InstrumentId;
-            instrument.ContractMultiplier = info.ContractMultiplier;
-            instrument.PreSettlementPrice = info.PreSettlementPrice;
-            instrument.CurrentPrice = info.PreSettlementPrice;
+            var loginInfo = e.Message.Data;
+            Data.Instruments.Add(loginInfo.InstrumentId, new InstrumentData());
+            var instrument = Data.Instruments[loginInfo.InstrumentId];
+            instrument.InstrumentId = loginInfo.InstrumentId;
+            instrument.ContractMultiplier = loginInfo.ContractMultiplier;
+            instrument.PreSettlementPrice = loginInfo.PreSettlementPrice;
+            instrument.CurrentPrice = loginInfo.PreSettlementPrice;
 
-            log.Info("InstrumentInfo\t" + info.InstrumentId + "\tContractMultipler\t" + instrument.ContractMultiplier
-                + "\tPreSettlementPrice\t" + info.PreSettlementPrice);
+            log.Info("InstrumentInfo\t" + loginInfo.InstrumentId + "\tContractMultipler\t" + instrument.ContractMultiplier
+                + "\tPreSettlementPrice\t" + loginInfo.PreSettlementPrice);
         }
 
         void InitPositionHandler(object sender, SocketService.MessageEventArgs<Publish<InitPosition>> e)

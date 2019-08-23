@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.jsonData;
+package com.hb.websocketclientdemo.model.jsonReceivedToObj;
 
 import com.alibaba.fastjson.annotation.JSONField;
 

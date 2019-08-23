@@ -1,4 +1,4 @@
-depth_marketdata
+epth_marketdata
 
 {"channel":"depth_marketdata","data":{"instrument_id":"IF1908","trading_date":"20190709","update_time":"13:35:28","update_millisec":"100","last_price":"3757.000000","adjusted_price":"3757.000000","volume":"1109","turnover":"1253183520.000000","bids":[["3756.000000","3"],["0.000000","0"],["0.000000","0"],["0.000000","0"],["0.000000","0"]],"asks":[["3760.600000","1"],["0.000000","0"],["0.000000","0"],["0.000000","0"],["0.000000","0"]]}}
 
@@ -148,7 +148,7 @@ login
 
 {
     "channel":"login", 
-    "info": {
+    "loginInfo": {
                 "user_id":"gt_w", 
                 "password":"higgspass"
             }

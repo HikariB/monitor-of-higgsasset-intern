@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.service.model;
+package com.hb.websocketclientdemo.service.model.base;
 
 public class InstrumentData {
 
@@ -49,7 +49,7 @@ public class InstrumentData {
     private boolean isMarketDataValid;
     private String updateTime;
 
-    //Info Limit WARNING
+    //LoginInfo Limit WARNING
     private boolean isCancelRatioWarn;
     private boolean isCancelNumWarn;
     private boolean isProfitWarn;

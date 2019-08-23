@@ -1,20 +1,24 @@
 package com.hb.websocketclientdemo.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.hb.websocketclientdemo.controller.viewObj.AccountSummary;
-import com.hb.websocketclientdemo.model.LoginInfo;
-import com.hb.websocketclientdemo.model.SubscribeInfo;
-import com.hb.websocketclientdemo.service.WSServerInfoConfig;
 import com.hb.websocketclientdemo.service.impl.OnMessageService;
 import com.hb.websocketclientdemo.service.impl.WebSocketService;
-import com.hb.websocketclientdemo.service.impl.WsStatus;
-import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
-import com.hb.websocketclientdemo.service.model.*;
+import com.hb.websocketclientdemo.service.model.AccountType;
+import com.hb.websocketclientdemo.service.model.WsStatus;
+import com.hb.websocketclientdemo.service.model.base.InstrumentData;
+import com.hb.websocketclientdemo.service.model.base.OrderData;
+import com.hb.websocketclientdemo.service.model.core.AccountData;
+import com.hb.websocketclientdemo.service.model.core.WebSocketConnInfo;
+import org.apache.commons.io.FileUtils;
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.*;
 
 @RestController
@@ -22,161 +26,183 @@ public class MonitorController {
     public static final String CONTENT_TYPE_FORMED = "application/x-www-form-urlencoded";
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorController.class);
+
     @Autowired
-    private MultiAccountMonitorData multiAccountData;
+    private Map<String, AccountData> allData;
+
+    @Autowired
+    private List<WebSocketConnInfo> connInfos;
+
+    @Autowired
+    private Map<String, WebSocketConnInfo> connInfoMap;
 
     @Autowired
     private WebSocketService webSocketService;
 
-    @Autowired
-    private WSServerInfoConfig wsServerInfos;
 
-    @RequestMapping("/instruments/{accountID}")
-    public List<InstrumentData> getInstrumentInfo(@PathVariable String accountID) {
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(accountID);
-        //      试一下Java8 Stream功能
-        return new ArrayList<>(monitorData.getInstruments().values());
-
-//        List<InstrumentData> res = new LinkedList<>();
-//        Map<String, InstrumentData> instruments = monitorData.getInstruments();
-//        instruments.forEach((k, v) -> res.add(v));
-
-//        return res;
+    @RequestMapping("/clients/lr")
+    public Map<String, Boolean> getLoginResult() {
+        Map<String, Boolean> loginResult = new HashMap<>();
+        for (WebSocketConnInfo connInfo : connInfos) {
+            loginResult.put(connInfo.getAccount(), connInfo.isLogin());
+        }
+        return loginResult;
     }
 
-    @RequestMapping("/orders/{accountID}")
-    public List<OrderData> getOrderData(@PathVariable String accountID) {
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(accountID);
-        List<OrderData> res = new LinkedList<>();
-        Map<String, Map<Integer, OrderData>> orderMap = monitorData.getOrders();
-        orderMap.forEach((k, orders) -> orders.forEach((orderId, orderData) -> {
-            res.add(orderData);
-        }));
-        return res;
-    }
-
-    @RequestMapping("/summary")
-    public List<AccountSummary> getSummary() {
-        List<AccountSummary> res = new LinkedList<>();
-        multiAccountData.getAccountsInfo().forEach((k, monitorData) -> {
-            AccountSummary summary = new AccountSummary();
-            summary.setAccountId(k);
-            int tradeVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getTradeVolume).sum();
-            int marketVolumeSum = monitorData.getInstruments().values().stream().mapToInt(InstrumentData::getVolume).sum();
-            double volumeRatio = (marketVolumeSum == 0) ? 0 : (1.0 * tradeVolumeSum / (marketVolumeSum));
-//            double positionCost = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getPositionCost).sum();
-            double feeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getFee).sum();
-            double orderFeeSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getOrderFee).sum();
-            double profitSum = monitorData.getInstruments().values().stream().mapToDouble(InstrumentData::getProfit).sum();
-            double profitNonSum = profitSum + orderFeeSum + feeSum;
-            boolean profitWarn = (profitSum < AccountSummary.TOTAL_PROFIT_LIMIT);
-            // 全部合同没有延迟，则该账号无延迟，否则有延迟
-            boolean isMarketDataValid = monitorData.getInstruments().values().stream().allMatch(InstrumentData::isMarketDataValid);
-            // 合同中的最大延迟时间
-            Optional<Long> maxDelayOP = monitorData.getInstruments().values().stream().map(InstrumentData::getMDDelaySec).max(Long::compareTo);
-            int clientNum = monitorData.getWsClientNum();
-            int wsClientStatus = webSocketService.getWsClientsStatus().get(clientNum).getValue();
-
-            long maxDelay = (wsClientStatus == WsStatus.OPEN.getValue() && maxDelayOP.isPresent()) ? maxDelayOP.get() : wsClientStatus;
-
-
-            summary.setTradeVolumeSum(tradeVolumeSum);
-            summary.setVolumeRatio(volumeRatio);
-//            summary.setPositionCost(positionCost);
-            summary.setFeeSum(feeSum);
-            summary.setOrderFeeSum(orderFeeSum);
-            summary.setProfitSum(profitSum);
-            summary.setProfitNonNetSum(profitNonSum);
-            summary.setTotalProfitWarn(profitWarn);
-            summary.setMarketDataValid(isMarketDataValid);
-            summary.setMaxMDDelaySec(maxDelay);
-
-            res.add(summary);
-        });
-        return res;
-    }
-
-    @RequestMapping("/login-result")
-    public List<LoginResult> getLoginResult() {
-        return multiAccountData.getLoginResult();
-    }
-
-    @RequestMapping("/sub-result")
-    public SubResult getSubResult() {
-        return multiAccountData.getSubResult();
-    }
-
-    @RequestMapping("monitor-data/{accountId}")
-    public MonitorData getMonitorData(@PathVariable String accountId) {
-        return multiAccountData.getAccountsInfo().get(accountId);
+    @RequestMapping("/clients/sr")
+    public Map<String, List<String>> getSubResult() {
+        Map<String, List<String>> subResult = new HashMap<>();
+        for (WebSocketConnInfo connInfo : connInfos) {
+            subResult.put(connInfo.getAccount(), connInfo.getSubscribedInstrument());
+        }
+        return subResult;
     }
 
     /**
      * connect
      * 先断开，再重连是有问题
      */
-    @RequestMapping("/connect")
+    @RequestMapping("/clients/reconnect")
     public String connect() {
-//        if (webSocketService.isClientNull() ||
-//                !webSocketService.isClientOpen()) {
-//            webSocketService.getWsClients().clear();
-//            webSocketService.webSocketStart();
-//        } else {
-//            logger.info("remote server has been connected");
-//            return "connected";
-//        }
-//        return "Connecting";
-
-        webSocketService.close();
-        try {
-            Thread.currentThread().sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        multiAccountData.getLoginResult().clear();
-        multiAccountData.setSubResult(new SubResult());
-        multiAccountData.getAccountsInfo().clear();
-
-        webSocketService.getWsClientsStatus().clear();
-        webSocketService.getWsClients().clear();
-
-        webSocketService.connect();
-
-        return "OK";
-
+        // 重连
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                webSocketService.shutdown();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                for (WebSocketConnInfo connInfo : connInfos) {
+                    connInfo.setStatus(WsStatus.INIT);
+                    connInfo.setClient(null);
+                    connInfo.setLogin(false);
+                    connInfo.setSubscribedInstrument(null);
+                }
+                allData.clear();
+                webSocketService.connect(connInfos);
+            }
+        }).start();
+        logger.info("ReConnect Request Received...");
+        return "Wait a moment...To be restart";
     }
 
-    @RequestMapping("/close-all-client")
+    @RequestMapping("/clients/shutdown")
     public String close() {
-        if (webSocketService.isClientNull()) {
-            return "connection not established";
+        for (WebSocketConnInfo connInfo : connInfos) {
+            if (connInfo.getClient() == null || !connInfo.getClient().getReadyState().equals(WebSocket.READYSTATE.OPEN)) {
+                return "Not Initialized or Already Closed";
+            }
         }
-        if (webSocketService.isClosed())
-            return "closed ";
-        else {
-            webSocketService.close();
-        }
-        return "waiting to be closed";
+        webSocketService.shutdown();
+        return "Wait a moment...To be shutdown";
     }
 
-    @RequestMapping("/client-state/{clientId}")
-    public String state(@PathVariable int clientId) {
-        if (webSocketService.getWsClients().get(clientId) == null) {
-            return "connection not established";
-        }
-        if (webSocketService.getWsClients().get(clientId).getReadyState().equals(WebSocket.READYSTATE.OPEN))
-            return "connected";
-        if (webSocketService.getWsClients().get(clientId).getReadyState().equals(WebSocket.READYSTATE.CLOSED))
-            return "closed";
-        if (webSocketService.getWsClients().get(clientId).getReadyState().equals(WebSocket.READYSTATE.CONNECTING))
-            return "connecting";
-        if (webSocketService.getWsClients().get(clientId).getReadyState().equals(WebSocket.READYSTATE.CLOSING))
-            return "closing";
-        if (webSocketService.getWsClients().get(clientId).getReadyState().equals(WebSocket.READYSTATE.NOT_YET_CONNECTED))
-            return "not_yet_connected";
-        return "error";
+    @RequestMapping("clients/add")
+    public String addClient() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+//                    D:\JavaCode\websocket-client-demo-git\src\main\resources\application.properties
+                    File file = new File("src/main/resources/newConfig.Json");
+                    logger.info("Update JsonConfigFile to: " + JSON.toJSONString(connInfos));
+                    FileUtils.writeStringToFile(file, JSON.toJSONString(connInfos), Charset.forName("UTF-8"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
+
+        return "wait to";
     }
+
+
+    /**
+     * Query Data
+     */
+
+    @RequestMapping("/data/{accountId}")
+    public AccountData getMonitorData(@PathVariable String accountId) {
+        return allData.get(accountId);
+    }
+
+    @RequestMapping("/data/all")
+    public String queryAll() {
+        return JSON.toJSONString(allData);
+    }
+
+    @RequestMapping("/data/sif/summary")
+    public List<AccountSummary> getSifSummary() {
+        List<AccountSummary> res = new ArrayList<>();
+        allData.forEach((k, accountData) -> {
+            if (accountData.getAccountType().equals(AccountType.STOCK_INDEX_FT)) {
+                res.add(getAccountSummaryFromAccountData(accountData));
+            }
+        });
+        return res;
+    }
+
+
+    @RequestMapping("/data/cf/summary")
+    public List<AccountSummary> getCfSummary() {
+        List<AccountSummary> res = new ArrayList<>();
+        allData.forEach((k, accountData) -> {
+            if (accountData.getAccountType().equals(AccountType.COMMODITY_FT)) {
+                res.add(getAccountSummaryFromAccountData(accountData));
+            }
+        });
+        return res;
+    }
+
+    @RequestMapping("/data/bf/summary")
+    public List<AccountSummary> getBfSummary() {
+        List<AccountSummary> res = new ArrayList<>();
+        allData.forEach((k, accountData) -> {
+            if (accountData.getAccountType().equals(AccountType.BOND_FT)) {
+                res.add(getAccountSummaryFromAccountData(accountData));
+            }
+        });
+        return res;
+    }
+
+    @RequestMapping("/data/opt/summary")
+    public List<AccountSummary> getOptSummary() {
+        List<AccountSummary> res = new ArrayList<>();
+        allData.forEach((k, accountData) -> {
+            if (accountData.getAccountType().equals(AccountType.OPT)) {
+                res.add(getAccountSummaryFromAccountData(accountData));
+            }
+        });
+        return res;
+    }
+
+
+    // monitor-detail 请求的信息
+    @RequestMapping("/instruments/{accountID}")
+    public List<InstrumentData> getInstrumentInfo(@PathVariable String accountID) {
+        AccountData accountData = allData.get(accountID);
+        if (accountData == null)
+            return null;
+        return new ArrayList<>(accountData.getInstruments().values());
+    }
+
+    @RequestMapping("/orders/{accountID}")
+    public List<OrderData> getOrderData(@PathVariable String accountID) {
+        AccountData accountData = allData.get(accountID);
+        if (accountData == null)
+            return null;
+        List<OrderData> res = new ArrayList<>();
+        Map<String, Map<Integer, OrderData>> orderMap = accountData.getOrders();
+        orderMap.forEach((k, orders) ->
+                orders.forEach((orderId, orderData) -> {
+                    res.add(orderData);
+                }));
+        return res;
+    }
+
 
     //Control Form INDEX
     @RequestMapping(value = "/set/para", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
@@ -197,35 +223,53 @@ public class MonitorController {
         return "OK";
     }
 
-    @RequestMapping(value = "/new/wsClient", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
-    public String setPara(
-            @RequestParam(name = "wsUrl") String url,
-            @RequestParam(name = "loginAccount") String loginAccount,
-            @RequestParam(name = "loginPassword") String loginPassword,
-            @RequestParam(name = "subscribeAccount") String subscribeAccount
-    ) {
-        // 重连 之前断开的WebSocket Client，由于之前的MonitorData数据仍存在，将会出现问题
-        // 可能需要清空原先保存的数据
-        if (wsServerInfos.getAccountList().contains(subscribeAccount) || wsServerInfos.getLoginAccountList().contains(loginAccount))
-            return "Connection Already Exist";
-        webSocketService.startNewWebSocketClient(url,loginAccount, loginPassword,subscribeAccount);
-        return "OK";
-    }
+//    @RequestMapping(value = "/new/wsClient", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
+//    public String setPara(
+//            @RequestParam(name = "wsUrl") String url,
+//            @RequestParam(name = "loginAccount") String loginAccount,
+//            @RequestParam(name = "loginPassword") String loginPassword,
+//            @RequestParam(name = "subscribeAccount") String subscribeAccount
+//    ) {
+//        // 重连 之前断开的WebSocket Client，由于之前的MonitorData数据仍存在，将会出现问题
+//        // 可能需要清空原先保存的数据
+////        if (wsServerInfos.getAccountList().contains(subscribeAccount) || wsServerInfos.getLoginAccountList().contains(loginAccount))
+////            return "Connection Already Exist";
+////        webSocketService.startNewWebSocketClient(url, loginAccount, loginPassword, subscribeAccount);
+////        return "OK";
+//    }
 
 
-    @RequestMapping("/config-login-bean")
-    public List<LoginInfo> getLoginInfo() {
-        return wsServerInfos.getLoginInfos();
-    }
+    private AccountSummary getAccountSummaryFromAccountData(AccountData accountData) {
 
-    @RequestMapping("/config-subscribe-bean")
-    public List<SubscribeInfo> getSubscribeInfo() {
-        return wsServerInfos.getSubscribeInfos();
-    }
+        AccountSummary summary = new AccountSummary();
+        summary.setAccountId(accountData.getConnInfo().getAccount());
+        int tradeVolumeSum = accountData.getInstruments().values().stream().mapToInt(InstrumentData::getTradeVolume).sum();
+        int marketVolumeSum = accountData.getInstruments().values().stream().mapToInt(InstrumentData::getVolume).sum();
+        double volumeRatio = (marketVolumeSum == 0) ? 0 : (1.0 * tradeVolumeSum / (marketVolumeSum));
+//            double positionCost = accountData.getInstruments().values().stream().mapToDouble(InstrumentData::getPositionCost).sum();
+        double feeSum = accountData.getInstruments().values().stream().mapToDouble(InstrumentData::getFee).sum();
+        double orderFeeSum = accountData.getInstruments().values().stream().mapToDouble(InstrumentData::getOrderFee).sum();
+        double profitSum = accountData.getInstruments().values().stream().mapToDouble(InstrumentData::getProfit).sum();
+        double profitNonSum = profitSum + orderFeeSum + feeSum;
+        boolean profitWarn = (profitSum < AccountSummary.TOTAL_PROFIT_LIMIT);
+        // 全部合同没有延迟，则该账号无延迟，否则有延迟
+        boolean isMarketDataValid = accountData.getInstruments().values().stream().allMatch(InstrumentData::isMarketDataValid);
+        // 合同中的最大延迟时间
+        Optional<Long> maxDelayOP = accountData.getInstruments().values().stream().map(InstrumentData::getMDDelaySec).max(Long::compareTo);
+        WsStatus clientStatus = accountData.getConnInfo().getStatus();
+        long maxDelay = (clientStatus == WsStatus.SUBSCRIBED && maxDelayOP.isPresent()) ? maxDelayOP.get() : clientStatus.getValue();
 
-    @RequestMapping("/all-data")
-    public MultiAccountMonitorData getAllData() {
-        return multiAccountData;
+        summary.setTradeVolumeSum(tradeVolumeSum);
+        summary.setVolumeRatio(volumeRatio);
+//            summary.setPositionCost(positionCost);
+        summary.setFeeSum(feeSum);
+        summary.setOrderFeeSum(orderFeeSum);
+        summary.setProfitSum(profitSum);
+        summary.setProfitNonNetSum(profitNonSum);
+        summary.setTotalProfitWarn(profitWarn);
+        summary.setMarketDataValid(isMarketDataValid);
+        summary.setMaxMDDelaySec(maxDelay);
+        return summary;
     }
 
 }

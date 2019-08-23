@@ -1,16 +1,16 @@
-package com.hb.websocketclientdemo.model;
+package com.hb.websocketclientdemo.model.loginAndSubscribe;
 
-public class Info {
+public class LoginInfo {
 
     private String user_id;
 
     private String password;
 
-    public Info(){
+    public LoginInfo(){
         
     }
 
-    public Info(String user_id, String password) {
+    public LoginInfo(String user_id, String password) {
         this.user_id = user_id;
         this.password = password;
     }

@@ -1,4 +1,4 @@
-package com.hb.websocketclientdemo.model.jsonData;
+package com.hb.websocketclientdemo.model.jsonReceivedToObj;
 
 /**【成交回报】
  * 用户名	user_id

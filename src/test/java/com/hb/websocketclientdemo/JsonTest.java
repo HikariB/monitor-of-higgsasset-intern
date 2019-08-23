@@ -1,42 +1,34 @@
 package com.hb.websocketclientdemo;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hb.websocketclientdemo.model.Info;
-import com.hb.websocketclientdemo.model.LoginInfo;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
-import com.hb.websocketclientdemo.model.Topic;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.HttpMessageConverter;
 
 public class JsonTest {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonTest.class);
 
     @Autowired
-    private static Info info;
+    private static LoginInfo loginInfo;
 
 
     public static void main(String[] args) throws JsonProcessingException {
 
         ObjectMapper mapper = new ObjectMapper();
-//        Info info = new Info("higgs1","higgspass");
-//        LoginInfo loginInfo = new LoginInfo("login",info);
+//        LoginInfo loginInfo = new LoginInfo("higgs1","higgspass");
+//        LoginJson loginInfo = new LoginJson("login",loginInfo);
 //
 //
 //
 //        String str = mapper.writeValueAsString(loginInfo);
 //        System.out.println(str);
-//        String str1 = mapper.writeValueAsString(info);
+//        String str1 = mapper.writeValueAsString(loginInfo);
 //        System.out.println(str1);
 
 

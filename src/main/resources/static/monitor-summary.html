@@ -25,7 +25,7 @@
 <body>
 
 <nav class="navbar bg-light navbar-dark">
-    <a class="navbar-brand" href="light-summary" id="logo-brand">
+    <a class="navbar-brand" href="#" id="logo-brand">
         <img src="images/banner1.png" alt="logo" style="width: 30%">
     </a>
 
@@ -43,9 +43,9 @@
 
     <p class="text-center bg-info" style="color:#ffffff ; margin-bottom: 0%">股指期货</p>
     <table class="table-borderless table-dark table-sm"
-           id="summary"
+           id="summary-sif"
            data-toggle="table"
-           data-url="summary"
+           data-url="data/sif/summary"
            data-method="get"
            data-sort-name="accountId"
            data-sort-order="asc"
@@ -88,16 +88,14 @@
         </tr>
         </thead>
     </table>
-
 </div>
 
 <div class="container text-center">
-
     <p class="text-center bg-maroon" style="color:#ffffff ; margin-bottom: 0%">商品期货</p>
     <table class="table-borderless table-dark table-sm"
-           id="summary-commodity"
+           id="summary-cf"
            data-toggle="table"
-           data-url="summary"
+           data-url="data/cf/summary"
            data-method="get"
            data-sort-name="accountId"
            data-sort-order="asc"
@@ -141,8 +139,110 @@
         </tr>
         </thead>
     </table>
-
 </div>
+
+<div class="container text-center">
+    <p class="text-center bg-yellow" style="color:#6c757d ; margin-bottom: 0%">国债期货</p>
+    <table class="table-borderless table-dark table-sm"
+           id="summary-bf"
+           data-toggle="table"
+           data-url="data/bf/summary"
+           data-method="get"
+           data-sort-name="accountId"
+           data-sort-order="asc"
+           data-auto-refresh="true"
+           data-auto-refresh-status="true"
+           data-auto-refresh-interval="1"
+           data-show-footer="true"
+           data-reorderable-columns="true"
+           data-footer-style="footerStyle"
+           data-response-handler="responseHandler"
+           data-show-header="false">
+        <thead>
+        <tr>
+            <th data-sortable="true" data-field="accountId" data-formatter="accountName"
+                data-footer-formatter="idFormatter" data-width="50"
+                data-cell-style="idCellStyle">账号
+            </th>
+            <th data-sortable="true" data-field="tradeVolumeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">成交量
+            </th>
+            <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent"
+                data-footer-formatter="sumFormatterFraction" data-width="80">市场占比
+            </th>
+            <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">交易盈亏
+            </th>
+            <th data-sortable="true" data-field="feeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">手续费
+            </th>
+            <th data-sortable="true" data-field="orderFeeSum"
+                data-footer-formatter="sumFormatter" data-width="80">报单费
+            </th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter"
+                data-cell-style="profitStyle" data-width="80">净盈亏
+            </th>
+            <th data-field="maxMDDelaySec" data-cell-style="delayWarnStyle" data-formatter="delayDF"
+                data-width="80">
+                延迟(s)
+            </th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div class="container text-center">
+    <p class="text-center bg-olive" style="color:#ffffff ; margin-bottom: 0%">期  权</p>
+    <table class="table-borderless table-dark table-sm"
+           id="summary-option"
+           data-toggle="table"
+           data-url="data/opt/summary"
+           data-method="get"
+           data-sort-name="accountId"
+           data-sort-order="asc"
+           data-auto-refresh="true"
+           data-auto-refresh-status="true"
+           data-auto-refresh-interval="1"
+           data-show-footer="true"
+           data-reorderable-columns="true"
+           data-footer-style="footerStyle"
+           data-response-handler="responseHandler"
+           data-show-header="false">
+        <thead>
+        <tr>
+            <th data-sortable="true" data-field="accountId" data-formatter="accountName"
+                data-footer-formatter="idFormatter" data-width="50"
+                data-cell-style="idCellStyle">账号
+            </th>
+            <th data-sortable="true" data-field="tradeVolumeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">成交量
+            </th>
+            <th data-sortable="true" data-field="volumeRatio" data-formatter="toPercent"
+                data-footer-formatter="sumFormatterFraction" data-width="80">市场占比
+            </th>
+            <th data-sortable="true" data-field="profitNonNetSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">交易盈亏
+            </th>
+            <th data-sortable="true" data-field="feeSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter" data-width="80">手续费
+            </th>
+            <th data-sortable="true" data-field="orderFeeSum"
+                data-footer-formatter="sumFormatter" data-width="80">报单费
+            </th>
+            <th data-sortable="true" data-field="profitSum" data-formatter="formatCurrency"
+                data-footer-formatter="sumFormatter"
+                data-cell-style="profitStyle" data-width="80">净盈亏
+            </th>
+            <th data-field="maxMDDelaySec" data-cell-style="delayWarnStyle" data-formatter="delayDF"
+                data-width="80">
+                延迟(s)
+            </th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
 
 <script src="js/user_js/jquery-3.3.1.js"></script>
 <script src="js/user_js/popper.min.js"></script>
@@ -156,20 +256,3 @@
 <script src="js/user_js/monitor-summary.js"></script>
 </body>
 </html>
-
-
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link active" href="monitor-summary">Summary</a>-->
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link" href="monitor-detail">Detail</a>-->
-<!--        </li>-->
-
-
-<!--data-show-button-icons="true"-->
-<!--data-search="true"-->
-<!--data-icons="icons"-->
-<!--data-toolbar="#toolbar2"-->
-<!--data-show-columns="true"-->
-<!--data-show-refresh="true"-->
-<!--data-show-fullscreen="true"-->

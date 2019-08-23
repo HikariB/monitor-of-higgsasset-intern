@@ -1,10 +1,10 @@
 package com.hb.websocketclientdemo.service;
 
 
-import com.hb.websocketclientdemo.model.Info;
-import com.hb.websocketclientdemo.model.LoginInfo;
+import com.hb.websocketclientdemo.model.LoginJson;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.LoginInfo;
 import com.hb.websocketclientdemo.model.SubscribeInfo;
-import com.hb.websocketclientdemo.model.Topic;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.Topic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -86,8 +86,8 @@ public class WebSocketConfiguration {
 
 
     @Bean(name = "LoginInfoWS1")
-    public LoginInfo getLoginInfo() {
-        return new LoginInfo("login", new Info(loginAccount, password));
+    public LoginJson getLoginInfo() {
+        return new LoginJson("login", new LoginInfo(loginAccount, password));
     }
 
     @SuppressWarnings("all")
@@ -110,8 +110,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean(name = "LoginInfoWS2")
-    public LoginInfo getLoginInfoWS2(){
-        return new LoginInfo("login", new Info(loginAccount2, password));
+    public LoginJson getLoginInfoWS2(){
+        return new LoginJson("login", new LoginInfo(loginAccount2, password));
     }
 
     @SuppressWarnings("all")
@@ -134,8 +134,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean(name = "LoginInfoWS3")
-    public LoginInfo getLoginInfoWS3(){
-        return new LoginInfo("login", new Info(loginAccount3, password));
+    public LoginJson getLoginInfoWS3(){
+        return new LoginJson("login", new LoginInfo(loginAccount3, password));
     }
 
     @SuppressWarnings("all")
@@ -158,8 +158,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean(name = "LoginInfoWS4")
-    public LoginInfo getLoginInfoWS4(){
-        return new LoginInfo("login", new Info(loginAccount4, password));
+    public LoginJson getLoginInfoWS4(){
+        return new LoginJson("login", new LoginInfo(loginAccount4, password));
     }
 
     @SuppressWarnings("all")
@@ -182,8 +182,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean(name = "LoginInfoWS5")
-    public LoginInfo getLoginInfoWS5(){
-        return new LoginInfo("login", new Info(loginAccount5, password));
+    public LoginJson getLoginInfoWS5(){
+        return new LoginJson("login", new LoginInfo(loginAccount5, password));
     }
 
     @SuppressWarnings("all")
@@ -206,8 +206,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean(name = "LoginInfoWS6")
-    public LoginInfo getLoginInfoWS6(){
-        return new LoginInfo("login", new Info(loginAccount6, password));
+    public LoginJson getLoginInfoWS6(){
+        return new LoginJson("login", new LoginInfo(loginAccount6, password));
     }
 
     @SuppressWarnings("all")
@@ -230,8 +230,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean(name = "LoginInfoWS7")
-    public LoginInfo getLoginInfoWS7(){
-        return new LoginInfo("login", new Info(loginAccount7, password));
+    public LoginJson getLoginInfoWS7(){
+        return new LoginJson("login", new LoginInfo(loginAccount7, password));
     }
 
     @SuppressWarnings("all")

@@ -1,18 +1,11 @@
 package com.hb.websocketclientdemo.service;
 
-import org.java_websocket.client.WebSocketClient;
+import com.hb.websocketclientdemo.service.model.core.WebSocketConnInfo;
 
 import java.util.List;
 
 public interface WebSocketControlService {
-    void connect();
-    void login();
-    void subscribe();
+    void connect(List<WebSocketConnInfo> connInfos);
     void webSocketStart();
-    void close();
-    boolean isClientNull();
-    boolean isClientOpen();
-    boolean isClosed();
-    List<WebSocketClient> getWsClients();
-
+    void shutdown();
 }

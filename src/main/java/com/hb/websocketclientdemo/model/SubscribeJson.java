@@ -1,12 +1,13 @@
 package com.hb.websocketclientdemo.model;
 
-import com.hb.websocketclientdemo.model.loginAndSubscribe.Topic;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.NewTopic;
 
-public class SubscribeInfo {
+public class SubscribeJson {
     private String channel;
-    private Topic[] topics;
 
-    public SubscribeInfo(String channel, Topic[] topics) {
+    private NewTopic[] topics;
+
+    public SubscribeJson(String channel, NewTopic[] topics) {
         this.channel = channel;
         this.topics = topics;
     }
@@ -19,11 +20,11 @@ public class SubscribeInfo {
         this.channel = channel;
     }
 
-    public Topic[] getTopics() {
+    public NewTopic[] getTopics() {
         return topics;
     }
 
-    public void setTopics(Topic[] topics) {
+    public void setTopics(NewTopic[] topics) {
         this.topics = topics;
     }
 }

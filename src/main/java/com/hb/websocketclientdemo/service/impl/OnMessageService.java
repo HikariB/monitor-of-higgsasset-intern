@@ -2,13 +2,15 @@ package com.hb.websocketclientdemo.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.hb.websocketclientdemo.model.SubscribeInfo;
-import com.hb.websocketclientdemo.model.Topic;
-import com.hb.websocketclientdemo.model.jsonData.*;
+import com.hb.websocketclientdemo.model.SubscribeJson;
+import com.hb.websocketclientdemo.model.jsonReceivedToObj.*;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.NewTopic;
 import com.hb.websocketclientdemo.service.WebSocketCallbackService;
-import com.hb.websocketclientdemo.service.WebSocketControlService;
-import com.hb.websocketclientdemo.service.model.Core.MultiAccountMonitorData;
 import com.hb.websocketclientdemo.service.model.*;
+import com.hb.websocketclientdemo.service.model.base.InstrumentData;
+import com.hb.websocketclientdemo.service.model.base.OrderData;
+import com.hb.websocketclientdemo.service.model.core.AccountData;
+import com.hb.websocketclientdemo.service.model.core.WebSocketConnInfo;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;
@@ -18,8 +20,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -30,120 +32,100 @@ public class OnMessageService implements WebSocketCallbackService {
     private static int DELAY_MAX = 10;
 
     @Autowired
-    private MultiAccountMonitorData multiAccountData;
+    private Map<String, AccountData> allData;
 
-    @Autowired
-    private WebSocketControlService wsControlService;
-
-    @Autowired
-    private List<SubscribeInfo> subscribeInfos;
-
-    //websocket client onMessage 方法后总转发，根据channel
+    // onMessage的调用，根据channel转发
     @Override
-    public boolean messageDispatch(String msg, String subAccount, int wsClientNo) {
-        if (msg == null || msg.equals(""))
-            return false;
+    public boolean messageDispatch(String msg, WebSocketConnInfo connInfo) {
+        if (msg == null || msg.equals("")) return false;
         JSONObject msgJson = JSONObject.parseObject(msg);
         String channel = (String) msgJson.get("channel");
-        if (channel == null || channel.equals(""))
-            return false;
-        if (channel.equals("login_result")) {
-            return loginResultHandler(msgJson, wsClientNo);
-        }
-        if (channel.equals("sub_result")) {
-            return subResultHandler(msgJson);
-        }
-        if (channel.equals("instrument_info")) {
-            return instrumentInfoHandler(msgJson, subAccount,wsClientNo);
-        }
-        if (channel.equals("init_position")) {
-            return initPositionHandler(msgJson, subAccount);
-        }
-        if (channel.equals("order_rtn")) {
-            return orderRtnHandler(msgJson);
-        }
-        if (channel.equals("trade_rtn")) {
-            return tradeRtnHandler(msgJson);
-        }
-        if (channel.equals("depth_marketdata")) {
-            return depthMarketDataHandler(msgJson, subAccount);
-        }
+
+        if (channel == null || channel.equals("")) return false;
+
+        if (channel.equals("login_result")) return loginResultHandler(msgJson, connInfo);
+
+        if (channel.equals("sub_result")) return subResultHandler(msgJson, connInfo);
+
+        if (channel.equals("instrument_info")) return instrumentInfoHandler(msgJson, connInfo);
+
+        if (channel.equals("init_position")) return initPositionHandler(msgJson, connInfo);
+
+        if (channel.equals("order_rtn")) return orderRtnHandler(msgJson, connInfo);
+
+        if (channel.equals("trade_rtn")) return tradeRtnHandler(msgJson, connInfo);
+
+        if (channel.equals("depth_marketdata")) return depthMarketDataHandler(msgJson, connInfo);
+
         return false;
     }
 
-    private boolean loginResultHandler(JSONObject msgJson, int wsClientNo) {
-
-        //result 并非 Json 下面会报错
-//            JSONObject result = (JSONObject) msgJson.get("result");
-        List<LoginResult> loginResults = multiAccountData.getLoginResult();
-        LoginResult result = new LoginResult();
-        result.setResult((String) msgJson.get("result"));
-        result.setAccount((String) msgJson.get("account"));
-        loginResults.add(result);
-        logger.info("loginResultHandler:" + msgJson.get("account") + ":" + msgJson.get("result"));
-        if (result.getResult().equals("success")) {
-            //do sth to subscribe
-            wsControlService.getWsClients().get(wsClientNo).send(JSON.toJSONString(subscribeInfos.get(wsClientNo)));
-            logger.info("Ws" + wsClientNo + ",account " + msgJson.get("account") + " Subscribing...");
+    private boolean loginResultHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
+        boolean isLogin = msgJson.get("result").equals("success");
+        connInfo.setLogin(isLogin);
+        logger.info("loginResultHandler [" + msgJson.get("account") + "]: " + msgJson.get("result"));
+        if (isLogin) {
+            connInfo.setStatus(WsStatus.SUBSCRIBED);
+            //Subscribe
+            SubscribeJson subscribeInfo = new SubscribeJson("subscribe", connInfo.getTopics());
+            logger.info(JSON.toJSONString(subscribeInfo));
+            connInfo.getClient().send(JSON.toJSONString(subscribeInfo));
+            logger.info("[" + connInfo.getAccount() + "]: Subscribing...");
+            // 初始化 数据容器
+            String account = connInfo.getAccount();
+            if (!allData.containsKey(account)) {
+                // 初始化 instruments orders
+                allData.put(account, new AccountData(connInfo, AccountType.forType(connInfo.getAccountType())));
+            }
             return true;
         }
-        logger.error("Ws" + wsClientNo + "account " + msgJson.get("account") + " NOT Subscribe");
+        connInfo.setStatus(WsStatus.LOGIN);
+        logger.error("[" + connInfo.getAccount() + "]: Not Subscribing...");
         return false;
     }
 
-    private boolean subResultHandler(JSONObject msgJson) {
-        SubResult subResult = multiAccountData.getSubResult();
-        subResult.setResult((String) msgJson.get("result"));
-        JSONObject objectTopic = (JSONObject) msgJson.get("topic");
-        logger.info("subResultHandler:" + objectTopic.toJSONString() + ":" + msgJson.get("result"));
-        if (subResult.getResult().equals("success")) {
-            Topic topic = JSONObject.parseObject(objectTopic.toJSONString(), Topic.class);
-            subResult.getTopics().add(topic);
-            return true;
+    private boolean subResultHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
+        boolean isSubscribed = msgJson.get("result").equals("success");
+        String topicJson = ((JSONObject)msgJson.get("topic")).toJSONString();
+        String instrumentId = (JSONObject.parseObject(topicJson,NewTopic.class)).getInstrumentId();
+        logger.info("[" +connInfo.getAccount()+":"+ instrumentId + "] subResultHandler: " + msgJson.get("result"));
+        if (isSubscribed) {
+            if (connInfo.getSubscribedInstrument() == null) {
+                connInfo.setSubscribedInstrument(new ArrayList<>());
+            }
+            connInfo.getSubscribedInstrument().add(instrumentId);
         }
-        logger.error("subResultHandler: Subscribe Failed");
-        logger.info(msgJson.toJSONString());
-        return false;
+        return isSubscribed;
     }
 
-    private boolean instrumentInfoHandler(JSONObject msgJson, String subAccount, int wsClientNo) {
-        //检查是否已存在
-        if (!multiAccountData.getAccountsInfo().containsKey(subAccount)) {
-            multiAccountData.getAccountsInfo().put(subAccount, new MonitorData(wsClientNo));
-        }
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
-
+    private boolean instrumentInfoHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
+        String account = connInfo.getAccount();
+        AccountData accountData = allData.get(account);
         JSONObject object = (JSONObject) msgJson.get("data");
-        //使用 copyProperties 进行修改，“=”赋值无效
         InstrumentInfoDO instrumentInfoDO = JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class);
-        logger.info("instrumentInfoHandler  " + subAccount + ":" + instrumentInfoDO.toString());
-//        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InstrumentInfoDO.class), instrumentInfoDO);
-//        JSONObject.parseObject(object.toJSONString(), InstrumentInfo.class)
+        logger.info("[" + account + "] instrumentInfoHandler: " + instrumentInfoDO.toString());
+
         String instrumentId = instrumentInfoDO.getInstrumentId();
-        if (monitorData.getInstruments().containsKey(instrumentId)) {
-            logger.info("Another InstrumentInfo, ****Already Initialized");
+        if (accountData.getInstruments().containsKey(instrumentId)) {
+            logger.info("Duplicate InstrumentInfo for instrumentId: " + instrumentId);
         } else {
-            // 初始化 instruments，以及orders
-            monitorData.getInstruments().put(instrumentId, new InstrumentData());
+            accountData.getInstruments().put(instrumentId, new InstrumentData());
         }
-        InstrumentData instrumentData = monitorData.getInstruments().get(instrumentId);
+        InstrumentData instrumentData = accountData.getInstruments().get(instrumentId);
         instrumentData.setInstrumentId(instrumentInfoDO.getInstrumentId());
         instrumentData.setContractMultiplier(instrumentInfoDO.getContractMultiplier());
         instrumentData.setPreSettlementPrice(instrumentInfoDO.getPreSettlementPrice());
-//        currentPrice = preSettlementPrice
         instrumentData.setCurrentPrice(instrumentData.getPreSettlementPrice());
         return true;
     }
 
-    private boolean initPositionHandler(JSONObject msgJson, String subAccount) {
-
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
-
+    private boolean initPositionHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
+        String account = connInfo.getAccount();
+        AccountData accountData = allData.get(account);
         JSONObject object = (JSONObject) msgJson.get("data");
         InitPositionDO initPositionDO = JSONObject.parseObject(object.toJSONString(), InitPositionDO.class);
-        logger.info("initPositionHandler  " + subAccount + ":" + initPositionDO.toString());
-//        BeanUtils.copyProperties(JSONObject.parseObject(object.toJSONString(), InitPositionDO.class), initPosition);
-        InstrumentData instrumentData = monitorData.getInstruments().get(initPositionDO.getInstrumentId());
+        logger.info("[" + account + "] initPositionHandler: " + initPositionDO.toString());
+        InstrumentData instrumentData = accountData.getInstruments().get(initPositionDO.getInstrumentId());
         instrumentData.setInitLongPosition(initPositionDO.getLongPos());
         instrumentData.setCurrentLongPosition(initPositionDO.getLongPos());
         instrumentData.setInitShortPosition(initPositionDO.getShortPos());
@@ -153,22 +135,22 @@ public class OnMessageService implements WebSocketCallbackService {
         return true;
     }
 
-    private boolean orderRtnHandler(JSONObject msgJson) {
+    private boolean orderRtnHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
         JSONObject object = (JSONObject) msgJson.get("data");
         OrderRtnDO orderDO = JSONObject.parseObject(object.toJSONString(), OrderRtnDO.class);
         logger.info("orderRtnHandler  " + orderDO.toString());
         // 若之前不存在 订单表 则新增
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(orderDO.getUserId());
-        if (!monitorData.getOrders().containsKey(orderDO.getInstrumentId())) {
+        AccountData accountData = allData.get(connInfo.getAccount());
+        if (!accountData.getOrders().containsKey(orderDO.getInstrumentId())) {
             Map<Integer, OrderData> orders = new HashMap<>();
-            monitorData.getOrders().put(orderDO.getInstrumentId(), orders);
+            accountData.getOrders().put(orderDO.getInstrumentId(), orders);
         }
-        Map<Integer, OrderData> ordersInfo = monitorData.getOrders().get(orderDO.getInstrumentId());
-        InstrumentData instrumentData = monitorData.getInstruments().get(orderDO.getInstrumentId());
+        Map<Integer, OrderData> ordersInfo = accountData.getOrders().get(orderDO.getInstrumentId());
+        InstrumentData instrumentData = accountData.getInstruments().get(orderDO.getInstrumentId());
 
         //Check UpdateTime
         if (instrumentData.isMarketDataValid() && checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-            logger.info("OrderRtnHandler: 无市场行情，更新超时");
+            logger.info("[" + connInfo.getAccount() + "]:" + "OrderRtnHandler: 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
 
@@ -201,18 +183,16 @@ public class OnMessageService implements WebSocketCallbackService {
         return true;
     }
 
-    private boolean tradeRtnHandler(JSONObject msgJson) {
-
-
+    private boolean tradeRtnHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
         JSONObject object = (JSONObject) msgJson.get("data");
         TradeRtnDO tradeDO = JSONObject.parseObject(object.toJSONString(), TradeRtnDO.class);
         logger.info("tradeRtnHandler  " + object.toJSONString());
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(tradeDO.getUserId());
-        InstrumentData instrumentData = monitorData.getInstruments().get(tradeDO.getInstrumentId());
+        AccountData accountData = allData.get(connInfo.getAccount());
+        InstrumentData instrumentData = accountData.getInstruments().get(tradeDO.getInstrumentId());
 
         //Check UpdateTime
         if (instrumentData.isMarketDataValid() && checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-            logger.info("TradeRtnHandler: 无市场行情，更新超时");
+            logger.info("[" + connInfo.getAccount() + "]:" + "TradeRtnHandler: 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
 
@@ -220,8 +200,11 @@ public class OnMessageService implements WebSocketCallbackService {
 //        update position cost
         String direction = tradeDO.getDirection();
         double tradeNum = tradeDO.getVolume() * tradeDO.getPrice();
-        double newFee = tradeNum * instrumentData.getContractMultiplier() * instrumentData.getFeeRate();
-        instrumentData.addFee(newFee);
+
+//        double newFee = tradeNum * instrumentData.getContractMultiplier() * instrumentData.getFeeRate();
+//        instrumentData.addFee(newFee);
+        // 20190822
+        instrumentData.addFee(tradeDO.getFee());
 
         if (direction.equals(DIRECTION.BUY.getValue())) {
             instrumentData.addPositionCost(tradeNum);
@@ -239,21 +222,21 @@ public class OnMessageService implements WebSocketCallbackService {
         } else if (direction.equals(DIRECTION.BUY.getValue()) && offFlag.equals(OFFSET_FLAG.CLOSED.getValue())) {
             instrumentData.addCurrentShortPosition(tradeDO.getVolume() * (-1.0));
         }
-
         return true;
     }
 
-    private boolean depthMarketDataHandler(JSONObject msgJson, String subAccount) {
-        MonitorData monitorData = multiAccountData.getAccountsInfo().get(subAccount);
+    private boolean depthMarketDataHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
+        String account = connInfo.getAccount();
+        AccountData accountData = allData.get(account);
         JSONObject object = (JSONObject) msgJson.get("data");
-        logger.info("depthMarketDataHandler  " + subAccount + " " + object.toJSONString());
+        logger.info("depthMarketDataHandler  " + account + " " + object.toJSONString());
 
         DepthMarketDataDO marketDataDO = JSONObject.parseObject(object.toJSONString(), DepthMarketDataDO.class);
-        InstrumentData instrumentData = monitorData.getInstruments().get(marketDataDO.getInstrumentId());
+        InstrumentData instrumentData = accountData.getInstruments().get(marketDataDO.getInstrumentId());
 
         //通过比较当前时间和上一次的更新时间，判断数据是否有效
         if (instrumentData.isMarketDataValid() && checkUpdateMarketDataValid(instrumentData.getUpdateTime())) {
-            logger.info("DepthMarketDataHandler： 无市场行情，更新超时");
+            logger.info("[" + connInfo.getAccount() + "]:" + "DepthMarketDataHandler： 无市场行情，更新超时");
             instrumentData.setMarketDataValid(false);
         }
         //检查更新时间update_time，若更新时间是现在的10 sec以前，则不作处理
@@ -262,7 +245,7 @@ public class OnMessageService implements WebSocketCallbackService {
         instrumentData.setMDDelaySec(delay);
         if (delay >= DELAY_MAX) {
             instrumentData.setMarketDataValid(false);
-            logger.info("DepthMarketDataHandler：市场行情延迟");
+            logger.info("[" + connInfo.getAccount() + "]:" + "DepthMarketDataHandler：市场行情延迟");
             // 2019 08 05
 //            return false;
         }
@@ -272,7 +255,7 @@ public class OnMessageService implements WebSocketCallbackService {
         double[][] bids = marketDataDO.getBids();
         double[][] asks = marketDataDO.getAsks();
         if (bids[0][1] == 0 || asks[0][1] == 0) {
-            logger.info("DepthMarketDataHandler：市场行情：无效报价");
+            logger.info("[" + connInfo.getAccount() + "]:" + "DepthMarketDataHandler：市场行情：无效报价");
             instrumentData.setMarketDataValid(false);
             return false;
         }
@@ -304,7 +287,7 @@ public class OnMessageService implements WebSocketCallbackService {
         return (secDelta >= DELAY_MAX);
     }
 
-    private long getMDDelaySec(String time){
+    private long getMDDelaySec(String time) {
         DateTime now = new DateTime();
         DateTime updateTime = new LocalTime(time).toDateTimeToday();
         //now - updateTime

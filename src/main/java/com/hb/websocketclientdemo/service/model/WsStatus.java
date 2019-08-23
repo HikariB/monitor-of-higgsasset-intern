@@ -1,8 +1,10 @@
-package com.hb.websocketclientdemo.service.impl;
+package com.hb.websocketclientdemo.service.model;
 
 public enum WsStatus {
     INIT(-1000),
     OPEN(-2000),
+    LOGIN(-2001),
+    SUBSCRIBED(-2002),
     CLOSE(-3000),
     ERROR(-4000);
 

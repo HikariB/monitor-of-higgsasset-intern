@@ -1,15 +1,17 @@
 package com.hb.websocketclientdemo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hb.websocketclientdemo.model.jsonData.DepthMarketDataDO;
-import com.hb.websocketclientdemo.model.jsonData.TradeRtnDO;
+import com.hb.websocketclientdemo.service.model.core.WebSocketConnInfo;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 public class FastJsonDemo {
 
-    public static void main(String[] args) {
-
-
-
+    public static void main(String[] args) throws IOException {
 
 
 //        String str3 = "{\"channel\":\"subscribe\", \"topics\":[{\"account\":\"83925087\", \"instrument\":\"IF1904\"}, {\"account\":\"83925087\", \"instrument\":\"IF1905\"}, {\"account\":\"83925087\", \"instrument\":\"IF1906\"}]}";
@@ -49,14 +51,28 @@ public class FastJsonDemo {
 //        String order = "{\"user_id\":\"83925101\",\"instrument_id\":\"IF1908\",\"order_sys_id\":\"  148188\",\"order_ref\":\"   270353\",\"direction\":\"1\",\"offset_flag\":\"1\",\"price\":\"3819.800000\",\"total_volume\":\"1\",\"traded_volume\":\"0\",\"insert_time\":\"\",\"order_status\":\"1\"}".trim();
 //        OrderRtnDO orderRtn = JSONObject.parseObject(order.trim(),OrderRtnDO.class);
 
-        String trade = "{\"user_id\":\"83925101\",\"instrument_id\":\"IF1908\",\"order_sys_id\":\"      148291\",\"order_ref\":\"      270363\",\"trade_id\":\"       30376\",\"direction\":\"1\",\"offset_flag\":\"1\",\"price\":\"3819.800000\",\"volume\":\"1\",\"fee\":\"0.000000\"}";
-        TradeRtnDO tradeRtnDO = JSONObject.parseObject(trade,TradeRtnDO.class);
 
-        String market = "{\"instrument_id\":\"IF1908\",\"trading_date\":\"20190709\",\"update_time\":\"13:35:28\",\"update_millisec\":\"100\",\"last_price\":\"3757.000000\",\"adjusted_price\":\"3757.000000\",\"volume\":\"1109\",\"turnover\":\"1253183520.000000\",\"bids\":[[\"3756.000000\",\"3\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"]],\"asks\":[[\"3760.600000\",\"1\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"]]}";
+//        String trade = "{\"user_id\":\"83925101\",\"instrument_id\":\"IF1908\",\"order_sys_id\":\"      148291\",\"order_ref\":\"      270363\",\"trade_id\":\"       30376\",\"direction\":\"1\",\"offset_flag\":\"1\",\"price\":\"3819.800000\",\"volume\":\"1\",\"fee\":\"0.000000\"}";
+//        TradeRtnDO tradeRtnDO = JSONObject.parseObject(trade,TradeRtnDO.class);
+//
+//        String market = "{\"instrument_id\":\"IF1908\",\"trading_date\":\"20190709\",\"update_time\":\"13:35:28\",\"update_millisec\":\"100\",\"last_price\":\"3757.000000\",\"adjusted_price\":\"3757.000000\",\"volume\":\"1109\",\"turnover\":\"1253183520.000000\",\"bids\":[[\"3756.000000\",\"3\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"]],\"asks\":[[\"3760.600000\",\"1\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"],[\"0.000000\",\"0\"]]}";
+//
+//        DepthMarketDataDO marketDataDO = JSONObject.parseObject(market,DepthMarketDataDO.class);
 
-        DepthMarketDataDO marketDataDO = JSONObject.parseObject(market,DepthMarketDataDO.class);
 
 
+        ClassPathResource resource = new ClassPathResource("websocket.json");
+
+//        BufferedReader bf = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+        String jsonFile = IOUtils.toString(resource.getInputStream(), Charset.forName("UTF-8"));
+
+
+        System.out.println(jsonFile);
+        String websocketInfos = jsonFile;
+//        String websocketInfos = "[{\"url\":\"ws://114.55.210.206:9998/\",\"account\":\"gt_w\",\"password\":\"higgspass\",\"topics\":[{\"instrumentId\":\"\",\"productId\":\"cu\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"ni\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"IF\",\"productClass\":\"Futures\"}]},{\"url\":\"ws://47.103.89.75:9999/\",\"account\":\"dz_p\",\"password\":\"higgspass\",\"topics\":[{\"instrumentId\":\"\",\"productId\":\"cu\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"zn\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"ni\",\"productClass\":\"Futures\"}]}]";
+        List<WebSocketConnInfo> webSocketConnInfos = JSONObject.parseArray(websocketInfos, WebSocketConnInfo.class);
+
+        System.out.println(websocketInfos);
     }
 
 }

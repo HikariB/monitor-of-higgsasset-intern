@@ -67,28 +67,29 @@ $(function () {
 
     console.log("当前合同更新频率:1Hz, 订单更新频率:0.25Hz，出现10次以上无效市场数据标志时将报警，当利润低于-20000时将变为绿色背景")
 
-    let instrumentInfo = $('#instrument-info');
+    let instrumentInfo = $('#instrumentInfo');
     let oredersInfo = $('#ordersInfo');
     let accountId = getParam("id");
 
     if (accountId !== undefined) {
-        $('#' + accountId).attr("selected", true)
+        $('#' + accountId).attr("selected", true);
         oredersInfo.bootstrapTable('refreshOptions', {
             url: 'orders/' + accountId,
+            autoRefresh: true,
             autoRefreshStatus: true
         });
         instrumentInfo.bootstrapTable('refreshOptions', {
             url: 'instruments/' + accountId,
+            autoRefresh: true,
             autoRefreshStatus: true
-
         });
+        oredersInfo.bootstrapTable();
+        instrumentInfo.bootstrapTable();
+
     }
 
+
     $('#disconnect').click(btnlogout);
-
-
-    instrumentInfo.bootstrapTable();
-    oredersInfo.bootstrapTable();
 
 
     $('#account').change(function () {
@@ -97,15 +98,16 @@ $(function () {
         if (selectVal === 'default') {
             alert("Select an User Account")
         } else {
-            instrumentInfo.bootstrapTable('refreshOptions', {
-                url: 'instruments/' + selectVal,
-                autoRefreshStatus: true
-
-            });
-            oredersInfo.bootstrapTable('refreshOptions', {
-                url: 'orders/' + selectVal,
-                autoRefreshStatus: true
-            });
+            window.location.replace(`monitor-detail?id=${selectVal}`);
+            // instrumentInfo.bootstrapTable('refreshOptions', {
+            //     url: 'instruments/' + selectVal,
+            //     autoRefreshStatus: true
+            //
+            // });
+            // oredersInfo.bootstrapTable('refreshOptions', {
+            //     url: 'orders/' + selectVal,
+            //     autoRefreshStatus: true
+            // });
         }
     });
 });
