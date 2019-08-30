@@ -3,11 +3,137 @@
     "url": "ws://116.62.36.238:9998/",
     "account": "fz_t",
     "password": "higgspass",
-    "accountType": 4,
+    "accountType": 2,
+    "topics": [
+      {
+        "instrumentId": "zn1912",
+        "productId": "zn",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "zn1911",
+        "productId": "zn",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "zn1910",
+        "productId": "zn",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "zn1909",
+        "productId": "zn",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "ni1910",
+        "productId": "ni",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "ni1911",
+        "productId": "ni",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "ni1912",
+        "productId": "ni",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "hc2001",
+        "productId": "hc",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "rb1910",
+        "productId": "rb",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "rb2005",
+        "productId": "rb",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "ru1909",
+        "productId": "ru",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "ru2005",
+        "productId": "ru",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "sp1909",
+        "productId": "sp",
+        "productClass": "Futures"
+      }
+    ]
+  },
+  {
+    "url":"ws://114.55.210.206:9998/",
+    "account": "gt_w",
+    "password": "higgspass",
+    "accountType": 1,
     "topics": [
       {
         "instrumentId": "",
-        "productId": "ni",
+        "productId": "IF",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "",
+        "productId": "IH",
+        "productClass": "Futures"
+      },{
+        "instrumentId": "",
+        "productId": "IC",
+        "productClass": "Futures"
+      }
+    ]
+  },
+  {
+    "url":"ws://47.110.15.187:9998/",
+    "account": "gt_z",
+    "password": "higgspass",
+    "accountType": 1,
+    "topics": [
+      {
+        "instrumentId": "",
+        "productId": "IF",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "",
+        "productId": "IH",
+        "productClass": "Futures"
+      },{
+        "instrumentId": "",
+        "productId": "IC",
+        "productClass": "Futures"
+      }
+    ]
+  },
+  {
+    "url":"ws://47.110.15.187:9998/",
+    "account": "gt_z1",
+    "password": "higgspass",
+    "accountType": 3,
+    "topics": [
+      {
+        "instrumentId": "",
+        "productId": "T",
+        "productClass": "Futures"
+      },
+      {
+        "instrumentId": "",
+        "productId": "TF",
+        "productClass": "Futures"
+      },{
+        "instrumentId": "",
+        "productId": "TS",
         "productClass": "Futures"
       }
     ]

@@ -1,10 +1,13 @@
 package com.hb.websocketclientdemo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.hb.websocketclientdemo.controller.viewObj.AccountSummary;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.NewTopic;
 import com.hb.websocketclientdemo.service.impl.OnMessageService;
 import com.hb.websocketclientdemo.service.impl.WebSocketService;
 import com.hb.websocketclientdemo.service.model.AccountType;
+import com.hb.websocketclientdemo.service.model.ConstConfig;
 import com.hb.websocketclientdemo.service.model.WsStatus;
 import com.hb.websocketclientdemo.service.model.base.InstrumentData;
 import com.hb.websocketclientdemo.service.model.base.OrderData;
@@ -38,6 +41,9 @@ public class MonitorController {
 
     @Autowired
     private WebSocketService webSocketService;
+
+    @Autowired
+    private ConstConfig ccfg;
 
 
     @RequestMapping("/clients/lr")
@@ -97,26 +103,6 @@ public class MonitorController {
         }
         webSocketService.shutdown();
         return "Wait a moment...To be shutdown";
-    }
-
-    @RequestMapping("clients/add")
-    public String addClient() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-//                    D:\JavaCode\websocket-client-demo-git\src\main\resources\application.properties
-                    File file = new File("src/main/resources/newConfig.Json");
-                    logger.info("Update JsonConfigFile to: " + JSON.toJSONString(connInfos));
-                    FileUtils.writeStringToFile(file, JSON.toJSONString(connInfos), Charset.forName("UTF-8"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-
-        return "wait to";
     }
 
 
@@ -220,23 +206,162 @@ public class MonitorController {
         InstrumentData.setOrderCancelLimit(orderCancelLimit);
         InstrumentData.setNetPositionLimit(netPositionLimit);
         OnMessageService.setDelayMax(maxDelay);
-        return "OK";
+        ccfg.setAccountTotalProfitLimit(totalProfitLimit);
+        ccfg.setInstrumentProfitLimit(instrumentProfitLimit);
+        ccfg.setOrderCancelWarnRatio(cancelWarnRatio);
+        ccfg.setOrderCancelLimit(orderCancelLimit);
+        ccfg.setNetPositionLimit(netPositionLimit);
+        ccfg.setmDelaySecLimit(maxDelay);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File file = new File("src/main/resources/const.Json");
+                    logger.info("Update JsonConfigFile to: " + JSON.toJSONString(ccfg));
+                    FileUtils.writeStringToFile(file, JSON.toJSONString(ccfg), Charset.forName("UTF-8"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        return "Saved to const.json and update parameter";
     }
 
-//    @RequestMapping(value = "/new/wsClient", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
-//    public String setPara(
-//            @RequestParam(name = "wsUrl") String url,
-//            @RequestParam(name = "loginAccount") String loginAccount,
-//            @RequestParam(name = "loginPassword") String loginPassword,
-//            @RequestParam(name = "subscribeAccount") String subscribeAccount
-//    ) {
-//        // 重连 之前断开的WebSocket Client，由于之前的MonitorData数据仍存在，将会出现问题
-//        // 可能需要清空原先保存的数据
-////        if (wsServerInfos.getAccountList().contains(subscribeAccount) || wsServerInfos.getLoginAccountList().contains(loginAccount))
-////            return "Connection Already Exist";
-////        webSocketService.startNewWebSocketClient(url, loginAccount, loginPassword, subscribeAccount);
-////        return "OK";
-//    }
+
+    @RequestMapping(value = "account/config/edit", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
+    public String editAccountConfig(
+            @RequestParam(name = "cmdOpt") String cmdOpt,
+            @RequestParam(name = "account") String account,
+            @RequestParam(name = "editContent") String editContent
+    ) {
+        if (account.equals("*") && cmdOpt.equals("selCmd")) {
+            return JSON.toJSONString(connInfos);
+        }
+        String res = "[Error]: No Such Command";
+        if (cmdOpt.equals("delCmd") || cmdOpt.equals("selCmd")) {
+            if (connInfoMap.containsKey(account)) {
+                if (cmdOpt.equals("selCmd")) {
+                    return JSON.toJSONString(connInfoMap.get(account));
+                }
+                //  del
+                res = "[Before Deleted]: " + JSON.toJSONString(connInfoMap.get(account));
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        connInfoMap.get(account).getClient().close();
+                        connInfos.remove(connInfoMap.get(account));
+                        connInfoMap.remove(account);
+                        allData.remove(account);
+                        // write to file
+                        writeConnInfosToFile();
+                    }
+                }).start();
+                return res;
+            } else {
+                return "[Error]: Account Not Exist";
+            }
+        }
+        // update
+        if (cmdOpt.equals("updCmd")) {
+            try {
+                WebSocketConnInfo newConn = JSONObject.parseObject(editContent, WebSocketConnInfo.class);
+                String newAccount = newConn.getAccount();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (connInfoMap.containsKey(newAccount)) {
+                            // delete old conn
+                            connInfoMap.get(account).getClient().close();
+                            connInfos.remove(connInfoMap.get(account));
+                            connInfoMap.remove(account);
+                            allData.remove(account);
+                        }
+                        // restart
+                        connInfos.add(newConn);
+                        connInfoMap.put(newAccount, newConn);
+                        webSocketService.connect(newConn);
+                        writeConnInfosToFile();
+                    }
+                }).start();
+                return "Update Success, Try [Select *] to check";
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "[JsonString Error]";
+            }
+        }
+        return res;
+    }
+
+
+    @RequestMapping(value = "account/subscribe/edit", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
+    public String editSubscribe(
+            @RequestParam(name = "cmdOpt") String cmdOpt,
+            @RequestParam(name = "account") String account,
+            @RequestParam(name = "editContent") String editContent
+    ) {
+        if (account.equals("*") && cmdOpt.equals("selCmd")) {
+            return JSON.toJSONString(connInfos);
+        }
+        boolean isAccountValid = connInfoMap.containsKey(account);
+        if (!isAccountValid) {
+            return "[Error]: No Such Account";
+        }
+        boolean isUpdate = false;
+        String res = "[Error]: No Such Command";
+        NewTopic[] topics = new NewTopic[0];
+        if (cmdOpt.equals("selCmd")) {
+            return JSON.toJSONString(connInfoMap.get(account).getTopics());
+        } else if (cmdOpt.equals("updCmd")) {
+            try {
+                List<NewTopic> topicList = JSONObject.parseArray(editContent, NewTopic.class);
+                topics = new NewTopic[topicList.size()];
+                topicList.toArray(topics);
+                res = "[Override the topics]";
+                isUpdate = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                res = "[JsonString Error]";
+            }
+        } else if (cmdOpt.equals("delCmd")) {
+            isUpdate = true;
+            res = "[Before Deleted]: " + JSON.toJSONString(connInfoMap.get(account).getTopics());
+        }
+
+        if (isUpdate) {
+            //change to the file
+            NewTopic[] finalTopics = topics;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //restart the client
+                    WebSocketConnInfo connInfo = connInfoMap.get(account);
+                    connInfo.getClient().close();
+                    connInfo.setTopics(finalTopics);
+                    connInfo.setStatus(WsStatus.INIT);
+                    connInfo.setClient(null);
+                    connInfo.setLogin(false);
+                    connInfo.setSubscribedInstrument(null);
+                    allData.remove(account);
+                    webSocketService.connect(connInfo);
+                    writeConnInfosToFile();
+                }
+            }).start();
+        }
+        return res;
+    }
+
+    private boolean writeConnInfosToFile() {
+        try {
+            File file = new File("src/main/resources/newConfig.Json");
+            logger.info("Update JsonConfigFile to: " + JSON.toJSONString(connInfos));
+            FileUtils.writeStringToFile(file, JSON.toJSONString(connInfos), Charset.forName("UTF-8"));
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 
     private AccountSummary getAccountSummaryFromAccountData(AccountData accountData) {

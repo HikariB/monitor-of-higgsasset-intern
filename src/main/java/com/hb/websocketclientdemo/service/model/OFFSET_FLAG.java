@@ -3,7 +3,8 @@ package com.hb.websocketclientdemo.service.model;
 public enum OFFSET_FLAG {
 
     OPEN("0"),
-    CLOSED("1");
+    CLOSED("1"),
+    CLOSED_TODAY("2");
 
     private String value;
 

@@ -49,42 +49,76 @@ $('#limit-btn').click(function () {
     });
 });
 
-$('#newWs-btn').click(function () {
-    let wsUrl = $('#wsUrl').val();
-    let loginAccount = $('#loginAccount').val();
-    let loginPassword = $('#loginPassword').val();
-    let subscribeAccount = $('#subscribeAccount').val();
-    if (wsUrl === null || wsUrl === "") {
-        alert("Url Can't be Null");
+$('#edit-btn').click(function () {
+    let cmdOpt = $('#cmdOpt').val();
+    console.log(cmdOpt);
+    let account = $('#account').val();
+    let editContent = $('#edit-content').val();
+    if (cmdOpt === null || cmdOpt === "") {
+        alert("Option Can't be Null");
         return false;
     }
-    if (loginAccount === null || loginAccount === "") {
-        alert("loginAccount Can't be Null");
+    if (account === null || account === "") {
+        alert("Account Can't be Null");
         return false;
     }
-    if (loginPassword === null || loginPassword === "") {
-        alert("loginPassword Can't be Null");
-        return false;
-    }
-    if (subscribeAccount === null || subscribeAccount === "") {
-        alert("subscribeAccount Can't be Null");
+    if (cmdOpt === "updCmd" && (editContent === null || editContent === "")) {
+        alert("Update Content Can't be Null");
         return false;
     }
     $.ajax({
         type: "POST",
         contentType: "application/x-www-form-urlencoded",
-        url: "new/wsClient",
+        url: "account/subscribe/edit",
         data: {
-            "wsUrl":wsUrl,
-            "loginAccount":loginAccount,
-            "loginPassword":loginPassword,
-            "subscribeAccount":subscribeAccount
+            "cmdOpt": cmdOpt,
+            "account": account,
+            "editContent": editContent
         },
-        success:function (data) {
-            alert(data)
+        success: function (data) {
+            $('#time-stamp').text(new Date().toLocaleTimeString());
+            $('#alertText').text(data);
         },
-        error:function (data) {
-            alert("failed")
+        error: function (data) {
+            $('#time-stamp').text(new Date().toLocaleTimeString())
+            $('#alertText').text("failed")
+        }
+    });
+});
+
+$('#edit-ac').click(function () {
+    let cmdOpt = $('#cmdOpt-account').val();
+    console.log(cmdOpt);
+    let account = $('#account-ac').val();
+    let editContent = $('#edit-content-ac').val();
+    if (cmdOpt === null || cmdOpt === "") {
+        alert("Option Can't be Null");
+        return false;
+    }
+    if (account === null || account === "") {
+        alert("Account Can't be Null");
+        return false;
+    }
+    if (cmdOpt === "updCmd" && (editContent === null || editContent === "")) {
+        alert("Update Content Can't be Null");
+        return false;
+    }
+    $.ajax({
+        type: "POST",
+        contentType: "application/x-www-form-urlencoded",
+        url: "account/config/edit",
+        data: {
+            "cmdOpt": cmdOpt,
+            "account": account,
+            "editContent": editContent
+        },
+        success: function (data) {
+            $('#time-stamp').text(new Date().toLocaleTimeString());
+            $('#alertText').text(data)
+        },
+        error: function (data) {
+            $('#time-stamp').text(new Date().toLocaleTimeString());
+            $('#alertText').text("failed")
         }
     });
 });

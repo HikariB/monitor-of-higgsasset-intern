@@ -22,6 +22,10 @@ public class MultiAccountConfig {
     }
 
 
+    /**
+     * connInfoMap 和 connInfos 捆绑在一起
+     * @return
+     */
     @Bean
     public Map<String, WebSocketConnInfo> getConnInfoMap() {
         Map<String, WebSocketConnInfo> connInfoMap = new HashMap<>();
@@ -30,4 +34,6 @@ public class MultiAccountConfig {
         }
         return connInfoMap;
     }
+
+
 }

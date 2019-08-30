@@ -93,7 +93,10 @@ function accountName(value) {
 
     let oldVal = value;
     value = value.replace('_', '').toUpperCase();
-    return `<a href="monitor-detail?id=${oldVal}">${value}</a>`
+    if (oldVal === "fz_t"){
+        value = "SHFE";
+    }
+    return `<a href="monitor-detail?did=${oldVal}">${value}</a>`
 }
 
 

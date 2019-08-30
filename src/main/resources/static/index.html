@@ -14,13 +14,13 @@
         <img src="images/banner1.png" alt="logo" style="width: 30%">
     </a>
 
-    <button id="disconnect" class="btn btn-loginInfo" type="submit">Login Out</button>
+    <button id="disconnect" class="btn btn-info" type="submit">Login Out</button>
 </nav>
 <br>
 <div class="container">
 
     <br>
-    <h3>后台信息</h3>
+    <h3>后台</h3>
     <ul>
         <li><a href="clients/lr">Websocket Login Result</a></li>
         <li><a href="clients/sr">Websocket Subscribe result</a></li>
@@ -37,8 +37,8 @@
     </ul>
 
     <hr>
-    <h3>控制台</h3>
-    <h5>Parameter Limit</h5>
+    <h3>Console</h3>
+    <h5>Risk Parameter</h5>
     <div class="form-group row">
         <div class="col-2">
             <label class="col-form-label">账号亏损界限</label>
@@ -68,94 +68,112 @@
     </div>
 
     <div>
-        <button class="btn btn-primary" id="limit-btn" type="submit">
-            Submit Parameter
+        <button class="btn btn-secondary" id="limit-btn" type="submit">
+            Set Parameter
         </button>
     </div>
 
 
     <br>
-    <h5>New WebSocket Client</h5>
+    <h5>Update Subscribe Info</h5>
     <div class="form-group row">
-        <div class="col-3">
-            <label class="col-form-label">url</label>
-            <input type="text" class="form-control" id="wsUrl" placeholder="ws://114.55.210.206:9999/">
+        <div class="select col-2">
+            <select class="form-control" name="" id="cmdOpt">
+                <option value="selCmd" id="selCmd" selected>Select</option>
+                <option value="updCmd" id="updCmd">Update</option>
+                <option value="delCmd" id="delCmd">Delete</option>
+            </select>
         </div>
         <div class="col-2">
-            <label class="col-form-label">LoginAccount</label>
-            <input type="text" class="form-control" id="loginAccount" placeholder="gt_w">
+            <input type="text" class="form-control" id="account" placeholder="Account: not null">
         </div>
-        <div class="col-2">
-            <label class="col-form-label">Password</label>
-            <input type="text" class="form-control" id="loginPassword" placeholder="higgspass">
+        <div class="col-7">
+            <input type="text" class="form-control" id="edit-content"
+                   placeholder="JsonString: not null if update: [{}]">
+
         </div>
-        <div class="col-2">
-            <label class="col-form-label">Subscribe Account</label>
-            <input type="text" class="form-control" id="subscribeAccount" placeholder="83925101">
+        <div class="col-1">
+            <button class="btn btn-secondary" id="edit-btn" type="submit">
+                Submit
+            </button>
         </div>
-<!--        <div class="col-2">-->
-<!--            <label class="col-form-label">Websocket连接超时</label>-->
-<!--            <input type="text" class="form-control" id="connectionTimeout" placeholder="Default: 3">-->
-<!--        </div>-->
     </div>
-    <div>
-        <button class="btn btn-primary" id="newWs-btn" type="submit">
-            Create And Start
-        </button>
+
+    <h5>Update Account Info</h5>
+    <div class="form-group row align-bottom">
+        <div class="select col-2">
+            <select class="form-control" name="" id="cmdOpt-account">
+                <option value="selCmd" id="selCmd-account" selected>Select</option>
+                <option value="updCmd" id="updCmd-account">Update</option>
+                <option value="delCmd" id="delCmd-account">Delete</option>
+            </select>
+        </div>
+        <div class="col-2">
+            <input type="text" class="form-control" id="account-ac" placeholder="Account: not null">
+        </div>
+        <div class="col-7">
+            <input type="text" class="form-control" id="edit-content-ac"
+                   placeholder="JsonString: not null if update/create">
+        </div>
+        <div class="col-1">
+            <!--            <label class="col-form-label"></label>-->
+            <button class="btn btn-secondary" id="edit-ac" type="submit">
+                Submit
+            </button>
+        </div>
     </div>
-    <p>合同默认为IF IH IC</p>
+    <div class="alert alert-success" role="alert">
+        <h5 class="alert-heading">Last Command TimeStamp / Message: </h5>
+        <div><p id="time-stamp"></p></div>
+        <hr>
+        <div id="alertText"></div>
+    </div>
 
-    <h5>账号及权限控制</h5>
-
-    <hr>
-    <h3>开发日志</h3>
-    <ul>
-        <li>提醒功能：具体的文档详见userFile/前端提醒备忘。挺难修改cell的属性或者row的属性。考虑另一种较简单的实现方式：新增一列添加暗示错误代码</li>
-        <li>使用nginx 反向代理，可能出现spring security登入的问题（由于没有保存session信息，cookie），会重复登入，无法认证</li>
-        <li>在monitor-detail页下，检测MarketDataValid标志，如果出现连续超过10次以上无效标志，将提示报警alert</li>
-    </ul>
-
-    <hr>
-    <h3>BUG</h3>
-    <ul>
-        <li>20190801 WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client
-            均无法发送Login和Subscribe信息。
-            <p>修复为：1. 添加try catch 保证程序继续进行；2. 在连接OnError 回调函数中移除客户端 </p>
-        </li>
-        <li>20190802，在进行websocketclient 连接建立的时候，会发现websocketclient出现尚未建立连接，会进行登入和订阅消息的发送，导致异常出现
-            <p>修复为：采用同步策略，即所有连接均已经建立后再发送其他请求。采用CountLatchDown类，在OnConnected和OnError中进行倒计数，避免其余所有websocket
-                client一直被阻塞</p>
-        </li>
-        <li>
-            把订阅的命令放在，登入成功后的回调函数处理中；遵循先登入后订阅的原则；【已完成】应该把登入的命令放在connect连接的回调，onOpen函数中，所有流程都同步的话，是不需要进行CountLatchDown同步的
-        </li>
-        <li>
-            系统初始运行时，数据结构的建立是发生在instrumentInfo第一次出现的时候，比如各种Map数据，但似乎会出现异常情况即：同时多线程InstrumentInfo回调时，会出现NullpointerExceptio；
-            考虑解决方案是：将容器的初始化放在Subscribe 或者 Login 的回调函数中
-        </li>
-        <li>
-            新增Socket 中的KeepAlive选项，放在OnOpen中实现
-            新增在OnClose回调函数中尝试重连接
-            新增 使用MaxDelay 表示服务器的状态：-1 表示初始化，-2表示已连接，-3表示断开，-4表示错误
-        </li>
-    </ul>
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="js/user_js/index.js"></script>
 </body>
 </html>
 
-<!--    <ul class="nav justify-content-end nav-tabs">-->
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link" href="monitor-detail">Detail</a>-->
+
+<!--AccountType:-->
+<!--    UNKNOWN(0),-->
+<!--    STOCK_INDEX_FT(1),-->
+<!--    COMMODITY_FT(2),-->
+<!--    BOND_FT(3),-->
+<!--    OPT(4);-->
+
+
+
+<!--    <hr>-->
+<!--    <h3>开发日志</h3>-->
+<!--    <ul>-->
+<!--        <li>提醒功能：具体的文档详见userFile/前端提醒备忘。挺难修改cell的属性或者row的属性。考虑另一种较简单的实现方式：新增一列添加暗示错误代码</li>-->
+<!--        <li>使用nginx 反向代理，可能出现spring security登入的问题（由于没有保存session信息，cookie），会重复登入，无法认证</li>-->
+<!--        <li>在monitor-detail页下，检测MarketDataValid标志，如果出现连续超过10次以上无效标志，将提示报警alert</li>-->
+<!--    </ul>-->
+
+<!--    <hr>-->
+<!--    <h3>BUG</h3>-->
+<!--    <ul>-->
+<!--        <li>20190801 WebSocketClient Connect 出现 OnOpen 失败后，原逻辑是将继续发送Login 和 Subscribe 信息，这将导致程序异常，使得后续的Client-->
+<!--            均无法发送Login和Subscribe信息。-->
+<!--            <p>修复为：1. 添加try catch 保证程序继续进行；2. 在连接OnError 回调函数中移除客户端 </p>-->
 <!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link" href="monitor-summary">Summary</a>-->
+<!--        <li>20190802，在进行websocketclient 连接建立的时候，会发现websocketclient出现尚未建立连接，会进行登入和订阅消息的发送，导致异常出现-->
+<!--            <p>修复为：采用同步策略，即所有连接均已经建立后再发送其他请求。采用CountLatchDown类，在OnConnected和OnError中进行倒计数，避免其余所有websocket-->
+<!--                client一直被阻塞</p>-->
 <!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link active" href="#">Dev</a>-->
+<!--        <li>-->
+<!--            把订阅的命令放在，登入成功后的回调函数处理中；遵循先登入后订阅的原则；【已完成】应该把登入的命令放在connect连接的回调，onOpen函数中，所有流程都同步的话，是不需要进行CountLatchDown同步的-->
 <!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--            <button id="disconnect" class="btn btn-loginInfo" type="submit">Login Out</button>-->
+<!--        <li>-->
+<!--            系统初始运行时，数据结构的建立是发生在instrumentInfo第一次出现的时候，比如各种Map数据，但似乎会出现异常情况即：同时多线程InstrumentInfo回调时，会出现NullpointerExceptio；-->
+<!--            考虑解决方案是：将容器的初始化放在Subscribe 或者 Login 的回调函数中-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            新增Socket 中的KeepAlive选项，放在OnOpen中实现-->
+<!--            新增在OnClose回调函数中尝试重连接-->
+<!--            新增 使用MaxDelay 表示服务器的状态：-1 表示初始化，-2表示已连接，-3表示断开，-4表示错误-->
 <!--        </li>-->
 <!--    </ul>-->

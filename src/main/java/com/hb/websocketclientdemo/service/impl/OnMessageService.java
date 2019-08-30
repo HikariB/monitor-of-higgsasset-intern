@@ -86,9 +86,9 @@ public class OnMessageService implements WebSocketCallbackService {
 
     private boolean subResultHandler(JSONObject msgJson, WebSocketConnInfo connInfo) {
         boolean isSubscribed = msgJson.get("result").equals("success");
-        String topicJson = ((JSONObject)msgJson.get("topic")).toJSONString();
-        String instrumentId = (JSONObject.parseObject(topicJson,NewTopic.class)).getInstrumentId();
-        logger.info("[" +connInfo.getAccount()+":"+ instrumentId + "] subResultHandler: " + msgJson.get("result"));
+        String topicJson = ((JSONObject) msgJson.get("topic")).toJSONString();
+        String instrumentId = (JSONObject.parseObject(topicJson, NewTopic.class)).getInstrumentId();
+        logger.info("[" + connInfo.getAccount() + ":" + instrumentId + "] subResultHandler: " + msgJson.get("result"));
         if (isSubscribed) {
             if (connInfo.getSubscribedInstrument() == null) {
                 connInfo.setSubscribedInstrument(new ArrayList<>());
@@ -172,7 +172,11 @@ public class OnMessageService implements WebSocketCallbackService {
         } else {
             // 若不存在订单
             instrumentData.addOrderInsertNum(1);
-            instrumentData.addOrderFee(1);
+            //2019 08 29 添加逻辑当且合约名开头为为IF IH IC时，OrderFee增加，其余固定为0
+            String instrumentId = instrumentData.getInstrumentId();
+            if (instrumentId.startsWith("IF") || instrumentId.startsWith("IH") || instrumentId.startsWith("IC")){
+                instrumentData.addOrderFee(1);
+            }
             instrumentData.addOrderVolume(orderDO.getTotalVolume());
             if (orderDO.getOrderStatus().equals(ORDER_STATUS.QUEUED.getValue())) {
                 OrderData newObj = convertFromOrderRtnDOToOrderData(orderDO);
@@ -213,13 +217,14 @@ public class OnMessageService implements WebSocketCallbackService {
         }
 //        currentShortPosition and currentLongPosition
         String offFlag = tradeDO.getOffsetFlag();
+        //20190829 offFlag 添加 CLOSE_DAY
         if (direction.equals(DIRECTION.BUY.getValue()) && offFlag.equals(OFFSET_FLAG.OPEN.getValue())) {
             instrumentData.addCurrentLongPosition(tradeDO.getVolume());
-        } else if (direction.equals(DIRECTION.SELL.getValue()) && offFlag.equals(OFFSET_FLAG.CLOSED.getValue())) {
+        } else if (direction.equals(DIRECTION.SELL.getValue()) && !offFlag.equals(OFFSET_FLAG.OPEN.getValue())) {
             instrumentData.addCurrentLongPosition(tradeDO.getVolume() * (-1.0));
         } else if (direction.equals(DIRECTION.SELL.getValue()) && offFlag.equals(OFFSET_FLAG.OPEN.getValue())) {
             instrumentData.addCurrentShortPosition(tradeDO.getVolume());
-        } else if (direction.equals(DIRECTION.BUY.getValue()) && offFlag.equals(OFFSET_FLAG.CLOSED.getValue())) {
+        } else if (direction.equals(DIRECTION.BUY.getValue()) && !offFlag.equals(OFFSET_FLAG.OPEN.getValue())) {
             instrumentData.addCurrentShortPosition(tradeDO.getVolume() * (-1.0));
         }
         return true;

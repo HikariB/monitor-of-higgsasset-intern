@@ -1,6 +1,7 @@
 package com.hb.websocketclientdemo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hb.websocketclientdemo.model.loginAndSubscribe.NewTopic;
 import com.hb.websocketclientdemo.service.model.core.WebSocketConnInfo;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -71,6 +72,17 @@ public class FastJsonDemo {
         String websocketInfos = jsonFile;
 //        String websocketInfos = "[{\"url\":\"ws://114.55.210.206:9998/\",\"account\":\"gt_w\",\"password\":\"higgspass\",\"topics\":[{\"instrumentId\":\"\",\"productId\":\"cu\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"ni\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"IF\",\"productClass\":\"Futures\"}]},{\"url\":\"ws://47.103.89.75:9999/\",\"account\":\"dz_p\",\"password\":\"higgspass\",\"topics\":[{\"instrumentId\":\"\",\"productId\":\"cu\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"zn\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"ni\",\"productClass\":\"Futures\"}]}]";
         List<WebSocketConnInfo> webSocketConnInfos = JSONObject.parseArray(websocketInfos, WebSocketConnInfo.class);
+
+
+        String topics = "[{\"instrument_id\":\"\",\"product_class\":\"Futures\",\"product_id\":\"IH\"},{\"instrument_id\":\"\",\"product_class\":\"Futures\",\"product_id\":\"IC\"}]";
+        List<NewTopic> topicsArray = JSONObject.parseArray(topics,NewTopic.class);
+        NewTopic[] newTopics = new NewTopic[topicsArray.size()];
+        topicsArray.toArray(newTopics);
+
+
+        String editContent = "{\"url\":\"ws://47.110.15.187:9998/\",\"account\":\"gt_z\",\"password\":\"higgspass\",\"accountType\":1,\"topics\":[{\"instrumentId\":\"\",\"productId\":\"IF\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"IH\",\"productClass\":\"Futures\"},{\"instrumentId\":\"\",\"productId\":\"IC\",\"productClass\":\"Futures\"}]}";
+        WebSocketConnInfo newConn = JSONObject.parseObject(editContent, WebSocketConnInfo.class);
+
 
         System.out.println(websocketInfos);
     }
