@@ -216,7 +216,7 @@ public class MonitorController {
             @Override
             public void run() {
                 try {
-                    File file = new File("src/main/resources/const.Json");
+                    File file = new File("src/main/resources/const.json");
                     logger.info("Update JsonConfigFile to: " + JSON.toJSONString(ccfg));
                     FileUtils.writeStringToFile(file, JSON.toJSONString(ccfg), Charset.forName("UTF-8"));
                 } catch (Exception e) {
@@ -353,8 +353,8 @@ public class MonitorController {
 
     private boolean writeConnInfosToFile() {
         try {
-            File file = new File("src/main/resources/newConfig.Json");
-            logger.info("Update JsonConfigFile to: " + JSON.toJSONString(connInfos));
+            File file = new File("src/main/resources/newConfig.json");
+            logger.info("Update JsonConfigFile to newConfig.json: " + JSON.toJSONString(connInfos));
             FileUtils.writeStringToFile(file, JSON.toJSONString(connInfos), Charset.forName("UTF-8"));
             return true;
         } catch (Exception e) {
